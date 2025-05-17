@@ -2,8 +2,10 @@
   <img src="./public/images/tstwo.png" alt="TStwo Logo" width="60%">
 </p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/teddyjfpender/hairy/ci.yml?branch=main)](https://github.com/teddyjfpender/hairy/actions/workflows/ci.yml)
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?branch=main" alt="Build Status"></a>
+</p>
 
 Stwo re-written in TypeScript.
 
