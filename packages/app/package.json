@@ -1,0 +1,21 @@
+{
+  "name": "@tstwo/app",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch index.ts",
+    "start": "bun run index.ts",
+    "build": "bun build index.ts --outdir ./dist",
+    "test": "bun test",
+    "lint": "echo 'No linting configured'"
+  },
+  "dependencies": {
+    "@tstwo/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+} 

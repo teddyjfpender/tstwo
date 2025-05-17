@@ -1,0 +1,20 @@
+{
+  "name": "tstwo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "bun run --parallel --cwd packages build",
+    "dev": "bun run --parallel --cwd packages dev",
+    "test": "bun run --parallel --cwd packages test",
+    "lint": "bun run --parallel --cwd packages lint"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
