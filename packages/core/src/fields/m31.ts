@@ -115,10 +115,12 @@ export class M31 implements Field<M31> {
    * Multiplies two field elements
    */
   mul(rhs: M31): M31 {
-    // JavaScript numbers can safely represent integers up to 2^53-1,
-    // which is plenty for the intermediate result (P^2 < 2^62)
-    const product = this.value * rhs.value;
-    return M31.reduce(product);
+    // Use BigInt to avoid precision loss when the intermediate product
+    // exceeds 2^53. The final result fits into a 32-bit integer, so we
+    // convert back to a number after applying the modulus.
+    const product = BigInt(this.value) * BigInt(rhs.value);
+    const reduced = Number(product % BigInt(P));
+    return M31.reduce(reduced);
   }
 
   /**
