@@ -1,6 +1,11 @@
-# TS Two Monorepo
+<p align="center">
+  <img src="./public/images/tstwo.png" alt="TStwo Logo" width="100%">
+</p>
 
-A TypeScript monorepo project using Bun.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/teddyjfpender/hairy/ci.yml?branch=main)](https://github.com/teddyjfpender/hairy/actions/workflows/ci.yml)
+
+Stwo re-written in TypeScript.
 
 ## Structure
 
