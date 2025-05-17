@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./public/images/tstwo.png" alt="TStwo Logo" width="100%">
+  <img src="./public/images/tstwo.png" alt="TStwo Logo" width="60%">
 </p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
