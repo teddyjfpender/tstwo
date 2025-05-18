@@ -33,8 +33,8 @@ jobs:
       - name: Merge coverage reports
         run: |
           mkdir -p coverage
-          cp packages/core/coverage/lcov.info coverage/lcov.core.info 2>/dev/null || echo "no core coverage"
-          cp packages/app/coverage/lcov.info  coverage/lcov.app.info   2>/dev/null || echo "no app coverage"
+          cp packages/core/coverage/coverage.lcov coverage/lcov.core.info 2>/dev/null || echo "no core coverage"
+          cp packages/app/coverage/coverage.lcov coverage/lcov.app.info 2>/dev/null || echo "no app coverage"
           cat coverage/lcov.*.info > coverage/lcov.info
           ls -la coverage
 

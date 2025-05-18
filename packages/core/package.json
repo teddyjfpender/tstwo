@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch index.ts",
-    "build": "bun build index.ts --outdir ./dist --target node",
+    "build": "vite build",
     "test": "bun test --coverage",
-    "lint": "echo 'No linting configured'"
+    "lint": "eslint . --max-warnings=0"
   },
   "peerDependencies": {
     "typescript": "^5"
