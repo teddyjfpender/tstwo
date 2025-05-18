@@ -99,5 +99,12 @@ describe("CircleDomain", () => {
     ];
     expect(Array.from(domain.iterIndices())).toEqual(expected);
   });
+  it("at and indexAt work", () => {
+    const coset = FakeCoset.new(2, 2);
+    const domain = CircleDomain.new(coset);
+    expect(domain.indexAt(1).value).toBe(coset.index_at(1).value);
+    expect(domain.at(1)).toBe(coset.index_at(1).to_point());
+  });
+
 
 });

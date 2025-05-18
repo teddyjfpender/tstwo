@@ -75,4 +75,17 @@ describe("QM31", () => {
       expect(elements[i]!.equals(qm31(a, b, c, d))).toBe(true);
     }
   });
+
+  it("fromPartialEvals and other helpers", () => {
+    const e0 = qm31(1,0,0,0);
+    const e1 = qm31(0,1,0,0);
+    const e2 = qm31(0,0,1,0);
+    const e3 = qm31(0,0,0,1);
+    const combined = QM31.fromPartialEvals([e0,e1,e2,e3]);
+    expect(combined.equals(QM31.zero())).toBe(true);
+    expect(combined.square().equals(combined.mul(combined))).toBe(true);
+    expect(combined.pow(3).equals(combined.mul(combined).mul(combined))).toBe(true);
+    const m = QM31.from(m31(5));
+    expect(m.tryIntoM31()!.value).toBe(5);
+  });
 });
