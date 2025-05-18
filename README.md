@@ -1,6 +1,6 @@
 <div align="center">
 
-![TsTwo](./public/images/tstwo.png)
+![TStwo](./public/images/tstwo.png)
 
 <a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?style=for-the-badge" height="30"></a>
 <a href="https://codecov.io/gh/teddyjfpender/tstwo"><img src="https://img.shields.io/codecov/c/github/teddyjfpender/tstwo?style=for-the-badge&logo=codecov" height="30"/></a>
@@ -8,16 +8,16 @@
 </div>
 
 <div align="center">
-  <h1>TsTwo</h1>
+  <h1>TStwo</h1>
 </div>
 
 ## 🌟 About
 
-TsTwo is a TypeScript port of the Stwo project, built as a Bun monorepo. The project is still under heavy development and is not yet production ready.
+TStwo is a TypeScript port of the [Stwo](https://github.com/starkware-libs/stwo) project, built as a Bun monorepo. The project is still under heavy development and is not yet production ready.
 
 ## 🚀 Key Features
 
-- **TypeScript implementation** mirroring the original Stwo architecture.
+- **TypeScript implementation** mirroring the original [Stwo](https://github.com/starkware-libs/stwo) architecture.
 - **Monorepo setup** using Bun workspaces for the core library and application packages.
 - **Ready to develop** with scripts for building, testing and running locally.
 
