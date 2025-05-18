@@ -1,7 +1,54 @@
-// TODO: implement line domain utilities once the Rust logic is available.
+// TODO: import { Coset } from "../circle";
+// Once the circle geometry module is implemented, replace all `any` usages with
+// the real `Coset` and point types.
 
+/** A domain comprising the x-coordinates of points in a coset. */
 export class LineDomain {
-  // placeholder for fields and methods
+  coset: any;
+
+  constructor(coset: any) {
+    // The Rust implementation validates that the coset points have unique
+    // x-coordinates. Once the real Coset type is available this check should be
+    // reinstated.
+    this.coset = coset;
+  }
+
+  static new(coset: any): LineDomain {
+    return new LineDomain(coset);
+  }
+
+  at(i: number): any {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    return this.coset.at(i).x;
+  }
+
+  size(): number {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    return this.coset.size();
+  }
+
+  logSize(): number {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return this.coset.log_size;
+  }
+
+  *iter(): IterableIterator<any> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    const it: Iterable<any> = this.coset.iter();
+    for (const p of it) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      yield p.x;
+    }
+  }
+
+  double(): LineDomain {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    return new LineDomain(this.coset.double());
+  }
+
+  cosetValue(): any {
+    return this.coset;
+  }
 }
 
 
