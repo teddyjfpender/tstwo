@@ -64,6 +64,8 @@ mod tests {
 // from the Rust implementation, providing a single entry point for all circle
 // related types.
 
+// TODO: rename this file circle.ts to index.ts
+
 export { CanonicCoset } from "./canonic";
 export {
   CircleDomain,
