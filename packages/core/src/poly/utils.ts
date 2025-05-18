@@ -1,5 +1,24 @@
 import type { ExtensionOf, Field } from "../fields";
-
+/*
+// Folds values recursively in `O(n)` by a hierarchical application of folding factors.
+///
+/// i.e. folding `n = 8` values with `folding_factors = [x, y, z]`:
+///
+/// ```text
+///               n2=n1+x*n2
+///           /               \
+///     n1=n3+y*n4          n2=n5+y*n6
+///      /      \            /      \
+/// n3=a+z*b  n4=c+z*d  n5=e+z*f  n6=g+z*h
+///   /  \      /  \      /  \      /  \
+///  a    b    c    d    e    f    g    h
+/// ```
+///
+/// # Panics
+///
+/// Panics if the number of values is not a power of two or if an incorrect number of of folding
+/// factors is provided.
+*/
 // TODO: import { LineDomain } from "./line";
 // Once `line.ts` is implemented, update this import and ensure it exposes
 // `LineDomain` with `coset(): { size(): number; logSize(): number }`.
