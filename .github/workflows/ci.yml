@@ -27,5 +27,10 @@ jobs:
       - name: Build
         run: bun run build
       
-      - name: Test
-        run: bun run test 
+      - name: Test with coverage
+        run: bun run test
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./packages/core/coverage/lcov.info

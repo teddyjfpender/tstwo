@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
   <a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?branch=main" alt="Build Status"></a>
+  <a href="https://codecov.io/gh/teddyjfpender/tstwo"><img src="https://codecov.io/gh/teddyjfpender/tstwo/branch/main/graph/badge.svg" alt="Coverage status"/></a>
 </p>
 
 [Stwo](https://github.com/starkware-libs/stwo/) re-written in TypeScript, by AI.
