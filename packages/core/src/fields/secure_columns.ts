@@ -114,3 +114,81 @@ impl From<SecureColumnByCoords<CpuBackend>> for Vec<SecureField> {
 }
 ```
 */
+
+import { M31 } from "./m31";
+import { QM31, SECURE_EXTENSION_DEGREE } from "./qm31";
+
+/** Column-major representation of secure field coordinates. */
+export class SecureColumnByCoords {
+  columns: M31[][];
+
+  constructor(columns: M31[][]) {
+    if (columns.length !== SECURE_EXTENSION_DEGREE) {
+      throw new Error(`expected ${SECURE_EXTENSION_DEGREE} coordinate columns`);
+    }
+    const len = columns[0].length;
+    if (!columns.every((c) => c.length === len)) {
+      throw new Error("coordinate column length mismatch");
+    }
+    this.columns = columns.map((c) => c.slice());
+  }
+
+  static zeros(len: number): SecureColumnByCoords {
+    const cols = Array.from({ length: SECURE_EXTENSION_DEGREE }, () =>
+      Array.from({ length: len }, () => M31.zero()),
+    );
+    return new SecureColumnByCoords(cols);
+  }
+
+  /** Unsafe constructor used when porting from Rust. In JS just returns zeros. */
+  static uninitialized(len: number): SecureColumnByCoords {
+    return SecureColumnByCoords.zeros(len);
+  }
+
+  len(): number {
+    return this.columns[0].length;
+  }
+
+  is_empty(): boolean {
+    return this.len() === 0;
+  }
+
+  at(index: number): QM31 {
+    const coords = this.columns.map((c) => c[index]) as [M31, M31, M31, M31];
+    return QM31.fromM31Array(coords);
+  }
+
+  set(index: number, value: QM31): void {
+    const vals = value.toM31Array();
+    for (let i = 0; i < SECURE_EXTENSION_DEGREE; i++) {
+      this.columns[i][index] = vals[i];
+    }
+  }
+
+  to_cpu(): SecureColumnByCoords {
+    return new SecureColumnByCoords(this.columns);
+  }
+
+  /** Iterate over secure field values. */
+  *[Symbol.iterator](): IterableIterator<QM31> {
+    for (let i = 0; i < this.len(); i++) {
+      yield this.at(i);
+    }
+  }
+
+  static from(values: Iterable<QM31>): SecureColumnByCoords {
+    const arr = Array.from(values);
+    const cols = Array.from({ length: SECURE_EXTENSION_DEGREE }, () => [] as M31[]);
+    for (const v of arr) {
+      const vals = v.toM31Array();
+      for (let i = 0; i < SECURE_EXTENSION_DEGREE; i++) {
+        cols[i].push(vals[i]);
+      }
+    }
+    return new SecureColumnByCoords(cols);
+  }
+
+  to_vec(): QM31[] {
+    return Array.from(this);
+  }
+}

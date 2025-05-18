@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CirclePoint, CirclePointIndex, Coset, SECURE_FIELD_CIRCLE_GEN, SECURE_FIELD_CIRCLE_ORDER } from "../../src/circle";
+import { CirclePoint, CirclePointIndex, Coset, SECURE_FIELD_CIRCLE_GEN, SECURE_FIELD_CIRCLE_ORDER, M31_CIRCLE_LOG_ORDER } from "../../src/circle";
 import { QM31 as SecureField } from "../../src/fields/qm31";
 
 class DummyChannel {
@@ -55,5 +55,36 @@ describe("CirclePoint utilities", () => {
     expect(sum.y.equals(zero.y)).toBe(true);
     const lhs = SECURE_FIELD_CIRCLE_GEN.x.square().add(SECURE_FIELD_CIRCLE_GEN.y.square());
     expect(lhs.equals(SecureField.one())).toBe(true);
+  });
+});
+
+describe("CirclePoint math helpers", () => {
+  const F = SecureField;
+  it("double_x matches point doubling", () => {
+    const p = CirclePoint.get_point(5n);
+    const doubled = p.add(p);
+    expect(CirclePoint.double_x(p.x, F).equals(doubled.x)).toBe(true);
+  });
+
+  it("log_order returns expected", () => {
+    expect(SECURE_FIELD_CIRCLE_GEN.log_order(F)).toBe(M31_CIRCLE_LOG_ORDER);
+  });
+
+  it("mul matches repeated addition", () => {
+    const p = CirclePoint.get_point(3n);
+    const q = p.mul(5n, F);
+    let r = CirclePoint.zero(F);
+    for(let i=0;i<5;i++) r = r.add(p);
+    expect(q.x.equals(r.x)).toBe(true);
+    expect(q.y.equals(r.y)).toBe(true);
+  });
+
+  it("repeated_double matches iterative doubling", () => {
+    const p = CirclePoint.get_point(7n);
+    const q = p.repeated_double(4);
+    let r = p.clone();
+    for(let i=0;i<4;i++) r = r.double();
+    expect(q.x.equals(r.x)).toBe(true);
+    expect(q.y.equals(r.y)).toBe(true);
   });
 });
