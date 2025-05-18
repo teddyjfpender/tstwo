@@ -1,17 +1,11 @@
-/*
-This is below is the mod.rs file that needs to be ported to this TypeScript index.ts file.
-```rs
-pub mod circle;
-pub mod line;
-pub mod twiddles;
-pub mod utils;
+export * from "./circle";
+export * from "./line";
+export * from "./twiddles";
+export * from "./utils";
 
-/// Bit-reversed evaluation ordering.
-#[derive(Copy, Clone, Debug)]
-pub struct BitReversedOrder;
+/** Bit-reversed evaluation ordering. */
+export class BitReversedOrder {}
 
-/// Natural evaluation ordering (same order as domain).
-#[derive(Copy, Clone, Debug)]
-pub struct NaturalOrder;
-```
-*/
+/** Natural evaluation ordering (same order as domain). */
+export class NaturalOrder {}
+
