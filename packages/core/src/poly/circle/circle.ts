@@ -70,7 +70,8 @@ export {
   MAX_CIRCLE_DOMAIN_LOG_SIZE,
 } from "./domain";
 export { CircleEvaluation, CosetSubEvaluation } from "./evaluation";
-export { PolyOps } from "./ops";
+// `PolyOps` is an interface, so re-export it as a type-only export.
+export type { PolyOps } from "./ops";
 export { CirclePoly } from "./poly";
 export { SecureCirclePoly, SecureEvaluation } from "./secure_poly";
 
