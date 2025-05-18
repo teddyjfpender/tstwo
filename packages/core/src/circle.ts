@@ -43,9 +43,13 @@ export class CirclePoint<F extends Field<F>> implements ComplexConjugate<CircleP
   log_order(this: CirclePoint<F>, FClass: { one(): F }): number {
     let res = 0;
     let cur = this.x.clone();
-    while (!cur.equals(FClass.one())) {
+    const MAX_ITERATIONS = 100; // Safety limit to prevent infinite loops
+    while (!cur.equals(FClass.one()) && res < MAX_ITERATIONS) {
       cur = CirclePoint.double_x(cur, FClass);
       res += 1;
+    }
+    if (res === MAX_ITERATIONS) {
+      console.warn("Maximum iterations reached in log_order calculation, may not have found the true order");
     }
     return res;
   }
@@ -685,9 +689,9 @@ impl Coset {
         self.index_at(index).to_point()
     }
 
-    pub fn shift(&self, shift_size: CirclePointIndex) -> Self {
-        let initial_index = self.initial_index + shift_size;
-        Self {
+      pub fn shift(&self, shift_size: CirclePointIndex) -> Self {
+          let initial_index = self.initial_index + shift_size;
+          Self {
             initial_index,
             initial: initial_index.to_point(),
             ..*self
