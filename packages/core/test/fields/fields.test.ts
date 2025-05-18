@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { M31 } from "../../src/fields/m31";
 import { batchInverse, batchInverseChunked, TestUtils } from "../../src/fields/fields";
 

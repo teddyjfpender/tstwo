@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { interpolateColumnsDefault, evaluatePolynomialsDefault } from "../../src/poly/circle/ops";
 import { TwiddleTree } from "../../src/poly/twiddles";
 

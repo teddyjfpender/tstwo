@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { repeatValue } from "../../src/poly/utils";
 
 describe("repeatValue", () => {

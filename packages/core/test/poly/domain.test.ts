@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { CircleDomain } from "../../src/poly/circle/domain";
 
 // Simple fake coset implementation for testing purposes
