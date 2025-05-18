@@ -13,7 +13,7 @@
 
 ## 🌟 About
 
-TStwo is a TypeScript port of the [Stwo](https://github.com/starkware-libs/stwo) project, built as a Bun monorepo. The project is still under heavy development and is not yet production ready.
+TStwo is a TypeScript port of the [Stwo](https://github.com/starkware-libs/stwo) project, built as a Bun monorepo. The project is still under heavy development by AI Agents.
 
 ## 🚀 Key Features
 
