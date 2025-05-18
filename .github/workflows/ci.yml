@@ -29,16 +29,16 @@ jobs:
       
       - name: Test with coverage
         run: bun run test
-        
-      - name: Create combined coverage directory
+
+      - name: Merge coverage reports
         run: |
           mkdir -p coverage
-          [ -f packages/core/coverage/lcov.info ] && cp packages/core/coverage/lcov.info coverage/lcov.core.info || echo "No coverage for core"
-          [ -f packages/app/coverage/lcov.info ] && cp packages/app/coverage/lcov.info coverage/lcov.app.info || echo "No coverage for app"
-          [ -f packages/core/coverage/lcov.info ] || [ -f packages/app/coverage/lcov.info ] && cat coverage/lcov.*.info > coverage/lcov.info || echo "No coverage files found"
-          ls -la coverage || echo "Coverage directory empty or not found"
+          cp packages/core/coverage/lcov.info coverage/lcov.core.info 2>/dev/null || echo "no core coverage"
+          cp packages/app/coverage/lcov.info  coverage/lcov.app.info   2>/dev/null || echo "no app coverage"
+          cat coverage/lcov.*.info > coverage/lcov.info
+          ls -la coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: ./coverage/lcov.info
+          files: coverage/lcov.info

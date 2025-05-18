@@ -8,7 +8,7 @@
   "scripts": {
     "build": "bun run build",
     "dev": "bun run dev",
-    "test": "bun run test",
+    "test": "vitest run --coverage",
     "lint": "bun run lint"
   },
   "devDependencies": {
