@@ -3,11 +3,11 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run --watch index.ts",
+    "dev": "vite",
     "start": "bun run index.ts",
-    "build": "bun build index.ts --outdir ./dist",
+    "build": "vite build",
     "test": "bun test --coverage",
-    "lint": "echo 'No linting configured'"
+    "lint": "eslint . --max-warnings=0"
   },
   "dependencies": {
     "@tstwo/core": "workspace:*"

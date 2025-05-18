@@ -28,17 +28,10 @@ jobs:
         run: bun run build
       
       - name: Test with coverage
-        run: bun run test
-        
-      - name: Create combined coverage directory
-        run: |
-          mkdir -p coverage
-          [ -f packages/core/coverage/lcov.info ] && cp packages/core/coverage/lcov.info coverage/lcov.core.info || echo "No coverage for core"
-          [ -f packages/app/coverage/lcov.info ] && cp packages/app/coverage/lcov.info coverage/lcov.app.info || echo "No coverage for app"
-          [ -f packages/core/coverage/lcov.info ] || [ -f packages/app/coverage/lcov.info ] && cat coverage/lcov.*.info > coverage/lcov.info || echo "No coverage files found"
-          ls -la coverage || echo "Coverage directory empty or not found"
+        run: bun vitest run --coverage
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          files: ./coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: teddyjfpender/tstwo
