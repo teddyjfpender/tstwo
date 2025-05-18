@@ -92,9 +92,9 @@ import type { M31 as BaseField } from "../../fields/m31";
 
 /** A coset of the form `G_{2n} + <G_n>` used for circle FFT domains. */
 export class CanonicCoset {
-  coset: any; // Coset
+  coset: Coset;
 
-  constructor(coset: any) {
+  constructor(coset: Coset) {
     this.coset = coset;
   }
 
@@ -111,17 +111,17 @@ export class CanonicCoset {
   }
 
   /** Returns the underlying full coset `G_{2n} + <G_n>`. */
-  cosetFull(): any {
+  cosetFull(): Coset {
     return this.coset;
   }
 
   /** Returns half of the coset `G_{2n} + <G_{n/2}>`. */
-  halfCoset(): any {
+  halfCoset(): Coset {
     return (CanonicCoset as any)._half_odds(this.logSize() - 1);
   }
 
   /** Converts to a `CircleDomain` representing the same point set. */
-  circleDomain(): any {
+  circleDomain(): CircleDomain {
     return (CanonicCoset as any)._circle_domain(this.halfCoset());
   }
 
@@ -135,23 +135,23 @@ export class CanonicCoset {
     return this.coset.size();
   }
 
-  initialIndex(): any {
+  initialIndex(): CirclePointIndex {
     return this.coset.initial_index;
   }
 
-  stepSize(): any {
+  stepSize(): CirclePointIndex {
     return this.coset.step_size;
   }
 
-  step(): any {
+  step(): CirclePoint<BaseField> {
     return this.coset.step;
   }
 
-  indexAt(index: number): any {
+  indexAt(index: number): CirclePointIndex {
     return this.coset.index_at(index);
   }
 
-  at(i: number): any {
+  at(i: number): CirclePoint<BaseField> {
     return this.coset.at(i);
   }
 }
