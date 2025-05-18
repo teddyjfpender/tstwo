@@ -6,14 +6,14 @@
   ],
   "type": "module",
   "scripts": {
-    "prebuild": "bun link --all",
-    "build": "bun run -F=./packages/* build",
-    "dev": "bun run -F=./packages/* dev",
-    "test": "bun run -F=./packages/* test",
-    "lint": "bun run -F=./packages/* lint"
+    "build": "bun run build",
+    "dev": "bun run dev",
+    "test": "bun run test",
+    "lint": "bun run lint"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"

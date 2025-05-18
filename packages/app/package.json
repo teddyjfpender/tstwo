@@ -12,9 +12,6 @@
   "dependencies": {
     "@tstwo/core": "workspace:*"
   },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
   "peerDependencies": {
     "typescript": "^5"
   }

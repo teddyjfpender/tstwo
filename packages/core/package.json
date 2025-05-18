@@ -8,9 +8,6 @@
     "test": "bun test --coverage",
     "lint": "echo 'No linting configured'"
   },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
   "peerDependencies": {
     "typescript": "^5"
   }
