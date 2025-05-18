@@ -1,9 +1,8 @@
-// TODO: import { CircleDomain } from "./domain";
-// TODO: import { CircleEvaluation } from "./evaluation";
-// TODO: import type { PolyOps } from "./ops";
-// TODO: import { TwiddleTree } from "../twiddles";
-// TODO: import type { ColumnOps } from "../../backend";
-// TODO: import type { M31 as BaseField } from "../../fields/m31";
+import type { CircleDomain } from "./domain";
+import { CircleEvaluation, ColumnOps } from "./evaluation";
+import type { PolyOps } from "./ops";
+import { TwiddleTree } from "../twiddles";
+import type { M31 as BaseField } from "../../fields/m31";
 
 /** A polynomial defined on a CircleDomain. */
 export class CirclePoly<B extends ColumnOps<any>> {

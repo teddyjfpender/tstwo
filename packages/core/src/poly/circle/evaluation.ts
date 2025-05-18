@@ -1,9 +1,10 @@
-// TODO: import { CircleDomain } from "./domain";
-// TODO: import { CirclePoly } from "./poly";
-// TODO: import type { PolyOps } from "./ops";
+// Core circle polynomial structures.
+import type { CircleDomain } from "./domain";
+import type { CirclePoly } from "./poly";
+import type { PolyOps } from "./ops";
 // TODO: import type { ColumnOps } from "../../backend"; // placeholder path
 // TODO: import type { SimdBackend, CpuBackend } from "../../backend";
-// TODO: import { TwiddleTree } from "../twiddles";
+import { TwiddleTree } from "../twiddles";
 // TODO: import type { ExtensionOf } from "../../fields";
 
 /**
