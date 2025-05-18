@@ -4,7 +4,7 @@
 
 <a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?style=for-the-badge" height="30"></a>
 <a href="https://codecov.io/gh/teddyjfpender/tstwo"><img src="https://img.shields.io/codecov/c/github/teddyjfpender/tstwo?style=for-the-badge&logo=codecov" height="30"/></a>
-<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/github/license/teddyjfpender/tstwo.svg?style=for-the-badge" alt="License" height="30"></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License" height="30"></a>
 </div>
 
 <div align="center">
