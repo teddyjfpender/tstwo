@@ -83,8 +83,10 @@ impl CanonicCoset {
 ```
 */
 
-// TODO: import { CircleDomain } from "./domain";
-// Once `domain.ts` is ported, update this import and ensure the API matches the Rust version.
+// Import the circle domain once implemented. This mirrors the Rust `mod.rs` re-export
+// structure where `CanonicCoset` provides convenience constructors for a
+// corresponding `CircleDomain`.
+import { CircleDomain } from "./domain";
 
 // TODO: import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
 // These come from the yet-to-be-translated circle geometry module.

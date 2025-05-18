@@ -1,9 +1,9 @@
-// TODO: import { CircleDomain } from "./domain";
-// TODO: import { CircleEvaluation } from "./evaluation";
-// TODO: import { CirclePoly } from "./poly";
-// TODO: import type { PolyOps } from "./ops";
-// TODO: import type { ColumnOps } from "../../backend";
-// TODO: import { TwiddleTree } from "../twiddles";
+import type { CircleDomain } from "./domain";
+import { CircleEvaluation } from "./evaluation";
+import { CirclePoly } from "./poly";
+import type { PolyOps } from "./ops";
+import type { ColumnOps } from "./evaluation";
+import { TwiddleTree } from "../twiddles";
 // TODO: import type { SecureField } from "../../fields/qm31";
 
 export const SECURE_EXTENSION_DEGREE = 4; // placeholder constant
@@ -60,7 +60,7 @@ export class SecureEvaluation<B extends ColumnOps<any>, EvalOrder> {
   }
 }
 
-// TODO: import { BitReversedOrder } from "../index";
+import { BitReversedOrder } from "../index";
 
 /*
 This is the Rust code from secure_poly.rs that needs to be ported to Typescript in this secure_poly.ts file:
