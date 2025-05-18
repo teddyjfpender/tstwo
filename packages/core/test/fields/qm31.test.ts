@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { M31, P } from "../../src/fields/m31";
+import { CM31 } from "../../src/fields/cm31";
 import { QM31 } from "../../src/fields/qm31";
 
 function qm31(m0: number, m1: number, m2: number, m3: number): QM31 {
@@ -88,4 +89,17 @@ describe("QM31", () => {
     const m = QM31.from(m31(5));
     expect(m.tryIntoM31()!.value).toBe(5);
   });
+  it("additional helpers", () => {
+    const arr = [m31(1), m31(2), m31(3), m31(4)];
+    const f1 = QM31.fromM31(arr[0], arr[1], arr[2], arr[3]);
+    const f2 = QM31.fromM31Array(arr);
+    expect(f1.equals(qm31(1,2,3,4))).toBe(true);
+    expect(f2.equals(f1)).toBe(true);
+    expect(f1.toM31Array().map(v => v.value)).toEqual([1,2,3,4]);
+    const cm = CM31.fromUnchecked(5,6);
+    expect(f1.mulCM31(cm).equals(new QM31(f1.c0.mul(cm), f1.c1.mul(cm)))).toBe(true);
+    const conj = f1.complexConjugate();
+    expect(conj.c0.imag.value).toBe(P - 2);
+  });
+
 });
