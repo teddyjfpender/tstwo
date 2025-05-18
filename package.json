@@ -6,10 +6,12 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "bun run build",
-    "dev": "bun run dev",
-    "test": "vitest run --coverage",
-    "lint": "bun run lint"
+    "build": "bun run build:core && bun run build:app",
+    "build:core": "cd packages/core && bun run build",
+    "build:app": "cd packages/app && bun run build",
+    "dev": "cd packages/app && bun run dev",
+    "test": "bun test",
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@types/bun": "latest",
