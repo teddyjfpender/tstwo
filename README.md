@@ -7,7 +7,7 @@
   <a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?branch=main" alt="Build Status"></a>
 </p>
 
-Stwo re-written in TypeScript.
+[Stwo](https://github.com/starkware-libs/stwo/) re-written in TypeScript, by AI.
 
 ## Structure
 
