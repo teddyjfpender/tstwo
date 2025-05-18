@@ -21,12 +21,12 @@ export interface ColumnOps<F> {
 }
 
 export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrder> {
-  domain: any; // TODO: replace with CircleDomain
+  domain: CircleDomain;
   values: F[];
 
   private _evalOrder!: EvalOrder;
 
-  constructor(domain: any, values: F[]) {
+  constructor(domain: CircleDomain, values: F[]) {
     if ((domain as any).size() !== values.length) {
       throw new Error("CircleEvaluation: domain/values size mismatch");
     }
@@ -35,7 +35,7 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
   }
 
   static new<B extends ColumnOps<F>, F, E = NaturalOrder>(
-    domain: any,
+    domain: CircleDomain,
     values: F[],
   ): CircleEvaluation<B, F, E> {
     return new CircleEvaluation<B, F, E>(domain, values);
@@ -43,13 +43,13 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
 
   bitReverse(this: CircleEvaluation<B, F, NaturalOrder>): CircleEvaluation<B, F, BitReversedOrder> {
     (this.constructor as unknown as { bitReverseColumn(col: F[]): void }).bitReverseColumn(this.values);
-    const Ctor = this.constructor as new (d: any, v: F[]) => CircleEvaluation<B, F, BitReversedOrder>;
+    const Ctor = this.constructor as new (d: CircleDomain, v: F[]) => CircleEvaluation<B, F, BitReversedOrder>;
     return new Ctor(this.domain, this.values);
   }
 
   bitReverseBack(this: CircleEvaluation<B, F, BitReversedOrder>): CircleEvaluation<B, F, NaturalOrder> {
     (this.constructor as unknown as { bitReverseColumn(col: F[]): void }).bitReverseColumn(this.values);
-    const Ctor = this.constructor as new (d: any, v: F[]) => CircleEvaluation<B, F, NaturalOrder>;
+    const Ctor = this.constructor as new (d: CircleDomain, v: F[]) => CircleEvaluation<B, F, NaturalOrder>;
     return new Ctor(this.domain, this.values);
   }
 

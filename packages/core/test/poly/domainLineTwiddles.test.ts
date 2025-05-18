@@ -1,15 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { domainLineTwiddlesFromTree } from "../../src/poly/utils";
-
-class FakeCoset {
-  constructor(public logSizeVal: number) {}
-  size(): number { return 1 << this.logSizeVal; }
-  logSize(): number { return this.logSizeVal; }
-}
+import { Coset } from "../../src/circle";
 
 class FakeDomain {
   constructor(private logSizeVal: number) {}
-  coset() { return new FakeCoset(this.logSizeVal); }
+  coset() {
+    const c = Coset.subgroup(this.logSizeVal);
+    return { size: () => c.size(), logSize: () => c.log_size };
+  }
 }
 
 describe("domainLineTwiddlesFromTree", () => {

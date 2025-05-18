@@ -189,33 +189,29 @@ export const MAX_CIRCLE_DOMAIN_LOG_SIZE = M31_CIRCLE_LOG_ORDER - 1;
 
 /** A valid domain for circle polynomial interpolation and evaluation. */
 export class CircleDomain {
-  halfCoset: any; // Coset
+  halfCoset: Coset;
 
-  constructor(halfCoset: any) {
+  constructor(halfCoset: Coset) {
     this.halfCoset = halfCoset;
   }
 
   /** Given a coset C + <G_n>, constructs the circle domain +-C + <G_n>. */
-  static new(halfCoset: any): CircleDomain {
+  static new(halfCoset: Coset): CircleDomain {
     return new CircleDomain(halfCoset);
   }
 
   /** Iterates over all points in the domain. */
-  *iter(): IterableIterator<any> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const first: Iterable<any> = this.halfCoset.iter();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const second: Iterable<any> = this.halfCoset.conjugate().iter();
+  *iter(): IterableIterator<CirclePoint<M31>> {
+    const first: Iterable<CirclePoint<M31>> = this.halfCoset.iter();
+    const second: Iterable<CirclePoint<M31>> = this.halfCoset.conjugate().iter();
     yield* first;
     yield* second;
   }
 
   /** Iterates over point indices. */
-  *iterIndices(): IterableIterator<any> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const first: Iterable<any> = this.halfCoset.iter_indices();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const second: Iterable<any> = this.halfCoset.conjugate().iter_indices();
+  *iterIndices(): IterableIterator<CirclePointIndex> {
+    const first: Iterable<CirclePointIndex> = this.halfCoset.iter_indices();
+    const second: Iterable<CirclePointIndex> = this.halfCoset.conjugate().iter_indices();
     yield* first;
     yield* second;
   }
@@ -231,55 +227,45 @@ export class CircleDomain {
   }
 
   /** Returns the `i`th domain element. */
-  at(i: number): any {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  at(i: number): CirclePoint<M31> {
     return this.indexAt(i).to_point();
   }
 
   /** Returns the index of the `i`th domain element. */
-  indexAt(i: number): any {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  indexAt(i: number): CirclePointIndex {
     if (i < this.halfCoset.size()) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       return this.halfCoset.index_at(i);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return -this.halfCoset.index_at(i - this.halfCoset.size());
   }
 
   /** Returns true if the domain is canonic. */
   isCanonic(): boolean {
-    return this.halfCoset.initial_index * 4 === this.halfCoset.step_size;
+    return this.halfCoset.initial_index.mul(4).value === this.halfCoset.step_size.value;
   }
 
   /** Splits a circle domain into smaller subdomains shifted by offsets. */
-  split(logParts: number): [CircleDomain, any[]] {
+  split(logParts: number): [CircleDomain, CirclePointIndex[]] {
     if (logParts > this.halfCoset.log_size) {
       throw new Error('logParts out of range');
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const subdomain = CircleDomain.new(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      this.halfCoset.constructor.new(
-        this.halfCoset.initial_index,
-        this.halfCoset.log_size - logParts,
-      ),
+      Coset.new(this.halfCoset.initial_index, this.halfCoset.log_size - logParts)
     );
-    const shifts: any[] = [];
+    const shifts: CirclePointIndex[] = [];
     for (let i = 0; i < 1 << logParts; i++) {
-      shifts.push(this.halfCoset.step_size * i);
+      shifts.push(this.halfCoset.step_size.mul(i));
     }
     return [subdomain, shifts];
   }
 
   /** Returns a shifted domain by the given offset. */
-  shift(shift: any): CircleDomain {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  shift(shift: CirclePointIndex): CircleDomain {
     return CircleDomain.new(this.halfCoset.shift(shift));
   }
 
   /** Enables `for...of` iteration over the domain points. */
-  [Symbol.iterator](): IterableIterator<any> {
+  [Symbol.iterator](): IterableIterator<CirclePoint<M31>> {
     return this.iter();
   }
 }

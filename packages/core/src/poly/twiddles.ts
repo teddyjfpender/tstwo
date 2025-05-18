@@ -3,9 +3,7 @@
 // Once `circle/ops.ts` is ported, update this import path and ensure `PolyOps`
 // matches the Rust trait.
 
-// TODO: import type { Coset } from "../circle";
-// Once the Circle module is implemented, replace the `unknown` type annotations
-// for `Coset` with the correct import.
+import type { Coset } from "../circle";
 
 /**
  * Precomputed twiddles for a specific coset tower.
@@ -16,7 +14,7 @@
  */
 export class TwiddleTree<B, Twiddle> {
   /** The root coset of the tower. */
-  rootCoset: unknown; // TODO: replace `unknown` with `Coset` when available
+  rootCoset: Coset;
 
   /** Forward FFT twiddles. */
   twiddles: Twiddle;
@@ -24,7 +22,7 @@ export class TwiddleTree<B, Twiddle> {
   /** Inverse FFT twiddles. */
   itwiddles: Twiddle;
 
-  constructor(rootCoset: unknown, twiddles: Twiddle, itwiddles: Twiddle) {
+  constructor(rootCoset: Coset, twiddles: Twiddle, itwiddles: Twiddle) {
     this.rootCoset = rootCoset;
     this.twiddles = twiddles;
     this.itwiddles = itwiddles;

@@ -1,52 +1,45 @@
-// TODO: import { Coset } from "../circle";
-// Once the circle geometry module is implemented, replace all `any` usages with
-// the real `Coset` and point types.
+import { Coset, CirclePoint } from "../circle";
+import type { M31 } from "../fields/m31";
 
 /** A domain comprising the x-coordinates of points in a coset. */
 export class LineDomain {
-  coset: any;
+  coset: Coset;
 
-  constructor(coset: any) {
+  constructor(coset: Coset) {
     // The Rust implementation validates that the coset points have unique
     // x-coordinates. Once the real Coset type is available this check should be
     // reinstated.
     this.coset = coset;
   }
 
-  static new(coset: any): LineDomain {
+  static new(coset: Coset): LineDomain {
     return new LineDomain(coset);
   }
 
-  at(i: number): any {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  at(i: number): M31 {
     return this.coset.at(i).x;
   }
 
   size(): number {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return this.coset.size();
   }
 
   logSize(): number {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.coset.log_size;
   }
 
-  *iter(): IterableIterator<any> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const it: Iterable<any> = this.coset.iter();
+  *iter(): IterableIterator<M31> {
+    const it: Iterable<CirclePoint<M31>> = this.coset.iter();
     for (const p of it) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       yield p.x;
     }
   }
 
   double(): LineDomain {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return new LineDomain(this.coset.double());
   }
 
-  cosetValue(): any {
+  cosetValue(): Coset {
     return this.coset;
   }
 }
