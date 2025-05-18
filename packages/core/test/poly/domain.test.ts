@@ -10,6 +10,9 @@ class FakeIndex {
   conjugate(): number {
     return -this.value;
   }
+  valueOf(): number {
+    return this.value;
+  }
 }
 
 class FakeCoset {
@@ -85,6 +88,16 @@ describe("CircleDomain", () => {
     const shifted = domain.shift(3);
     expect(shifted.halfCoset.initial_index).toBe(coset.initial_index + 3);
     expect(shifted.halfCoset.log_size).toBe(coset.log_size);
+  });
+
+  it("iterIndices yields indices then their conjugates", () => {
+    const coset = FakeCoset.new(0, 2);
+    const domain = CircleDomain.new(coset);
+    const expected = [
+      ...coset.iter_indices(),
+      ...coset.conjugate().iter_indices(),
+    ];
+    expect(Array.from(domain.iterIndices())).toEqual(expected);
   });
 
 });
