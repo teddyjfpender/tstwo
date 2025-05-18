@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun run --watch index.ts",
     "build": "bun build index.ts --outdir ./dist --target node",
-    "test": "bun test",
+    "test": "bun test --coverage",
     "lint": "echo 'No linting configured'"
   },
   "devDependencies": {
