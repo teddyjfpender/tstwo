@@ -3,9 +3,7 @@ export * from "./line";
 export * from "./twiddles";
 export * from "./utils";
 
-/** Bit-reversed evaluation ordering. */
-export class BitReversedOrder {}
-
-/** Natural evaluation ordering (same order as domain). */
-export class NaturalOrder {}
+// Re-export the evaluation order marker classes from the circle evaluation
+// module so that consumers can import them from `poly` directly.
+export { BitReversedOrder, NaturalOrder } from "./circle/evaluation";
 

@@ -43,12 +43,14 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
 
   bitReverse(this: CircleEvaluation<B, F, NaturalOrder>): CircleEvaluation<B, F, BitReversedOrder> {
     (this.constructor as unknown as { bitReverseColumn(col: F[]): void }).bitReverseColumn(this.values);
-    return CircleEvaluation.new<B, F, BitReversedOrder>(this.domain, this.values);
+    const Ctor = this.constructor as new (d: any, v: F[]) => CircleEvaluation<B, F, BitReversedOrder>;
+    return new Ctor(this.domain, this.values);
   }
 
   bitReverseBack(this: CircleEvaluation<B, F, BitReversedOrder>): CircleEvaluation<B, F, NaturalOrder> {
     (this.constructor as unknown as { bitReverseColumn(col: F[]): void }).bitReverseColumn(this.values);
-    return CircleEvaluation.new<B, F, NaturalOrder>(this.domain, this.values);
+    const Ctor = this.constructor as new (d: any, v: F[]) => CircleEvaluation<B, F, NaturalOrder>;
+    return new Ctor(this.domain, this.values);
   }
 
   interpolate(this: CircleEvaluation<any, any, BitReversedOrder>): any {
