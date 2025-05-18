@@ -1,46 +1,53 @@
-<p align="center">
-  <img src="./public/images/tstwo.png" alt="TStwo Logo" width="60%">
-</p>
+<div align="center">
 
-<p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
-  <a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?branch=main" alt="Build Status"></a>
-  <a href="https://codecov.io/gh/teddyjfpender/tstwo"><img src="https://codecov.io/gh/teddyjfpender/tstwo/branch/main/graph/badge.svg" alt="Coverage status"/></a>
-</p>
+![TsTwo](./public/images/tstwo.png)
 
-[Stwo](https://github.com/starkware-libs/stwo/) re-written in TypeScript, by AI.
+<a href="https://github.com/teddyjfpender/tstwo/actions/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/teddyjfpender/tstwo/ci.yml?style=for-the-badge" height="30"></a>
+<a href="https://codecov.io/gh/teddyjfpender/tstwo"><img src="https://img.shields.io/codecov/c/github/teddyjfpender/tstwo?style=for-the-badge&logo=codecov" height="30"/></a>
+<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/github/license/teddyjfpender/tstwo.svg?style=for-the-badge" alt="License" height="30"></a>
+</div>
 
-## Structure
+<div align="center">
+  <h1>TsTwo</h1>
+</div>
 
-- `packages/app`: Main application
-- `packages/core`: Shared utilities and core functionality
+## 🌟 About
 
-## Getting Started
+TsTwo is a TypeScript port of the Stwo project, built as a Bun monorepo. The project is still under heavy development and is not yet production ready.
+
+## 🚀 Key Features
+
+- **TypeScript implementation** mirroring the original Stwo architecture.
+- **Monorepo setup** using Bun workspaces for the core library and application packages.
+- **Ready to develop** with scripts for building, testing and running locally.
+
+## 📦 Getting Started
 
 ```bash
 # Install dependencies
 bun install
 
-# Run development
-bun dev
+# Start development mode
+bun run dev
 
 # Build all packages
-bun build
+bun run build
 
 # Run tests
-bun test
+bun run --cwd packages/core test
+bun run --cwd packages/app test
 ```
 
-## Working with packages
-
-You can run commands for specific packages:
+## 📚 Working with Packages
 
 ```bash
-# Run only the app in dev mode
-bun --cwd packages/app dev
+# Run only the app package
+bun run --cwd packages/app dev
 
 # Build only the core package
-bun --cwd packages/core build
+bun run --cwd packages/core build
 ```
 
-This project was created using `bun init` in bun v1.2.13. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## 📜 License
+
+Released under the MIT license.
