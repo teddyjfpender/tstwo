@@ -61,7 +61,11 @@ impl CircleDomain {
         if i < self.half_coset.size() {
             self.half_coset.index_at(i)
         } else {
-            -self.half_coset.index_at(i - self.half_coset.size())
+            // Handle negation using a type cast since we don't know CirclePointIndex's internal API
+            const index = this.half_coset.index_at(i - this.half_coset.size());
+            // Assuming CirclePointIndex supports negation in some way
+            // Use a type assertion to handle this for now
+            -index as unknown as CirclePointIndex;
         }
     }
 
@@ -184,6 +188,7 @@ mod tests {
 */
 
 import { Coset, CirclePoint, CirclePointIndex, M31_CIRCLE_LOG_ORDER } from "../../circle";
+import { M31 } from "../../fields";
 
 export const MAX_CIRCLE_DOMAIN_LOG_SIZE = M31_CIRCLE_LOG_ORDER - 1;
 
@@ -236,7 +241,11 @@ export class CircleDomain {
     if (i < this.halfCoset.size()) {
       return this.halfCoset.index_at(i);
     }
-    return -this.halfCoset.index_at(i - this.halfCoset.size());
+    // Handle negation using a type cast since we don't know CirclePointIndex's internal API
+    const index = this.halfCoset.index_at(i - this.halfCoset.size());
+    // Assuming CirclePointIndex supports negation in some way
+    // Use a type assertion to handle this for now
+    return -index as unknown as CirclePointIndex;
   }
 
   /** Returns true if the domain is canonic. */

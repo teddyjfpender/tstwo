@@ -5,19 +5,58 @@ import type { PolyOps } from "./ops";
 // TODO: import type { ColumnOps } from "../../backend"; // placeholder path
 // TODO: import type { SimdBackend, CpuBackend } from "../../backend";
 import { TwiddleTree } from "../twiddles";
-// TODO: import type { ExtensionOf } from "../../fields";
+import { M31 } from "../../fields"; // Import M31 type
 
 /**
  * Below is the evaluation.rs file that needs to be ported. The TypeScript version
  * defines generic circle evaluation logic operating over a backend `B` and field `F`.
  */
 
+/**
+ * Order types for evaluation domains
+ */
 export class NaturalOrder {}
 export class BitReversedOrder {}
 
+/**
+ * Column operations interface
+ */
 export interface ColumnOps<F> {
   bitReverseColumn(col: F[]): void;
-  // Backend specific conversion utilities may be defined elsewhere
+}
+
+/**
+ * Default implementation of column operations
+ */
+export class DefaultColumnOps<F> implements ColumnOps<F> {
+  bitReverseColumn(col: F[]): void {
+    // Basic implementation - can be overridden by specific backends
+    const n = col.length;
+    const logN = Math.log2(n);
+    if (Math.pow(2, logN) !== n) {
+      throw new Error("Column length must be a power of 2");
+    }
+    
+    // Bit-reverse permutation
+    for (let i = 0; i < n; i++) {
+      const j = this.bitReverseIndex(i, logN);
+      if (i < j) {
+        // Use non-null assertion to handle type safety concerns
+        const temp = col[i]!;
+        col[i] = col[j]!;
+        col[j] = temp;
+      }
+    }
+  }
+  
+  private bitReverseIndex(idx: number, logSize: number): number {
+    let rev = 0;
+    for (let i = 0; i < logSize; i++) {
+      rev = (rev << 1) | (idx & 1);
+      idx >>>= 1;
+    }
+    return rev;
+  }
 }
 
 export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrder> {
@@ -27,7 +66,7 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
   private _evalOrder!: EvalOrder;
 
   constructor(domain: CircleDomain, values: F[]) {
-    if ((domain as any).size() !== values.length) {
+    if (domain.size() !== values.length) {
       throw new Error("CircleEvaluation: domain/values size mismatch");
     }
     this.domain = domain;
@@ -55,7 +94,7 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
 
   interpolate(this: CircleEvaluation<any, any, BitReversedOrder>): any {
     const BClass: any = this.constructor;
-    const coset = (this.domain as any).halfCoset;
+    const coset = this.domain.halfCoset;
     return BClass.interpolate(this, BClass.precomputeTwiddles(coset));
   }
 
@@ -66,7 +105,8 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
 
   toCpu(this: CircleEvaluation<any, F, EvalOrder>): CircleEvaluation<any, F, EvalOrder> {
     const BClass: any = this.constructor;
-    return CircleEvaluation.new(BClass.to_cpu(this.values), this.domain);
+    const cpuValues = BClass.to_cpu(this.values);
+    return CircleEvaluation.new<any, F, EvalOrder>(this.domain, cpuValues);
   }
 
   deref(): F[] {
@@ -82,7 +122,8 @@ export class CosetSubEvaluation<F> {
 
   at(index: number): F {
     const idx = (this.offset + index * this.step) & (this.evaluation.length - 1);
-    return this.evaluation[idx];
+    // Use non-null assertion to handle type safety
+    return this.evaluation[idx]!;
   }
 
   // Array indexer helpers

@@ -72,7 +72,9 @@ describe("CircleEvaluation helpers", () => {
 
   it("toCpu converts values via static method", () => {
     const ev = new DummyOps(domSmall, [1]);
-    expect(() => ev.toCpu()).toThrow();
+    const res = ev.toCpu();
+    expect(res).toBeInstanceOf(CircleEvaluation);
+    expect(res.values).toEqual([2]); // Value should be 1 + 1 = 2
   });
 });
 

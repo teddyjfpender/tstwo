@@ -1,5 +1,6 @@
 import type { CircleDomain } from "./domain";
-import { CircleEvaluation, ColumnOps } from "./evaluation";
+import { CircleEvaluation } from "./evaluation";
+import type { ColumnOps } from "./evaluation";
 import type { PolyOps } from "./ops";
 import { TwiddleTree } from "../twiddles";
 import type { M31 as BaseField } from "../../fields/m31";
