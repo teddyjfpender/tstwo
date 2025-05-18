@@ -11,7 +11,7 @@
     "build:app": "cd packages/app && bun run build",
     "dev": "cd packages/app && bun run dev",
     "test": "bun test",
-    "lint": "eslint ."
+    "lint": "eslint . --max-warnings=1000 --no-error-on-unmatched-pattern"
   },
   "devDependencies": {
     "@types/bun": "latest",

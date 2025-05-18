@@ -107,7 +107,7 @@ export class CanonicCoset {
     if (logSize <= 0) {
       throw new Error("log_size must be greater than 0");
     }
-    return new CanonicCoset((CanonicCoset as any)._odds(logSize));
+    return new CanonicCoset(Coset.odds(logSize));
   }
 
   /** Returns the underlying full coset `G_{2n} + <G_n>`. */
@@ -117,12 +117,12 @@ export class CanonicCoset {
 
   /** Returns half of the coset `G_{2n} + <G_{n/2}>`. */
   halfCoset(): Coset {
-    return (CanonicCoset as any)._half_odds(this.logSize() - 1);
+    return Coset.half_odds(this.logSize() - 1);
   }
 
   /** Converts to a `CircleDomain` representing the same point set. */
   circleDomain(): CircleDomain {
-    return (CanonicCoset as any)._circle_domain(this.halfCoset());
+    return CircleDomain.new(this.halfCoset());
   }
 
   /** Logarithmic size of the coset. */
