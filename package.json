@@ -6,6 +6,7 @@
   ],
   "type": "module",
   "scripts": {
+    "prebuild": "bun link --all",
     "build": "bun run -F=./packages/* build",
     "dev": "bun run -F=./packages/* dev",
     "test": "bun run -F=./packages/* test",

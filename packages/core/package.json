@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch index.ts",
-    "build": "bun build index.ts --outdir ./dist",
+    "build": "bun build index.ts --outdir ./dist --target node",
     "test": "bun test",
     "lint": "echo 'No linting configured'"
   },
