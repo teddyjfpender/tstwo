@@ -48,26 +48,6 @@ bun run --cwd packages/app dev
 bun run --cwd packages/core build
 ```
 
-## Porting Status
-
-| Rust Module | TypeScript Path | Notes |
-|-------------|-----------------|-------|
-| `fields/m31.rs` | `packages/core/src/fields/m31.ts` | ✅ ported |
-| `fields/cm31.rs` | `packages/core/src/fields/cm31.ts` | ✅ ported |
-| `fields/qm31.rs` | `packages/core/src/fields/qm31.ts` | ✅ ported |
-| `poly/utils.rs` | `packages/core/src/poly/utils.ts` | ✅ ported |
-| `poly/line.rs` | `packages/core/src/poly/line.ts` | 🔶 partial |
-| `poly/circle/mod.rs` | `packages/core/src/poly/circle/` | 🔶 partial |
-| `circle.rs` | `packages/core/src/circle.ts` | ❌ unstarted |
-| `fft.rs` | `packages/core/src/fft.ts` | ❌ unstarted |
-| `fri.rs` | `packages/core/src/fri.ts` | ❌ unstarted |
-| `constraints.rs` | `packages/core/src/constraints.ts` | ❌ unstarted |
-| `proof_of_work.rs` | `packages/core/src/proof_of_work.ts` | ❌ unstarted |
-| `queries.rs` | `packages/core/src/queries.ts` | ❌ unstarted |
-
-The table above is also available in machine-readable form at
-`porting_status.json`.
-
 ## 📜 License
 
 Released under the MIT license.
