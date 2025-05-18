@@ -1,0 +1,68 @@
+import { describe, it, expect } from "bun:test";
+import { CircleDomain } from "../../src/poly/circle/domain";
+
+// Simple fake coset implementation for testing purposes
+class FakeIndex {
+  constructor(public value: number) {}
+  to_point(): number {
+    return this.value;
+  }
+  conjugate(): number {
+    return -this.value;
+  }
+}
+
+class FakeCoset {
+  initial_index: number;
+  log_size: number;
+  step_size: number;
+  constructor(initialIndex: number, logSize: number, stepSize: number) {
+    this.initial_index = initialIndex;
+    this.log_size = logSize;
+    this.step_size = stepSize;
+  }
+
+  size(): number {
+    return 1 << this.log_size;
+  }
+
+  index_at(i: number): FakeIndex {
+    return new FakeIndex(this.initial_index + this.step_size * i);
+  }
+
+  iter(): number[] {
+    return Array.from({ length: this.size() }, (_, i) => this.index_at(i).to_point());
+  }
+
+  iter_indices(): FakeIndex[] {
+    return Array.from({ length: this.size() }, (_, i) => this.index_at(i));
+  }
+
+  conjugate(): FakeCoset {
+    return new FakeCoset(-this.initial_index, this.log_size, -this.step_size);
+  }
+
+  shift(shift: number): FakeCoset {
+    return new FakeCoset(this.initial_index + shift, this.log_size, this.step_size);
+  }
+
+  static new(initialIndex: number, logSize: number): FakeCoset {
+    return new FakeCoset(initialIndex, logSize, 4); // constant step for tests
+  }
+}
+
+describe("CircleDomain", () => {
+  it("iterates over all points", () => {
+    const coset = new FakeCoset(1, 2, 3);
+    const domain = CircleDomain.new(coset);
+    const expected = [...coset.iter(), ...coset.conjugate().iter()];
+    expect(Array.from(domain.iter())).toEqual(expected);
+  });
+
+  it("is_canonic invalid domain", () => {
+    const coset = new FakeCoset(1, 4, 2);
+    const domain = CircleDomain.new(coset);
+    expect(domain.isCanonic()).toBe(false);
+  });
+
+});
