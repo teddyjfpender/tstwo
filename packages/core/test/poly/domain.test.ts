@@ -65,4 +65,26 @@ describe("CircleDomain", () => {
     expect(domain.isCanonic()).toBe(false);
   });
 
+  it("is_canonic valid domain", () => {
+    const coset = FakeCoset.new(1, 3);
+    const domain = CircleDomain.new(coset);
+    expect(domain.isCanonic()).toBe(true);
+  });
+
+  it("split produces subdomain and shifts", () => {
+    const coset = FakeCoset.new(0, 3);
+    const domain = CircleDomain.new(coset);
+    const [subdomain, shifts] = domain.split(1);
+    expect(subdomain.logSize()).toBe(domain.logSize() - 1);
+    expect(shifts).toEqual([0, coset.step_size]);
+  });
+
+  it("shift offsets the domain", () => {
+    const coset = FakeCoset.new(5, 2);
+    const domain = CircleDomain.new(coset);
+    const shifted = domain.shift(3);
+    expect(shifted.halfCoset.initial_index).toBe(coset.initial_index + 3);
+    expect(shifted.halfCoset.log_size).toBe(coset.log_size);
+  });
+
 });
