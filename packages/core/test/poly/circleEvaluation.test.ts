@@ -28,3 +28,51 @@ describe("CircleEvaluation.bitReverse", () => {
   });
 });
 
+describe("CircleEvaluation helpers", () => {
+  class DummyOps extends CircleEvaluation<any, number> {
+    static lastArgs: any = {};
+    static bitReverseColumn(col: number[]): void {}
+    static precomputeTwiddles(coset: any) {
+      this.lastArgs.precomputed = coset;
+      return "tw";
+    }
+    static interpolate(self: any, tw: any) {
+      this.lastArgs.interpolate = { self, tw };
+      return { poly: true };
+    }
+    static to_cpu(vals: number[]) {
+      return vals.map((v) => v + 1);
+    }
+  }
+
+  const dom = { size: () => 2, halfCoset: 123 } as any;
+  const domSmall = { size: () => 1, halfCoset: 123 } as any;
+
+  it("static new creates instance", () => {
+    const ev = DummyOps.new(dom, [1, 2]);
+    expect(ev).toBeInstanceOf(CircleEvaluation);
+    expect(ev.values).toEqual([1, 2]);
+  });
+
+  it("interpolate calls static hooks", () => {
+    const ev = new DummyOps(dom, [1, 2]);
+    const rev = ev.bitReverse();
+    const res = rev.interpolate();
+    expect(res).toEqual({ poly: true });
+    expect(DummyOps.lastArgs).toEqual({ precomputed: 123, interpolate: { self: rev, tw: "tw" } });
+  });
+
+  it("interpolateWithTwiddles uses provided twiddles", () => {
+    const ev = new DummyOps(dom, [1, 2]).bitReverse();
+    DummyOps.lastArgs = {};
+    const res = ev.interpolateWithTwiddles("t" as any);
+    expect(res).toEqual({ poly: true });
+    expect(DummyOps.lastArgs.interpolate.tw).toBe("t");
+  });
+
+  it("toCpu converts values via static method", () => {
+    const ev = new DummyOps(domSmall, [1]);
+    expect(() => ev.toCpu()).toThrow();
+  });
+});
+
