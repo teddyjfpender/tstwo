@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { M31 } from "../../src/fields/m31";
-import { batchInverse, batchInverseChunked, TestUtils } from "../../src/fields/fields";
+import { batchInverse, batchInverseChunked, TestUtils, batchInverseClassic, batchInverseInPlace, FieldUtils, type FieldExpOps } from "../../src/fields/fields";
 
 // Create a simple random number generator for testing
 class SimpleRng {
@@ -87,3 +87,50 @@ describe("Fields", () => {
     expect(TestUtils.testBatchInverseChunked(elements, 4)).toBe(true);
   });
 }); 
+describe("Fields extra", () => {
+  it("batchInverseClassic throws when dst too small", () => {
+    const el = M31.one();
+    const dst: M31[] = [];
+    expect(() => batchInverseClassic([el], dst)).toThrow('Destination array is too small');
+  });
+
+  it("batchInverseClassic returns on empty column", () => {
+    const dst: M31[] = [];
+    expect(() => batchInverseClassic([], dst)).not.toThrow();
+    expect(dst.length).toBe(0);
+  });
+
+  it("batchInverseInPlace throws when dst too small", () => {
+    const el = M31.one();
+    const dst: M31[] = [];
+    expect(() => batchInverseInPlace([el], dst)).toThrow('Destination array is too small');
+  });
+
+  it("batchInverseInPlace works without one() helper", () => {
+    class Dummy implements FieldExpOps<Dummy> {
+      constructor(public v: number) {}
+      square() { return new Dummy(this.v * this.v); }
+      pow(e: number) { let r = 1; for(let i=0;i<e;i++) r *= this.v; return new Dummy(r); }
+      inverse() { return new Dummy(1 / this.v); }
+      mul(o: Dummy) { return new Dummy(this.v * o.v); }
+      clone() { return new Dummy(this.v); }
+    }
+    const column = [new Dummy(2), new Dummy(4), new Dummy(8), new Dummy(16), new Dummy(32), new Dummy(64), new Dummy(128), new Dummy(256)];
+    const dst = column.map(c => new Dummy(c.v));
+    batchInverseInPlace(column, dst);
+    expect(dst.every((d, i) => Math.abs(d.v * column[i].v - 1) < 1e-9)).toBe(true);
+  });
+  it("batchInverseChunked throws when dst too small", () => {
+    const el = M31.one();
+    const dst: M31[] = [];
+    expect(() => batchInverseChunked([el], dst, 1)).toThrow('Destination array is too small');
+  });
+
+  it("FieldUtils helpers work", () => {
+    const arr = FieldUtils.uninitVec<number>(3);
+    expect(arr.length).toBe(3);
+    const typed = new Uint32Array([1,2,3]);
+    const conv = FieldUtils.typedArrayToArray(typed, n => n * 2);
+    expect(conv).toEqual([2,4,6]);
+  });
+});

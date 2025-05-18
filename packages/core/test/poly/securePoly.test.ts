@@ -42,4 +42,16 @@ describe("SecureCirclePoly and Evaluation", () => {
     expect(res.intoCoordinatePolys()).toEqual([5,6,7,8]);
     CircleEvaluation.prototype.interpolateWithTwiddles = orig;
   });
+  it("evaluateWithTwiddles delegates to polys", () => {
+    const domain = { size: () => 1 } as any;
+    const tw = new TwiddleTree(null,null,null);
+    const polys = [new DummyPoly(1),new DummyPoly(2),new DummyPoly(3),new DummyPoly(4)];
+    const sp = new SecureCirclePoly(polys as any);
+    const orig = DummyPoly.prototype.evaluateWithTwiddles;
+    const seen:any[] = [];
+    DummyPoly.prototype.evaluateWithTwiddles = function(d,t){ seen.push(this.v); return { values:[this.v] }; };
+    expect(() => sp.evaluateWithTwiddles(domain, tw)).toThrow('SecureEvaluation: size mismatch');
+    DummyPoly.prototype.evaluateWithTwiddles = orig;
+    expect(seen).toEqual([1,2,3,4]);
+  });
 });

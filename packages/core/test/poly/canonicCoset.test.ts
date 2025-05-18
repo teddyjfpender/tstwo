@@ -27,6 +27,8 @@ describe("CanonicCoset", () => {
     expect(c.cosetFull().step_size).toBe(2);
     expect((c.halfCoset() as any).log_size).toBe(2);
     expect((c.circleDomain() as any).from.log_size).toBe(2);
+    expect(c.initialIndex()).toBe(1);
+    expect(c.stepSize()).toBe(2);
     expect(c.indexAt(1)).toEqual({ idx: 1, to_point: expect.any(Function) });
     expect(c.at(2)).toBe(2);
   });

@@ -25,6 +25,12 @@ describe("LineDomain", () => {
     expect(Array.from(domain.iter())).toEqual([0,1,2,3]);
   });
 
+  it("at returns x and cosetValue exposes coset", () => {
+    const coset = new FakeCoset(2);
+    const domain = LineDomain.new(coset);
+    expect(domain.at(1)).toBe(1);
+    expect(domain.cosetValue()).toBe(coset);
+  });
   it("double halves the domain size", () => {
     const coset = new FakeCoset(4);
     const domain = LineDomain.new(coset);

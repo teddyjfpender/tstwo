@@ -90,6 +90,14 @@ describe("CircleDomain", () => {
     expect(shifted.halfCoset.log_size).toBe(coset.log_size);
   });
 
+  it("size and iterator work", () => {
+    const coset = FakeCoset.new(1,2);
+    const domain = CircleDomain.new(coset);
+    expect(domain.size()).toBe(1 << domain.logSize());
+    const points: number[] = [];
+    for(const p of domain){ points.push(p); }
+    expect(points.length).toBe(domain.size());
+  });
   it("iterIndices yields indices then their conjugates", () => {
     const coset = FakeCoset.new(0, 2);
     const domain = CircleDomain.new(coset);

@@ -127,4 +127,9 @@ describe("M31", () => {
     expect(M31.zero().isZero()).toBe(true);
     expect(a.isZero()).toBe(false);
   });
+  it("complexConjugate returns self", () => {
+    const v = M31.from(99);
+    expect(v.complexConjugate().value).toBe(99);
+  });
+
 });
