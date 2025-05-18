@@ -83,3 +83,78 @@ impl CanonicCoset {
 ```
 */
 
+// TODO: import { CircleDomain } from "./domain";
+// Once `domain.ts` is ported, update this import and ensure the API matches the Rust version.
+
+// TODO: import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
+// These come from the yet-to-be-translated circle geometry module.
+
+import type { M31 as BaseField } from "../../fields/m31";
+
+/** A coset of the form `G_{2n} + <G_n>` used for circle FFT domains. */
+export class CanonicCoset {
+  coset: any; // Coset
+
+  constructor(coset: any) {
+    this.coset = coset;
+  }
+
+  /**
+   * Constructs a canonic coset of size `2^logSize`.
+   *
+   * Panics in Rust if `log_size` is zero. Here we throw an `Error`.
+   */
+  static new(logSize: number): CanonicCoset {
+    if (logSize <= 0) {
+      throw new Error("log_size must be greater than 0");
+    }
+    return new CanonicCoset((CanonicCoset as any)._odds(logSize));
+  }
+
+  /** Returns the underlying full coset `G_{2n} + <G_n>`. */
+  cosetFull(): any {
+    return this.coset;
+  }
+
+  /** Returns half of the coset `G_{2n} + <G_{n/2}>`. */
+  halfCoset(): any {
+    return (CanonicCoset as any)._half_odds(this.logSize() - 1);
+  }
+
+  /** Converts to a `CircleDomain` representing the same point set. */
+  circleDomain(): any {
+    return (CanonicCoset as any)._circle_domain(this.halfCoset());
+  }
+
+  /** Logarithmic size of the coset. */
+  logSize(): number {
+    return this.coset.log_size;
+  }
+
+  /** Size of the coset. */
+  size(): number {
+    return this.coset.size();
+  }
+
+  initialIndex(): any {
+    return this.coset.initial_index;
+  }
+
+  stepSize(): any {
+    return this.coset.step_size;
+  }
+
+  step(): any {
+    return this.coset.step;
+  }
+
+  indexAt(index: number): any {
+    return this.coset.index_at(index);
+  }
+
+  at(i: number): any {
+    return this.coset.at(i);
+  }
+}
+
+
