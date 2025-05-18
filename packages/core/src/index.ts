@@ -8,6 +8,7 @@ export const sum = (a: number, b: number): number => {
 
 // Expose the polynomial utilities as part of the public API
 export * from "./poly";
+export * from "./circle";
 
 /*
 This is the Rust code from mod.rs that needs to be ported to Typescript in this index.ts file:

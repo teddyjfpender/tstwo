@@ -73,11 +73,8 @@ pub trait PolyOps: ColumnOps<BaseField> + Sized {
 ```
 */
 
-// TODO: import type { CirclePoint, Coset } from "../../circle";
-// Once the circle geometry module is ported, update these imports and ensure the
-// types match the Rust definitions.
-
-// TODO: import type { SecureField } from "../../fields/qm31";
+import type { CirclePoint, Coset } from "../../circle";
+import type { SecureField } from "../../fields/qm31";
 // Once the secure field implementation is available, replace `unknown` with
 // `SecureField`.
 
