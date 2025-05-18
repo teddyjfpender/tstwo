@@ -183,13 +183,9 @@ mod tests {
 ```
 */
 
-// TODO: import { Coset } from "../../circle";
-// TODO: import { CirclePoint, CirclePointIndex } from "../../circle";
-// TODO: import { M31_CIRCLE_LOG_ORDER } from "../../circle";
-// Once the circle geometry module is implemented, update these imports.
+import { Coset, CirclePoint, CirclePointIndex, M31_CIRCLE_LOG_ORDER } from "../../circle";
 
-// Placeholder constant until circle constants are ported.
-export const MAX_CIRCLE_DOMAIN_LOG_SIZE = 0; // M31_CIRCLE_LOG_ORDER - 1
+export const MAX_CIRCLE_DOMAIN_LOG_SIZE = M31_CIRCLE_LOG_ORDER - 1;
 
 /** A valid domain for circle polynomial interpolation and evaluation. */
 export class CircleDomain {

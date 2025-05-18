@@ -87,10 +87,7 @@ impl CanonicCoset {
 // structure where `CanonicCoset` provides convenience constructors for a
 // corresponding `CircleDomain`.
 import { CircleDomain } from "./domain";
-
-// TODO: import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
-// These come from the yet-to-be-translated circle geometry module.
-
+import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
 import type { M31 as BaseField } from "../../fields/m31";
 
 /** A coset of the form `G_{2n} + <G_n>` used for circle FFT domains. */
