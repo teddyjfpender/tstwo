@@ -11,6 +11,8 @@
     "build:app": "cd packages/app && bun run build",
     "dev": "cd packages/app && bun run dev",
     "test": "bun test",
+    "coverage": "bun vitest run --coverage",
+    "bench": "bun run bench/m31.bench.ts",
     "lint": "eslint . --max-warnings=1000 --no-error-on-unmatched-pattern"
   },
   "devDependencies": {

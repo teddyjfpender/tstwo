@@ -36,6 +36,12 @@ bun run build
 # Run tests
 bun run --cwd packages/core test
 bun run --cwd packages/app test
+
+# Generate coverage report
+bun run coverage
+
+# Run benchmarks
+bun run bench
 ```
 
 ## 📚 Working with Packages

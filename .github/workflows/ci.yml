@@ -29,7 +29,16 @@ jobs:
         run: bun run build
       
       - name: Test with coverage
-        run: bun vitest run --coverage
+        run: bun run coverage
+
+      - name: Run benchmarks
+        run: bun run bench
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: bench-results
+          path: bench/results.json
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
