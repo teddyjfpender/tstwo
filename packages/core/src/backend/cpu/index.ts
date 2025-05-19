@@ -124,3 +124,63 @@ mod tests {
 }
 ```
 */
+
+import { bitReverseIndex } from "../../utils";
+import type { Backend, Column, ColumnOps } from "../index";
+
+/**
+ * TypeScript implementation of the CpuBackend from `backend/cpu/mod.rs`.
+ */
+export class CpuBackend implements Backend {}
+
+/** In-place bit reverse. Mirrors the Rust function `bit_reverse`. */
+export function bitReverse<T>(arr: T[]): void {
+  const n = arr.length;
+  if (n === 0 || (n & (n - 1)) !== 0) {
+    throw new Error("length is not power of two");
+  }
+  const logN = Math.floor(Math.log2(n));
+  for (let i = 0; i < n; i++) {
+    const j = bitReverseIndex(i, logN);
+    if (j > i) {
+      const tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+  }
+}
+
+export class CpuColumnOps<T> implements ColumnOps<T> {
+  bitReverseColumn(column: T[]): void {
+    bitReverse(column);
+  }
+}
+
+export class CpuColumn<T> implements Column<T> {
+  constructor(private data: T[]) {}
+
+  static zeros<T>(len: number, defaultValue: T): CpuColumn<T> {
+    return new CpuColumn(Array.from({ length: len }, () => defaultValue));
+  }
+
+  static uninitialized<T>(len: number): CpuColumn<T> {
+    return new CpuColumn(new Array(len).fill(undefined as unknown as T));
+  }
+
+  toCPU(): T[] {
+    return [...this.data];
+  }
+  len(): number {
+    return this.data.length;
+  }
+  at(index: number): T {
+    return this.data[index];
+  }
+  set(index: number, value: T): void {
+    this.data[index] = value;
+  }
+}
+
+export type CpuCirclePoly<F = unknown> = unknown; // TODO
+export type CpuCircleEvaluation<F = unknown, EvalOrder = unknown> = unknown; // TODO
+export type CpuMle<F> = unknown; // TODO

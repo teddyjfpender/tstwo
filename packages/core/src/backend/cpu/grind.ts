@@ -20,3 +20,13 @@ impl<C: Channel> GrindOps<C> for CpuBackend {
 }
 ```
 */
+
+export function grind(channel: { mix_u64(n: number): void; trailing_zeros(): number }, powBits: number): number {
+  let nonce = 0;
+  while (true) {
+    const c = { ...channel } as any; // shallow clone
+    c.mix_u64(nonce);
+    if (c.trailing_zeros() >= powBits) return nonce;
+    nonce++;
+  }
+}

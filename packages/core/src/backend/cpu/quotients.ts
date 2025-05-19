@@ -194,3 +194,8 @@ mod tests {
 }
 ```
 */
+
+// TODO: translate quotient logic
+export function accumulateRowQuotients(): never {
+  throw new Error("accumulateRowQuotients not yet implemented");
+}
