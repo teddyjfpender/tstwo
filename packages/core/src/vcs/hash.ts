@@ -20,3 +20,15 @@ pub trait Hash:
 }
 ```
 */
+/**
+ * Base interface for hash objects.
+ *
+ * Port of `vcs/hash.rs` trait `Hash`.
+ * See original Rust reference above for trait bounds.
+ */
+export interface HashLike {
+  /** Return the raw bytes for this hash. */
+  asBytes(): Uint8Array;
+  /** String representation, typically hex encoded. */
+  toString(): string;
+}

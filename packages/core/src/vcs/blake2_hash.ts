@@ -134,3 +134,81 @@ mod tests {
 }
 ```
 */
+import { createHash } from 'crypto';
+import { execFileSync } from 'child_process';
+import type { HashLike } from './hash';
+
+/** Wrapper around a 32 byte BLAKE2s hash. */
+export class Blake2sHash implements HashLike {
+  readonly bytes: Uint8Array;
+  constructor(bytes?: Uint8Array) {
+    this.bytes = bytes ? Uint8Array.from(bytes) : new Uint8Array(32);
+  }
+  asBytes(): Uint8Array {
+    return Uint8Array.from(this.bytes);
+  }
+  toString(): string {
+    return Buffer.from(this.bytes).toString('hex');
+  }
+}
+
+/** Simple BLAKE2s hasher using Node's crypto module. */
+export class Blake2sHasher {
+  private state = Blake2sHasher.create();
+  private buffer: Uint8Array[] | null = this.state ? null : [];
+
+  private static create() {
+    try {
+      return createHash('blake2s256');
+    } catch {
+      return null;
+    }
+  }
+
+  private static hashNode(data: Uint8Array | string): Uint8Array {
+    const nodeHasher = Blake2sHasher.create();
+    if (nodeHasher) {
+      nodeHasher.update(data);
+      return new Uint8Array(nodeHasher.digest());
+    }
+    return new Uint8Array(
+      execFileSync('openssl', ['dgst', '-blake2s256', '-binary'], { input: data })
+    );
+  }
+
+  static hash(data: Uint8Array | string): Blake2sHash {
+    return new Blake2sHash(Blake2sHasher.hashNode(data));
+  }
+
+  update(data: Uint8Array | string): void {
+    if (this.state) {
+      this.state.update(data);
+    } else {
+      this.buffer!.push(typeof data === 'string' ? new TextEncoder().encode(data) : data);
+    }
+  }
+
+  finalize(): Blake2sHash {
+    let out: Uint8Array;
+    if (this.state) {
+      out = new Uint8Array(this.state.digest());
+      this.state = Blake2sHasher.create();
+    } else {
+      const data = this.buffer!.length === 1 ? this.buffer![0] : Buffer.concat(this.buffer!);
+      out = Blake2sHasher.hashNode(data);
+      this.buffer = [];
+    }
+    return new Blake2sHash(out);
+  }
+
+  finalizeReset(): Blake2sHash {
+    return this.finalize();
+  }
+
+  static concatAndHash(v1: Blake2sHash, v2: Blake2sHash): Blake2sHash {
+    const h = createHash('blake2s256');
+    h.update(v1.bytes);
+    h.update(v2.bytes);
+    return new Blake2sHash(new Uint8Array(h.digest()));
+  }
+}

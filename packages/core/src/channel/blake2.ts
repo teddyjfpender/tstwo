@@ -226,3 +226,102 @@ mod tests {
 }
 ```
 */
+import { M31, P, N_BYTES_FELT } from '../fields/m31';
+import { QM31 as SecureField, SECURE_EXTENSION_DEGREE } from '../fields/qm31';
+import { Blake2sHash, Blake2sHasher } from '../vcs/blake2_hash';
+import { Channel, ChannelTime } from './index';
+
+export const BLAKE_BYTES_PER_HASH = 32;
+export const FELTS_PER_HASH = 8;
+
+export class Blake2sChannel implements Channel {
+  readonly BYTES_PER_HASH = BLAKE_BYTES_PER_HASH;
+  private digest: Blake2sHash = new Blake2sHash();
+  public channel_time: ChannelTime = new ChannelTime();
+  private baseQueue: M31[] = [];
+
+  private updateDigest(newDigest: Blake2sHash): void {
+    this.digest = newDigest;
+    this.channel_time.inc_challenges();
+  }
+
+  digestBytes(): Uint8Array { return this.digest.asBytes(); }
+
+  trailing_zeros(): number {
+    let val = 0n;
+    const bytes = this.digest.bytes;
+    for (let i = 15; i >= 0; i--) {
+      val = (val << 8n) | BigInt(bytes[i]);
+    }
+    let tz = 0;
+    while (((val >> BigInt(tz)) & 1n) === 0n && tz < 128) tz++;
+    return tz;
+  }
+
+  mix_felts(felts: readonly SecureField[]): void {
+    const hasher = new Blake2sHasher();
+    hasher.update(this.digest.bytes);
+    hasher.update(SecureField.intoSlice(felts as SecureField[]));
+    this.updateDigest(hasher.finalize());
+  }
+
+  mix_u32s(data: readonly number[]): void {
+    const hasher = new Blake2sHasher();
+    hasher.update(this.digest.bytes);
+    const buf = new Uint8Array(4);
+    const view = new DataView(buf.buffer);
+    for (const word of data) {
+      view.setUint32(0, word >>> 0, true);
+      hasher.update(buf);
+    }
+    this.updateDigest(hasher.finalize());
+  }
+
+  mix_u64(value: number | bigint): void {
+    const v = BigInt(value);
+    const low = Number(v & 0xffffffffn);
+    const high = Number((v >> 32n) & 0xffffffffn);
+    this.mix_u32s([low, high]);
+  }
+
+  private draw_base_felts(): M31[] {
+    while (true) {
+      const bytes = this.draw_random_bytes();
+      const u32s: number[] = [];
+      for (let i = 0; i < FELTS_PER_HASH; i++) {
+        const view = new DataView(bytes.buffer, i * N_BYTES_FELT, N_BYTES_FELT);
+        u32s.push(view.getUint32(0, true));
+      }
+      if (u32s.every((x) => x < 2 * P)) {
+        return u32s.map((x) => M31.reduce(x));
+      }
+    }
+  }
+
+  draw_felt(): SecureField {
+    if (this.baseQueue.length < SECURE_EXTENSION_DEGREE) {
+      this.baseQueue.push(...this.draw_base_felts());
+    }
+    const arr = this.baseQueue.splice(0, SECURE_EXTENSION_DEGREE) as [M31, M31, M31, M31];
+    return SecureField.fromM31Array(arr);
+  }
+
+  draw_felts(n_felts: number): SecureField[] {
+    const res: SecureField[] = [];
+    for (let i = 0; i < n_felts; i++) {
+      res.push(this.draw_felt());
+    }
+    return res;
+  }
+
+  draw_random_bytes(): Uint8Array {
+    const counter = new Uint8Array(BLAKE_BYTES_PER_HASH);
+    const view = new DataView(counter.buffer);
+    view.setUint32(0, this.channel_time.n_sent, true);
+    const input = new Uint8Array(this.digest.bytes.length + counter.length);
+    input.set(this.digest.bytes, 0);
+    input.set(counter, this.digest.bytes.length);
+    this.channel_time.inc_sent();
+    return Blake2sHasher.hash(input).asBytes();
+  }
+}
