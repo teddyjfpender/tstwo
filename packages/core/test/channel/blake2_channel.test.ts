@@ -51,7 +51,7 @@ describe('Blake2sChannel', () => {
 
   it('mix_u64 equals mix_u32s', () => {
     const ch1 = new Blake2sChannel();
-    ch1.mix_u64(Number(BigInt('0x1111222233334444')));
+    ch1.mix_u64(0x1111222233334444n);
     const digest64 = Buffer.from(ch1.digestBytes()).toString('hex');
 
     const ch2 = new Blake2sChannel();

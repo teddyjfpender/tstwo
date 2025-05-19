@@ -277,9 +277,10 @@ export class Blake2sChannel implements Channel {
     this.updateDigest(hasher.finalize());
   }
 
-  mix_u64(value: number): void {
-    const low = value >>> 0;
-    const high = Math.floor(value / 2 ** 32) >>> 0;
+  mix_u64(value: number | bigint): void {
+    const v = BigInt(value);
+    const low = Number(v & 0xffffffffn);
+    const high = Number((v >> 32n) & 0xffffffffn);
     this.mix_u32s([low, high]);
   }
 
