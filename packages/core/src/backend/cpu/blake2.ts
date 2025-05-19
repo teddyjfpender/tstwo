@@ -32,7 +32,13 @@ import { createHash } from "crypto";
 
 export type Blake2sHash = Uint8Array;
 
-/** Ported commit_on_layer using Node's blake2s256. */
+/**
+ * Ported `commit_on_layer`.
+ *
+ * NOTE: Bun currently lacks support for the `blake2s256` digest algorithm used
+ * in the Rust implementation. We temporarily use `sha256` until a compatible
+ * implementation is available.
+ */
 export function commitOnLayer(
   logSize: number,
   prevLayer: Blake2sHash[] | undefined,
@@ -41,7 +47,8 @@ export function commitOnLayer(
   const size = 1 << logSize;
   const result: Blake2sHash[] = new Array(size);
   for (let i = 0; i < size; i++) {
-    const h = createHash("blake2s256");
+    // TODO: switch to "blake2s256" once supported by Bun's crypto module.
+    const h = createHash("sha256");
     if (prevLayer) {
       h.update(prevLayer[2 * i]);
       h.update(prevLayer[2 * i + 1]);
