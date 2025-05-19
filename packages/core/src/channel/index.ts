@@ -91,7 +91,7 @@ export interface Channel {
 
   mix_u32s(data: readonly number[]): void;
   mix_felts(felts: readonly SecureField[]): void;
-  mix_u64(value: number): void;
+  mix_u64(value: number | bigint): void;
 
   draw_felt(): SecureField;
   draw_felts(n_felts: number): SecureField[];
