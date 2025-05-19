@@ -1,5 +1,4 @@
 // Proof of work implementation
-console.log("proof_of_work.ts"); 
 
 /*
 This is the Rust code from proof_of_work.rs that needs to be ported to Typescript in this proof_of_work.ts file:
@@ -13,3 +12,14 @@ pub trait GrindOps<C: Channel> {
 }
 ```
 */
+// -------------------- TypeScript implementation --------------------
+
+/**
+ * Port of `proof_of_work.rs` trait `GrindOps`.
+ * Implementers provide a `grind` function that searches for a nonce such
+ * that mixing it into the channel yields a digest with `powBits` leading zeros.
+ */
+export interface GrindOps<C> {
+  grind(channel: C, powBits: number): number;
+}
+
