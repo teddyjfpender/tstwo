@@ -61,3 +61,36 @@ mod tests {
 }
 ```
 */
+import { QM31 as SecureField } from "../../fields/qm31";
+import { SecureColumnByCoords } from "../../fields/secure_columns";
+
+/**
+ * Port of `backend/cpu/accumulation.rs` AccumulationOps for CpuBackend.
+ * See original Rust reference above for edge-case behavior.
+ */
+export function accumulate(
+  column: SecureColumnByCoords,
+  other: SecureColumnByCoords,
+): void {
+  if (column.len() !== other.len()) {
+    throw new Error("column length mismatch");
+  }
+  for (let i = 0; i < column.len(); i++) {
+    const res = column.at(i).add(other.at(i));
+    column.set(i, res);
+  }
+}
+
+/** Generate the first `nPowers` powers of `felt`. */
+export function generate_secure_powers(
+  felt: SecureField,
+  nPowers: number,
+): SecureField[] {
+  const res: SecureField[] = [];
+  let acc = SecureField.one();
+  for (let i = 0; i < nPowers; i++) {
+    res.push(acc);
+    acc = acc.mul(felt);
+  }
+  return res;
+}

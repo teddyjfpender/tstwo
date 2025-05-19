@@ -1,5 +1,4 @@
 // FRI implementation
-console.log("fri.ts"); 
 
 /*
 This is the Rust code from fri.rs that needs to be ported to Typescript in this fri.ts file:
@@ -1587,3 +1586,81 @@ mod tests {
 }
 ```
 */
+export interface FriChannel {
+  mix_u64(value: number): void;
+}
+
+/** FRI proof configuration. Port of `fri.rs` `FriConfig`. */
+export class FriConfig {
+  static readonly LOG_MIN_LAST_LAYER_DEGREE_BOUND = 0;
+  static readonly LOG_MAX_LAST_LAYER_DEGREE_BOUND = 10;
+  static readonly LOG_MIN_BLOWUP_FACTOR = 1;
+  static readonly LOG_MAX_BLOWUP_FACTOR = 16;
+
+  readonly log_blowup_factor: number;
+  readonly log_last_layer_degree_bound: number;
+  readonly n_queries: number;
+
+  constructor(logLastLayerDegreeBound: number, logBlowupFactor: number, nQueries: number) {
+    if (
+      logLastLayerDegreeBound < FriConfig.LOG_MIN_LAST_LAYER_DEGREE_BOUND ||
+      logLastLayerDegreeBound > FriConfig.LOG_MAX_LAST_LAYER_DEGREE_BOUND
+    ) {
+      throw new Error("invalid log_last_layer_degree_bound");
+    }
+    if (
+      logBlowupFactor < FriConfig.LOG_MIN_BLOWUP_FACTOR ||
+      logBlowupFactor > FriConfig.LOG_MAX_BLOWUP_FACTOR
+    ) {
+      throw new Error("invalid log_blowup_factor");
+    }
+    this.log_blowup_factor = logBlowupFactor;
+    this.log_last_layer_degree_bound = logLastLayerDegreeBound;
+    this.n_queries = nQueries;
+  }
+
+  last_layer_domain_size(): number {
+    return 1 << (this.log_last_layer_degree_bound + this.log_blowup_factor);
+  }
+
+  security_bits(): number {
+    return this.log_blowup_factor * this.n_queries;
+  }
+
+  mix_into(channel: FriChannel): void {
+    channel.mix_u64(this.log_blowup_factor >>> 0);
+    channel.mix_u64(this.n_queries >>> 0);
+    channel.mix_u64(this.log_last_layer_degree_bound >>> 0);
+  }
+}
+
+import { QM31 as SecureField } from "./fields/qm31";
+import { Queries } from "./queries";
+
+/** Accumulate evaluations in-place used during FRI folding. */
+export function accumulate_line(
+  layer_query_evals: SecureField[],
+  column_query_evals: SecureField[],
+  folding_alpha: SecureField,
+): void {
+  const folding_alpha_squared = folding_alpha.square();
+  for (let i = 0; i < layer_query_evals.length; i++) {
+    layer_query_evals[i] = layer_query_evals[i].mul(folding_alpha_squared).add(column_query_evals[i]);
+  }
+}
+
+/**
+ * Returns column query positions mapped by their log size.
+ * Mirrors `get_query_positions_by_log_size` from Rust.
+ */
+export function get_query_positions_by_log_size(
+  queries: Queries,
+  column_log_sizes: Set<number>,
+): Map<number, number[]> {
+  const res = new Map<number, number[]>();
+  for (const logSize of column_log_sizes) {
+    const folded = queries.fold(queries.log_domain_size - logSize);
+    res.set(logSize, folded.positions);
+  }
+  return res;
+}

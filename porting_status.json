@@ -7,8 +7,8 @@
   "poly/circle/mod.rs": "packages/core/src/poly/circle/ (partial)",
   "circle.rs": "packages/core/src/circle.ts (partial)",
   "fft.rs": "packages/core/src/fft.ts (partial)",
-  "fri.rs": "packages/core/src/fri.ts (unstarted)",
+  "fri.rs": "packages/core/src/fri.ts (partial)",
   "constraints.rs": "packages/core/src/constraints.ts (unstarted)",
   "proof_of_work.rs": "packages/core/src/proof_of_work.ts (unstarted)",
-  "queries.rs": "packages/core/src/queries.ts (unstarted)"
+  "queries.rs": "packages/core/src/queries.ts (partial)"
 }
