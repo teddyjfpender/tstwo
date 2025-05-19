@@ -60,3 +60,45 @@ pub trait MerkleChannel: Default {
 }
 ```
 */
+import type { QM31 as SecureField } from '../fields/qm31';
+import type { MerkleHasher } from '../vcs/ops';
+
+export { Blake2sChannel } from './blake2';
+// TODO: export Poseidon252Channel when implemented
+
+export const EXTENSION_FELTS_PER_HASH = 2;
+
+/**
+ * Tracks the time spent sending and receiving data through the channel.
+ */
+export class ChannelTime {
+  n_challenges = 0;
+  n_sent = 0;
+  inc_sent(): void {
+    this.n_sent += 1;
+  }
+  inc_challenges(): void {
+    this.n_challenges += 1;
+    this.n_sent = 0;
+  }
+}
+
+/** Interface for a random oracle channel. */
+export interface Channel {
+  readonly BYTES_PER_HASH: number;
+
+  trailing_zeros(): number;
+
+  mix_u32s(data: readonly number[]): void;
+  mix_felts(felts: readonly SecureField[]): void;
+  mix_u64(value: number): void;
+
+  draw_felt(): SecureField;
+  draw_felts(n_felts: number): SecureField[];
+  draw_random_bytes(): Uint8Array;
+}
+
+/** Interface for Merkle based channels. */
+export interface MerkleChannel<Hash> {
+  mix_root(channel: Channel, root: Hash): void;
+}
