@@ -371,3 +371,8 @@ mod tests {
 }
 ```
 */
+
+// TODO: port circle polynomial operations from Rust
+export function evaluateCircle(): never {
+  throw new Error("evaluateCircle not yet implemented");
+}

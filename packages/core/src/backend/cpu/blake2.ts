@@ -27,3 +27,31 @@ impl MerkleOps<Blake2sMerkleHasher> for CpuBackend {
 }
 ```
 */
+
+import { createHash } from "crypto";
+
+export type Blake2sHash = Uint8Array;
+
+/** Ported commit_on_layer using Node's blake2s256. */
+export function commitOnLayer(
+  logSize: number,
+  prevLayer: Blake2sHash[] | undefined,
+  columns: readonly (readonly number[])[],
+): Blake2sHash[] {
+  const size = 1 << logSize;
+  const result: Blake2sHash[] = new Array(size);
+  for (let i = 0; i < size; i++) {
+    const h = createHash("blake2s256");
+    if (prevLayer) {
+      h.update(prevLayer[2 * i]);
+      h.update(prevLayer[2 * i + 1]);
+    }
+    for (const column of columns) {
+      const buf = Buffer.alloc(4);
+      buf.writeUInt32LE(column[i] >>> 0, 0);
+      h.update(buf);
+    }
+    result[i] = new Uint8Array(h.digest());
+  }
+  return result;
+}

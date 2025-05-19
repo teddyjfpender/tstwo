@@ -147,3 +147,14 @@ mod tests {
 }
 ```
 */
+
+// TODO: translate fri.rs fully
+export function foldLine(): never {
+  throw new Error("foldLine not yet implemented");
+}
+export function foldCircleIntoLine(): never {
+  throw new Error("foldCircleIntoLine not yet implemented");
+}
+export function decompose(): never {
+  throw new Error("decompose not yet implemented");
+}
