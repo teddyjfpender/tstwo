@@ -153,12 +153,30 @@ export class SecureColumnByCoords {
     return this.len() === 0;
   }
 
+  /**
+   * Retrieves the QM31 element at the specified index.
+   * @param index The index of the element to retrieve.
+   * @returns The QM31 element at the specified index.
+   * @throws Error if the index is out of bounds.
+   */
   at(index: number): QM31 {
+    if (index < 0 || index >= this.len()) {
+      throw new Error("Index out of bounds");
+    }
     const coords = this.columns.map((c) => c[index]) as [M31, M31, M31, M31];
     return QM31.fromM31Array(coords);
   }
 
+  /**
+   * Sets the QM31 element at the specified index.
+   * @param index The index of the element to set.
+   * @param value The QM31 value to set.
+   * @throws Error if the index is out of bounds.
+   */
   set(index: number, value: QM31): void {
+    if (index < 0 || index >= this.len()) {
+      throw new Error("Index out of bounds");
+    }
     const vals = value.toM31Array();
     for (let i = 0; i < SECURE_EXTENSION_DEGREE; i++) {
       this.columns[i][index] = vals[i];
