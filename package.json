@@ -29,6 +29,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@noble/hashes": "^1.8.0",
     "@vitest/coverage-v8": "^3.1.3"
   }
 }
