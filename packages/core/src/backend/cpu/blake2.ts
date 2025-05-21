@@ -28,7 +28,7 @@ impl MerkleOps<Blake2sMerkleHasher> for CpuBackend {
 ```
 */
 
-import { blake2s } from '@noble/hashes/blake2s.js';
+import { blake2s } from '@noble/hashes/blake2';
 
 export type Blake2sHash = Uint8Array; // Represents a 32-byte hash
 
