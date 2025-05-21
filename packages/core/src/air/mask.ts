@@ -94,3 +94,43 @@ mod tests {
 }
 ```
 */
+
+// TODO(Jules): Port the Rust type alias `Mask` and functions `fixed_mask_points` and
+// `shifted_mask_points` to TypeScript.
+//
+// Task: Port the Rust type alias `Mask` and the functions `fixed_mask_points` and
+// `shifted_mask_points` to TypeScript.
+//
+// Details:
+// - Mask type: Defined as `ColumnVec<Vec<usize>>` in Rust. This will likely be
+//   `ColumnVec<number[]>` in TypeScript. It represents a list of mask item offsets
+//   for each column.
+//
+// - fixed_mask_points(mask: Mask, point: CirclePoint<SecureField>): ColumnVec<Vec<CirclePoint<SecureField>>>
+//   - Returns the same `point` for each mask item within each column's mask entry.
+//   - Used when mask items represent no shift (i.e., offset 0) relative to the constraint point.
+//   - The Rust version includes an assertion that all mask items are 0. This assertion logic
+//     should be preserved or adapted.
+//
+// - shifted_mask_points(mask: Mask, domains: CanonicCoset[], point: CirclePoint<SecureField>): ColumnVec<Vec<CirclePoint<SecureField>>>
+//   - For each mask item, returns the `point` shifted by the corresponding domain element.
+//   - Specifically, for a mask item `m` in a column `j` (associated with `domains[j]`),
+//     the generated point is `point + domains[j].at(m).into_ef()`.
+//   - Used when mask items represent shifts relative to the constraint point.
+//
+// Dependencies:
+// - `CirclePoint` from `core/src/circle.ts` (or its actual location, e.g., `core/src/poly/circle/point.ts`).
+// - `SecureField` from `core/src/fields/qm31.ts`.
+// - `CanonicCoset` from `core/src/poly/circle/canonic.ts`.
+// - `ColumnVec` utility type/class (e.g., from `core/src/pcs/utils.ts` or a general utility module,
+//   or it might be a simple array type alias `T[][]` or `Array<Array<T>>` if ColumnVec is not complex).
+//   Note: `usize` in Rust typically maps to `number` in TypeScript.
+//
+// Goal: Provide helper functions to generate specific evaluation points required for
+// Out-of-Domain Sampling (OODS) based on a mask structure. These functions are crucial
+// for evaluating polynomials at shifted points, a common operation in STARK protocols,
+// particularly for boundary constraints and FRI.
+//
+// Tests: Port the existing Rust tests (`test_mask_fixed_points` and
+// `test_mask_shifted_points`) to TypeScript to ensure the ported functions behave
+// identically.

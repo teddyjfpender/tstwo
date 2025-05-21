@@ -69,3 +69,49 @@ impl MultivariatePolyOracle for Mle<CpuBackend, SecureField> {
 }
 ```
 */
+
+// TODO(Jules): Port the Rust `impl MleOps<BaseField> for CpuBackend`,
+// `impl MleOps<SecureField> for CpuBackend`, and
+// `impl MultivariatePolyOracle for Mle<CpuBackend, SecureField>` to TypeScript.
+//
+// Task: Port the Rust implementations for `MleOps<BaseField>`, `MleOps<SecureField>`,
+// and `MultivariatePolyOracle` for `Mle<CpuBackend, SecureField>` to TypeScript.
+//
+// Details:
+// - `MleOps<BaseField>` for `CpuBackend`:
+//   - `fix_first_variable(mle: Mle<CpuBackend, BaseField>, assignment: SecureField)`: Mle<CpuBackend, SecureField>
+//     - Fixes the first variable of an MLE with `BaseField` evaluations.
+//     - Returns a new MLE with `SecureField` evaluations.
+//
+// - `MleOps<SecureField>` for `CpuBackend`:
+//   - `fix_first_variable(mle: Mle<CpuBackend, SecureField>, assignment: SecureField)`: Mle<CpuBackend, SecureField>
+//     - Fixes the first variable of an MLE with `SecureField` evaluations.
+//     - Returns a new MLE with `SecureField` evaluations.
+//
+// - `MultivariatePolyOracle` for `Mle<CpuBackend, SecureField>`:
+//   - `n_variables()`: number
+//     - Returns the number of variables in the MLE.
+//   - `sum_as_poly_in_first_variable(claim: SecureField)`: UnivariatePoly<SecureField>
+//     - Computes the sum over the MLE as a univariate polynomial.
+//   - `fix_first_variable(challenge: SecureField)`: Mle<CpuBackend, SecureField>
+//     - Fixes the first variable of the MLE oracle (likely calls the `MleOps` version).
+//
+// - These implementations would ideally become methods of a `CpuBackend` class
+//   (for `MleOps`) or methods of the `Mle` class itself when specialized for `CpuBackend`
+//   (for `MultivariatePolyOracle`).
+//
+// Dependencies:
+// - `BaseField`, `SecureField` from `core/src/fields/`.
+// - `Mle` class and `MleOps` interface (from `core/src/lookups/mle.ts`).
+// - `MultivariatePolyOracle` interface (from `core/src/lookups/sumcheck.ts`).
+// - `UnivariatePoly` (from `core/src/lookups/utils.ts`).
+// - `fold_mle_evals` utility (from `core/src/lookups/utils.ts`).
+//
+// Goal: Provide CPU-specific implementations for operations on Multivariate Linear
+// Extensions (MLEs). These are fundamental for sumcheck protocols and other components
+// like GKR.
+//
+// Tests: Although no tests are directly in this Rust snippet, unit tests for these
+// MLE operations should be created. These tests might reference existing tests for
+// `Mle` or `sumcheck` if they exist elsewhere in the Rust codebase to ensure
+// behavioral parity.

@@ -306,3 +306,53 @@ mod tests {
 }
 ```
 */
+
+// TODO(Jules): Port the Rust `PointEvaluationAccumulator`, `DomainEvaluationAccumulator`,
+// `AccumulationOps` trait, and `ColumnAccumulator` to TypeScript.
+//
+// Details:
+// - PointEvaluationAccumulator: Manages accumulation of polynomial evaluations at a single point.
+//   - `new(random_coeff: SecureField)`
+//   - `accumulate(evaluation: SecureField)`
+//   - `finalize()`: SecureField
+//
+// - DomainEvaluationAccumulator: Accumulates evaluations over entire domains, handling multiple
+//   log sizes, and can be finalized into a `SecureCirclePoly`. This involves interaction with
+//   backend methods for twiddles and polynomial interpolation.
+//   - `new(random_coeff: SecureField, max_log_size: u32, total_columns: usize)`
+//   - `columns<N>(n_cols_per_size: [(u32, usize); N])`: Returns `ColumnAccumulator[]`
+//   - `log_size()`: u32
+//   - `finalize()`: SecureCirclePoly<B> (B is Backend)
+//     - This method involves complex logic:
+//       - Iterating through sub_accumulations by log_size.
+//       - Evaluating previous polynomials on larger domains if `cur_poly` exists.
+//       - Using backend's `accumulate` to add evaluations to `SecureColumnByCoords`.
+//       - Interpolating `SecureColumnByCoords` to `SecureCirclePoly` using backend methods.
+//
+// - AccumulationOps trait: Defines `accumulate` (for `SecureColumnByCoords`) and
+//   `generate_secure_powers`. This will likely become an interface or part of a
+//   backend-specific implementation. A CPU backend version is shown in
+//   `core/src/backend/cpu/accumulation.ts`.
+//   - `accumulate(column: &mut SecureColumnByCoords<Self>, other: &SecureColumnByCoords<Self>)`
+//   - `generate_secure_powers(felt: SecureField, n_powers: usize)`: SecureField[]
+//
+// - ColumnAccumulator: Helper struct/class for `DomainEvaluationAccumulator`.
+//   - `accumulate(index: usize, evaluation: SecureField)` (for CPU backend)
+//
+// Dependencies:
+// - `SecureField` from `core/src/fields/qm31.ts`.
+// - `SecureColumnByCoords` from `core/src/fields/secure_columns.ts`.
+// - `CirclePoly`, `SecureCirclePoly`, `CircleEvaluation`, `CanonicCoset` from `core/src/poly/circle/`.
+// - Backend methods:
+//   - `generate_secure_powers` (from `AccumulationOps`)
+//   - `precompute_twiddles` (from `PolyOps` / `Backend`)
+//   - `accumulate` on `SecureColumnByCoords` (from `AccumulationOps`)
+//   - Polynomial interpolation/evaluation methods (defined by `PolyOps` in
+//     `core/src/poly/circle/ops.ts` and implemented by backends like
+//     `core/src/backend/cpu/circle.ts`).
+//
+// Goal: Provide robust mechanisms for combining multiple polynomial evaluations, essential for
+// constructing composition polynomials in the STARK protocol.
+//
+// Tests: Port the existing Rust tests (`test_point_evaluation_accumulator` and
+// `test_domain_evaluation_accumulator`) to TypeScript, ensuring equivalent coverage and correctness.
