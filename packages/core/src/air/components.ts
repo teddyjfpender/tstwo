@@ -141,3 +141,52 @@ impl<B: Backend> ComponentProvers<'_, B> {
 }
 ```
 */
+
+// TODO(Jules): Port the Rust `Components` and `ComponentProvers` structs and their
+// methods to TypeScript.
+//
+// Task: Port the Rust `Components` and `ComponentProvers` structs and their methods to TypeScript.
+//
+// Details:
+// - Components: Manages a collection of `Component` trait objects (which will be
+//   `Component` interfaces/abstract classes in TypeScript).
+//   - `composition_log_degree_bound()`: Calculates the maximum constraint log degree
+//     bound among all components.
+//   - `mask_points(point: CirclePoint<SecureField>)`: Gathers all mask points from components.
+//     Handles special logic for preprocessed columns.
+//   - `eval_composition_polynomial_at_point(point: CirclePoint<SecureField>, mask_values: TreeVec<Vec<Vec<SecureField>>>, random_coeff: SecureField)`:
+//     Evaluates the sum of all component constraint quotients times their respective random
+//     coefficients at a given point. Uses `PointEvaluationAccumulator`.
+//   - `column_log_sizes()`: Collects and consolidates trace log degree bounds from all
+//     components, ensuring consistency for preprocessed columns.
+//
+// - ComponentProvers: Manages a collection of `ComponentProver` trait objects (which will
+//   be `ComponentProver` interfaces/abstract classes).
+//   - `components()`: Converts `ComponentProvers` to a `Components` instance.
+//   - `compute_composition_polynomial(random_coeff: SecureField, trace: Trace)`:
+//     Computes the full composition polynomial by evaluating all constraint quotients
+//     on their respective domains and combining them using `DomainEvaluationAccumulator`.
+//
+// Dependencies:
+// - `Component` and `ComponentProver` interfaces/abstract classes (to be defined, likely
+//   based on `core/src/air/index.ts`).
+// - `PointEvaluationAccumulator` and `DomainEvaluationAccumulator` (from
+//   `core/src/air/accumulator.ts`).
+// - `SecureField` (from `core/src/fields/qm31.ts`).
+// - `CirclePoint` (from `core/src/poly/circle/point.ts` - path may vary, e.g. `core/src/circle.ts`).
+// - `SecureCirclePoly` (from `core/src/poly/circle/poly.ts` or `secure_poly.ts`).
+// - `Trace` type/interface (to be defined, likely based on `core/src/air/index.ts`).
+// - `TreeVec` and `ColumnVec` utility types/classes (these might need to be ported or
+//   adapted from Rust's `TreeVec` and `ColumnVec`; path might be `core/src/pcs/utils.ts` or similar).
+// - `PREPROCESSED_TRACE_IDX` constant (its definition and location in TS need to be
+//   determined, possibly `core/src/constraint_framework/constants.ts` or similar).
+//
+// Goal: To provide TypeScript structures that can manage multiple AIR components,
+// enabling the calculation of combined constraint polynomials (composition polynomial)
+// and the collection of essential data (mask points, log sizes) required by the STARK
+// prover and verifier.
+//
+// Unification: These structures are central to the STARK prover logic. They will
+// orchestrate operations across various components defined for a specific AIR,
+// bringing together their constraints and trace data. This is a key part of the
+// system described in `core/src/prover/index.ts`.

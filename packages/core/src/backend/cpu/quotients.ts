@@ -195,7 +195,48 @@ mod tests {
 ```
 */
 
-// TODO: translate quotient logic
+// TODO(Jules): Port the Rust `impl QuotientOps for CpuBackend` and its helper functions
+// (`accumulate_row_quotients`, `column_line_coeffs`, `batch_random_coeffs`,
+// `denominator_inverses`, `quotient_constants`, `QuotientConstants` struct) to TypeScript.
+//
+// Task: Port the Rust `impl QuotientOps for CpuBackend` and its helper functions
+// (`accumulate_row_quotients`, `column_line_coeffs`, `batch_random_coeffs`,
+// `denominator_inverses`, `quotient_constants`, `QuotientConstants` struct) to TypeScript.
+//
+// Details:
+// - `accumulate_quotients()`: This is the main method for `QuotientOps`. It computes
+//   the accumulated quotients for a set of columns given sample batches. It uses
+//   `SecureColumnByCoords::uninitialized`, `quotient_constants`, and
+//   `accumulate_row_quotients`.
+// - `accumulate_row_quotients()`: Calculates the quotient contribution for a single
+//   row in the domain.
+// - `column_line_coeffs()`: Precomputes line coefficients for numerator terms.
+// - `batch_random_coeffs()`: Precomputes random coefficients for combining batches.
+// - `denominator_inverses()`: Computes inverses of denominators used in quotient
+//   calculation. Uses `CM31::batch_inverse`.
+// - `quotient_constants()`: Bundles precomputed constants.
+// - `QuotientConstants` struct: Holds these precomputed constants (will be an interface or class).
+// - These methods/structs would likely be part of a `CpuBackend` class or a dedicated
+//   quotients module for the CPU backend, with the class implementing a `QuotientOps`
+//   interface (to be defined based on `core/src/pcs/quotients.ts`).
+//
+// Dependencies:
+// - `BaseField`, `SecureField`, `CM31` from `core/src/fields/`.
+// - `SecureColumnByCoords` from `core/src/fields/secure_columns.ts`.
+// - `CirclePoint`, `CircleDomain` from `core/src/poly/circle/`.
+// - `CircleEvaluation`, `SecureEvaluation`, `BitReversedOrder` from `core/src/poly/circle/`.
+// - `ColumnSampleBatch`, `PointSample` (structs/interfaces to be ported, likely from
+//   `core/src/pcs/quotients.ts`).
+// - `complex_conjugate_line_coeffs` (from `core/src/constraints.ts` - path needs
+//   verification, port if necessary).
+// - `bit_reverse_index` (utility from `core/src/utils.ts` or similar).
+// - The future `QuotientOps` interface (from `core/src/pcs/quotients.ts`).
+//
+// Goal: Provide a CPU-specific implementation for calculating and accumulating
+// quotients, a core step in the STARK protocol for constraint satisfaction.
+//
+// Tests: Port the Rust test `test_quotients_are_low_degree` to TypeScript.
+
 export function accumulateRowQuotients(): never {
   throw new Error("accumulateRowQuotients not yet implemented");
 }

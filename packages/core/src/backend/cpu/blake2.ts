@@ -28,6 +28,42 @@ impl MerkleOps<Blake2sMerkleHasher> for CpuBackend {
 ```
 */
 
+// TODO(Jules): Verify and finalize the TypeScript implementation of `commitOnLayer`
+// against the Rust `impl MerkleOps<Blake2sMerkleHasher> for CpuBackend`.
+//
+// Task: Verify and finalize the TypeScript implementation of `commitOnLayer` against
+// the Rust `impl MerkleOps<Blake2sMerkleHasher> for CpuBackend`.
+//
+// Details:
+// - The existing TypeScript `commitOnLayer` function attempts to replicate the Merkle
+//   tree layer commitment using `@noble/hashes/blake2s`.
+// - The crucial part is ensuring it correctly replicates the behavior of
+//   `Blake2sMerkleHasher::hash_node` from `core/src/vcs/blake2_merkle.ts` (which
+//   also needs porting). The current TS `commitOnLayer` makes assumptions about
+//   `hash_node` as noted in its comments.
+// - This function should eventually become a method of a `CpuBackend` class that
+//   implements a `MerkleOps<Blake2sMerkleHasher>` interface (where
+//   `Blake2sMerkleHasher` itself will be a port from `vcs/blake2_merkle.ts`).
+//
+// Dependencies:
+// - `BaseField` from `core/src/fields/m31.ts`.
+// - `Blake2sHash` type (currently defined locally, but should align with
+//   `core/src/vcs/blake2_hash.ts`).
+// - The future port of `Blake2sMerkleHasher` from `core/src/vcs/blake2_merkle.ts`.
+// - The future `MerkleOps` interface (from `core/src/vcs/ops.ts`).
+//
+// Goal: Provide a correct and verified CPU backend implementation for committing to
+// Merkle tree layers using Blake2s, to be used by the `MerkleProver` in `vcs/prover.ts`.
+//
+// Verification: Pay close attention to the existing detailed comments in the
+// `commitOnLayer` function regarding potential discrepancies with the Rust
+// implementation if `hash_node` has specific pre-processing. This will require
+// careful cross-referencing once `Blake2sMerkleHasher` is ported.
+//
+// Tests: Add unit tests to verify the layer commitment logic, ideally by comparing
+// outputs with the Rust version if possible, or by testing against known Merkle
+// tree structures.
+
 import { blake2s } from '@noble/hashes/blake2';
 
 export type Blake2sHash = Uint8Array; // Represents a 32-byte hash

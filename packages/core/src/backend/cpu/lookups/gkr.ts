@@ -451,3 +451,49 @@ mod tests {
 }
 ```
 */
+
+// TODO(Jules): Port the Rust `impl GkrOps for CpuBackend` and its helper functions
+// (`eval_grand_product_sum`, `eval_logup_sum`, `eval_logup_singles_sum`,
+// `gen_eq_evals`, `next_grand_product_layer`, `next_logup_layer`, `MleExpr` enum)
+// to TypeScript.
+//
+// Task: Port the Rust `impl GkrOps for CpuBackend` and its helper functions
+// (`eval_grand_product_sum`, `eval_logup_sum`, `eval_logup_singles_sum`,
+// `gen_eq_evals`, `next_grand_product_layer`, `next_logup_layer`, `MleExpr` enum)
+// to TypeScript.
+//
+// Details:
+// - `GkrOps` methods for `CpuBackend`:
+//   - `gen_eq_evals()`: Generates evaluations for `eq(x,y)*v`.
+//   - `next_layer()`: Computes the next layer in a GKR proof based on the current
+//     layer type (GrandProduct, LogUpGeneric, LogUpMultiplicities, LogUpSingles).
+//   - `sum_as_poly_in_first_variable()`: Computes the sum over a
+//     `GkrMultivariatePolyOracle` as a univariate polynomial.
+// - Helper functions:
+//   - `eval_grand_product_sum()`: Evaluates sum for grand product layers.
+//   - `eval_logup_sum()`: Evaluates sum for generic log-up layers.
+//   - `eval_logup_singles_sum()`: Evaluates sum for log-up layers with single numerators.
+//   - `gen_eq_evals()`: (Static/helper version, distinct from the interface method if needed).
+//   - `next_grand_product_layer()`: Computes next layer for grand products.
+//   - `next_logup_layer()`: Computes next layer for log-ups.
+// - `MleExpr` enum: Helper for `next_logup_layer` to handle constant or MLE numerators.
+//   This will likely be a discriminated union type or a small class hierarchy in TypeScript.
+// - These components would ideally be part of a `CpuBackend` class that implements a
+//   `GkrOps` interface (which would be defined based on `core/src/lookups/gkr_prover.ts`).
+//
+// Dependencies:
+// - `BaseField`, `SecureField` from `core/src/fields/`.
+// - `Mle` (Multivariate Linear Extension) from `core/src/lookups/mle.ts`.
+// - `GkrMultivariatePolyOracle`, `EqEvals`, `Layer` types/interfaces (from
+//   `core/src/lookups/gkr_prover.ts`).
+// - `UnivariatePoly`, `Fraction`, `Reciprocal` utilities (from
+//   `core/src/lookups/utils.ts`).
+// - `correct_sum_as_poly_in_first_variable` (from `core/src/lookups/gkr_prover.ts`).
+// - The future `GkrOps` interface (itself from `core/src/lookups/gkr_prover.ts`).
+//
+// Goal: Provide CPU-specific implementations for GKR protocol operations, essential
+// for lookup arguments and other advanced STARK components.
+//
+// Tests: Port the extensive Rust test suite (`gen_eq_evals`, `grand_product_works`,
+// various `logup_..._works` tests) to TypeScript to ensure correctness and behavioral
+// parity.

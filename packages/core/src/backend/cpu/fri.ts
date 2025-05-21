@@ -148,7 +148,48 @@ mod tests {
 ```
 */
 
-// TODO: translate fri.rs fully
+// TODO(Jules): Port the Rust `impl FriOps for CpuBackend` and the associated private method
+// `decomposition_coefficient` to TypeScript.
+//
+// Task: Port the Rust `impl FriOps for CpuBackend` and the associated private method
+// `decomposition_coefficient` to TypeScript.
+//
+// Details:
+// - `FriOps` methods to implement for `CpuBackend`:
+//   - `fold_line()`: Folds a line evaluation. The Rust implementation calls a
+//     generic `fold_line` function (likely from `core/src/fri/`).
+//   - `fold_circle_into_line()`: Folds a circle evaluation into a line evaluation.
+//     The Rust implementation calls a generic `fold_circle_into_line` function
+//     (likely from `core/src/fri/`).
+//   - `decompose()`: Decomposes a `SecureEvaluation` into another `SecureEvaluation`
+//     and a `SecureField` coefficient (`lambda`). This uses the
+//     `decomposition_coefficient` method and `SecureColumnByCoords::uninitialized`.
+// - `decomposition_coefficient()`: A private helper method on `CpuBackend` (or a
+//   static/standalone function if `CpuBackend` is not yet a class) to calculate a
+//   coefficient used in the FRI decomposition. It assumes a blowup factor of 2.
+// - These methods would ideally belong to a `CpuBackend` class that implements a
+//   `FriOps` interface (which would be defined based on `core/src/fri/mod.rs` or a
+//   similar top-level FRI definitions file if `core/src/fri/` is empty).
+//
+// Dependencies:
+// - `SecureField`, `BaseField` from `core/src/fields/`.
+// - `SecureColumnByCoords` from `core/src/fields/secure_columns.ts`.
+// - `SecureEvaluation`, `BitReversedOrder` from `core/src/poly/circle/`.
+// - `LineEvaluation` from `core/src/poly/line.ts`.
+// - `TwiddleTree` from `core/src/poly/twiddles.ts`.
+// - Generic `fold_line` and `fold_circle_into_line` functions (these will need to
+//   be ported first, likely in a general `core/src/fri/` module).
+// - The future `FriOps` interface (from `core/src/fri/mod.rs` or similar).
+//
+// Goal: Provide CPU-specific implementations for FRI folding and decomposition
+// operations, crucial for the FRI protocol.
+//
+// Tests: Port the Rust test `decompose_coeff_out_fft_space_test` to TypeScript.
+//
+// Note: The `_twiddles` argument in `fold_line` and `fold_circle_into_line` is
+// unused in the Rust `CpuBackend` impl, but the generic functions they call might use
+// them. This detail should be preserved or clarified during porting.
+
 export function foldLine(): never {
   throw new Error("foldLine not yet implemented");
 }

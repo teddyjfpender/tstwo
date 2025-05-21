@@ -80,3 +80,50 @@ pub struct Trace<'a, B: Backend> {
 }
 ```
 */
+
+// TODO(Jules): Define TypeScript interfaces or abstract classes corresponding to the Rust traits
+// `Air`, `AirProver`, `Component`, `ComponentProver`, and the `Trace` struct.
+//
+// Task: Define TypeScript interfaces or abstract classes for core AIR (Arithmetic
+// Intermediate Representation) structures.
+//
+// Details:
+// - Air interface: Represents the AIR, providing a list of its `Component`s.
+//   - `components()`: Component[]
+//
+// - AirProver interface: Extends `Air` for provers, providing `ComponentProver`s.
+//   Will need to be generic over a Backend type `B`.
+//   - `component_provers()`: ComponentProver<B>[]
+//
+// - Component interface: Defines the interface for an AIR component.
+//   - `n_constraints()`: number
+//   - `max_constraint_log_degree_bound()`: u32
+//   - `trace_log_degree_bounds()`: TreeVec<ColumnVec<u32>>
+//   - `mask_points(point: CirclePoint<SecureField>)`: TreeVec<ColumnVec<Vec<CirclePoint<SecureField>>>>
+//   - `preproccessed_column_indices()`: ColumnVec<usize>  // Note: usize might be just number in TS
+//   - `evaluate_constraint_quotients_at_point(point: CirclePoint<SecureField>, mask: TreeVec<ColumnVec<Vec<SecureField>>>, evaluation_accumulator: PointEvaluationAccumulator)`: void
+//
+// - ComponentProver interface: Extends `Component` for provers. Will need to be
+//   generic over a Backend type `B`.
+//   - `evaluate_constraint_quotients_on_domain(trace: Trace<B>, evaluation_accumulator: DomainEvaluationAccumulator<B>)`: void
+//
+// - Trace struct/interface: Represents the execution trace. Will be generic over a
+//   Backend type `B`.
+//   - `polys`: TreeVec<ColumnVec<CirclePoly<B>>>
+//   - `evals`: TreeVec<ColumnVec<CircleEvaluation<B, BaseField, BitReversedOrder>>>
+//
+// Dependencies:
+// - `PointEvaluationAccumulator`, `DomainEvaluationAccumulator` from `core/src/air/accumulator.ts`.
+// - `CirclePoint` (likely from `core/src/poly/circle/point.ts` or similar, e.g. `core/src/circle.ts`).
+// - `SecureField`, `BaseField` from `core/src/fields/`.
+// - `TreeVec`, `ColumnVec` utility types/classes (e.g., from `core/src/pcs/utils.ts` or to be defined).
+// - `CirclePoly`, `CircleEvaluation`, `BitReversedOrder` from `core/src/poly/circle/`.
+// - A generic `Backend` interface/type will be needed for `AirProver`, `ComponentProver`, and `Trace`.
+//
+// Goal: Establish the fundamental interfaces for defining and interacting with AIRs and
+// their components within the STARK system. These interfaces will be implemented by
+// specific AIRs (e.g., for different computations) and used by the prover/verifier logic.
+//
+// Unification: These interfaces are critical for decoupling the generic STARK machinery
+// from specific AIR definitions. The `Components` and `ComponentProvers` structs (to be
+// defined in `core/src/air/components.ts`) will consume these interfaces.
