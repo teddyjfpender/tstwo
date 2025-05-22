@@ -8,13 +8,13 @@ import { fold } from "./utils";
 
 /** A domain comprising the x-coordinates of points in a coset. */
 export class LineDomain {
-  coset: Coset;
+  private readonly _coset: Coset;
 
   constructor(coset: Coset) {
     // The Rust implementation validates that the coset points have unique
     // x-coordinates. Once the real Coset type is available this check should be
     // reinstated.
-    this.coset = coset;
+    this._coset = coset;
   }
 
   static new(coset: Coset): LineDomain {
@@ -22,15 +22,15 @@ export class LineDomain {
   }
 
   at(i: number): M31 {
-    return this.coset.at(i).x;
+    return this._coset.at(i).x;
   }
 
   size(): number {
-    return this.coset.size();
+    return this._coset.size();
   }
 
   logSize(): number {
-    return this.coset.log_size;
+    return this._coset.log_size();
   }
 
   /** Alias for Rust-style `log_size` method name. */
@@ -39,19 +39,19 @@ export class LineDomain {
   }
 
   *iter(): IterableIterator<M31> {
-    const it: Iterable<CirclePoint<M31>> = this.coset.iter();
+    const it: Iterable<CirclePoint<M31>> = this._coset.iter();
     for (const p of it) {
       yield p.x;
     }
   }
 
   double(): LineDomain {
-    return new LineDomain(this.coset.double());
+    return new LineDomain(this._coset.double());
   }
 
   /** Returns the domain's underlying coset. */
   coset(): Coset {
-    return this.coset;
+    return this._coset;
   }
 }
 
