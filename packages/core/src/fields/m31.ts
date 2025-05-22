@@ -48,6 +48,14 @@ export class M31 implements Field<M31> {
   }
 
   /**
+   * Constructs an M31 element from a raw unsigned 32‑bit value without
+   * range checking. Mirrors the Rust `from_u32_unchecked` constructor.
+   */
+  static from_u32_unchecked(val: number): M31 {
+    return new M31(val);
+  }
+
+  /**
    * Returns the additive inverse of this element
    */
   neg(): M31 {

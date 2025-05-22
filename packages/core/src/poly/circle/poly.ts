@@ -46,6 +46,26 @@ export class CirclePoly<B extends ColumnOps<any>> {
     const BClass: any = (this.constructor as any);
     return BClass.evaluate(this, domain, twiddles);
   }
+
+  /** Check if the polynomial lies in the FFT space of size `2^logFftSize`. */
+  isInFftSpace(logFftSize: number): boolean {
+    const coeffs = [...this.coeffs];
+    while (coeffs.length > 0 && typeof coeffs[coeffs.length - 1].isZero === "function" && coeffs[coeffs.length - 1].isZero()) {
+      coeffs.pop();
+    }
+    const highest = 1 << logFftSize;
+    return coeffs.length <= highest;
+  }
+
+  /** Check if the polynomial lies in the FRI space of size `2^logFftSize`. */
+  isInFriSpace(logFftSize: number): boolean {
+    const coeffs = [...this.coeffs];
+    while (coeffs.length > 0 && typeof coeffs[coeffs.length - 1].isZero === "function" && coeffs[coeffs.length - 1].isZero()) {
+      coeffs.pop();
+    }
+    const highest = (1 << logFftSize) + 1;
+    return coeffs.length <= highest;
+  }
 }
 
 /*

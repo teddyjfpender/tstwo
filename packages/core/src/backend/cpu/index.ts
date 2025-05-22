@@ -127,6 +127,10 @@ mod tests {
 
 import { bitReverseIndex } from "../../utils";
 import type { Backend, Column, ColumnOps } from "../index";
+import { Coset } from "../../circle";
+import { M31 } from "../../fields/m31";
+import { batchInverseInPlace } from "../../fields/fields";
+import { TwiddleTree } from "../../poly/twiddles";
 
 /**
  * TypeScript implementation of the CpuBackend from `backend/cpu/mod.rs`.
@@ -181,6 +185,50 @@ export class CpuColumn<T> implements Column<T> {
   }
 }
 
-export type CpuCirclePoly<F = unknown> = unknown; // TODO
-export type CpuCircleEvaluation<F = unknown, EvalOrder = unknown> = unknown; // TODO
-export type CpuMle<F> = unknown; // TODO
+import { CirclePoly, CircleEvaluation } from "../../poly/circle";
+
+export type CpuCirclePoly = CirclePoly<CpuBackend>;
+export type CpuCircleEvaluation<F, EvalOrder = unknown> = CircleEvaluation<CpuBackend, F, EvalOrder>;
+export type CpuMle<F> = unknown; // TODO: define once lookups/mle.ts is ported
+
+/**
+ * Compute the FFT twiddle factors for the given coset using a straightforward
+ * implementation. Mirrors the Rust `slow_precompute_twiddles` helper.
+ */
+export function slowPrecomputeTwiddles(coset: Coset): M31[] {
+  let c = coset;
+  const twiddles: M31[] = [];
+  for (let i = 0; i < coset.log_size; i++) {
+    const points = Array.from(c.iter()).slice(0, c.size() / 2).map((p) => p.x);
+    bitReverse(points);
+    twiddles.push(...points);
+    c = c.double();
+  }
+  twiddles.push(M31.one());
+  return twiddles;
+}
+
+/**
+ * Precomputes twiddle and inverse twiddle tables for the provided coset.
+ */
+export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
+  const CHUNK_SIZE = 1 << 12;
+  const rootCoset = coset;
+  const twiddles = slowPrecomputeTwiddles(coset);
+
+  // Generate inverse twiddles
+  if (CHUNK_SIZE > rootCoset.size()) {
+    const itw = twiddles.map((t) => t.inverse());
+    return new TwiddleTree(rootCoset, twiddles, itw);
+  }
+
+  const itw: M31[] = new Array(twiddles.length).fill(M31.zero());
+  for (let i = 0; i < twiddles.length; i += CHUNK_SIZE) {
+    const src = twiddles.slice(i, i + CHUNK_SIZE);
+    const dst = new Array<M31>(src.length).fill(M31.zero());
+    batchInverseInPlace(src, dst);
+    for (let j = 0; j < dst.length; j++) itw[i + j] = dst[j];
+  }
+
+  return new TwiddleTree(rootCoset, twiddles, itw);
+}

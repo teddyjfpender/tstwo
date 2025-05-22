@@ -190,12 +190,52 @@ mod tests {
 // unused in the Rust `CpuBackend` impl, but the generic functions they call might use
 // them. This detail should be preserved or clarified during porting.
 
-export function foldLine(): never {
-  throw new Error("foldLine not yet implemented");
+import { fold_line as genericFoldLine, fold_circle_into_line as genericFoldCircleIntoLine } from "../../fri";
+import { LineEvaluation } from "../../poly/line";
+import { SecureEvaluation, BitReversedOrder } from "../../poly/circle";
+import { QM31 as SecureField } from "../../fields/qm31";
+import { M31 } from "../../fields/m31";
+import { SecureColumnByCoords } from "../../fields/secure_columns";
+
+export function foldLine(
+  eval_: LineEvaluation,
+  alpha: SecureField,
+): LineEvaluation {
+  return genericFoldLine(eval_, alpha);
 }
-export function foldCircleIntoLine(): never {
-  throw new Error("foldCircleIntoLine not yet implemented");
+
+export function foldCircleIntoLine(
+  dst: LineEvaluation,
+  src: SecureEvaluation<unknown, BitReversedOrder>,
+  alpha: SecureField,
+): void {
+  genericFoldCircleIntoLine(dst, src, alpha);
 }
-export function decompose(): never {
-  throw new Error("decompose not yet implemented");
+
+function decompositionCoefficient(eval_: SecureEvaluation<unknown, BitReversedOrder>): SecureField {
+  const domainSize = 1 << eval_.domain.log_size();
+  const half = domainSize / 2;
+  let aSum = SecureField.from_u32_unchecked(0,0,0,0);
+  for (let i = 0; i < half; i++) aSum = aSum.add(eval_.values.at(i));
+  let bSum = SecureField.from_u32_unchecked(0,0,0,0);
+  for (let i = half; i < domainSize; i++) bSum = bSum.add(eval_.values.at(i));
+  return aSum.sub(bSum).div(M31.from_u32_unchecked(domainSize));
+}
+
+export function decompose(
+  eval_: SecureEvaluation<unknown, BitReversedOrder>,
+): [SecureEvaluation<unknown, BitReversedOrder>, SecureField] {
+  const lambda = decompositionCoefficient(eval_);
+  const gValues = SecureColumnByCoords.uninitialized(eval_.len());
+  const half = eval_.len() / 2;
+  for (let i = 0; i < half; i++) {
+    const val = eval_.values.at(i).sub(lambda);
+    gValues.set(i, val);
+  }
+  for (let i = half; i < eval_.len(); i++) {
+    const val = eval_.values.at(i).add(lambda);
+    gValues.set(i, val);
+  }
+  const g = new SecureEvaluation(eval_.domain, gValues) as SecureEvaluation<unknown, BitReversedOrder>;
+  return [g, lambda];
 }
