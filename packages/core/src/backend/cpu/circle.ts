@@ -372,50 +372,8 @@ mod tests {
 ```
 */
 
-// TODO(Jules): Port the Rust `impl PolyOps for CpuBackend` to TypeScript.
-//
-// Task: Port the Rust `impl PolyOps for CpuBackend` to TypeScript.
-//
-// Details: This involves implementing the following methods within a `CpuBackend`
-// class (or as standalone functions if a class structure isn't ready yet):
-//   - `interpolate()`: Inverse FFT for circle polynomials. Handles specific cases for
-//     log_size 1 and 2, and a general case using `fft_layer_loop` and `ibutterfly`.
-//   - `eval_at_point()`: Evaluates a circle polynomial at a `SecureField` point
-//     using a Horner-like method (`fold`).
-//   - `extend()`: Extends a polynomial by padding with zeros.
-//   - `evaluate()`: Forward FFT for circle polynomials. Handles specific cases for
-//     log_size 1 and 2, and a general case using `fft_layer_loop` and `butterfly`.
-//   - `precompute_twiddles()`: Generates and stores twiddle factors for FFTs,
-//     including inverse twiddles using `batch_inverse_in_place`. Relies on
-//     `slow_precompute_twiddles`.
-//   - Helper functions to port: `slow_precompute_twiddles`, `fft_layer_loop`,
-//     `circle_twiddles_from_line_twiddles`.
-//   - The `CpuBackend` should implement the `PolyOps` interface (from
-//     `core/src/poly/circle/ops.ts`).
-//
-// Dependencies:
-//   - `BaseField`, `SecureField`, `CM31` (for `batch_inverse_in_place`) from `core/src/fields/`.
-//   - `CirclePoint`, `Coset` from `core/src/circle.ts`.
-//   - `CirclePoly`, `CircleEvaluation`, `CircleDomain`, `BitReversedOrder` from
-//     `core/src/poly/circle/`.
-//   - `TwiddleTree` from `core/src/poly/twiddles.ts`.
-//   - `fold`, `domain_line_twiddles_from_tree` from `core/src/poly/utils.ts`.
-//   - `bit_reverse` (likely a utility for `BaseField[]`).
-//   - `butterfly`, `ibutterfly` (core FFT operations, possibly from `core/src/fft/`
-//     if that gets populated, or defined locally).
-//   - `batch_inverse_in_place` (from `core/src/fields/fields.ts`).
-//
-// Goal: Provide efficient CPU-specific implementations of core polynomial operations
-// for STARKs.
-//
-// Tests: Port the extensive Rust test suite to TypeScript to ensure correctness.
-//
-// Note: The Rust code uses `Col<B, F>` for collections; in TypeScript, this will
-// likely be native arrays (`F[]`) for the CPU backend.
+// TypeScript implementation of CpuBackend circle polynomial operations.
 
-// -----------------------------------------------------------------------------
-// TypeScript port of CpuBackend circle polynomial operations.
-// -----------------------------------------------------------------------------
 import { butterfly, ibutterfly } from "../../fft";
 import { M31 } from "../../fields/m31";
 import { QM31 as SecureField } from "../../fields/qm31";
