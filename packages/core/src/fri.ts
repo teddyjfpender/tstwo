@@ -1648,7 +1648,7 @@ interface TypescriptPolyOps { /* Corresponds to Rust's core::poly::PolyOps */ }
 // Domain Placeholders
 // TODO(Jules): Replace TypescriptLineDomainPlaceholder with a full implementation of LineDomain from Rust's `core::poly::line::LineDomain`.
 // Key methods: constructor, at(index), log_size(), double(), coset().index_at().
-class TypescriptLineDomainPlaceholder {
+export class TypescriptLineDomainPlaceholder {
   constructor(public log_size: number) {}
   // TODO(Jules): Implement `at(index: number): SecureField` (or appropriate point type) as per Rust's `LineDomain::at()`.
   // TODO(Jules): Implement `double(): TypescriptLineDomainPlaceholder` as per Rust's `LineDomain::double()`.
@@ -1658,7 +1658,7 @@ class TypescriptLineDomainPlaceholder {
 
 // Evaluation and Poly Placeholders (refined)
 // TODO(Jules): Refine TypescriptLineEvaluation to match Rust's `core::poly::line::LineEvaluation<B>`.
-interface TypescriptLineEvaluation<B> {
+export interface TypescriptLineEvaluation<B> {
   domain: TypescriptLineDomainPlaceholder; // Should be the actual LineDomain type.
   values: SecureField[]; 
   len(): number;
@@ -1671,7 +1671,7 @@ interface TypescriptLineEvaluation<B> {
 
 // Placeholder implementation for TypescriptLineEvaluation
 // TODO(Jules): Replace with full implementation matching Rust's `core::poly::line::LineEvaluation`.
-class TypescriptLineEvaluationImpl<B> implements TypescriptLineEvaluation<B> {
+export class TypescriptLineEvaluationImpl<B> implements TypescriptLineEvaluation<B> {
   constructor(public domain: TypescriptLineDomainPlaceholder, public values: SecureField[]) {}
 
   len(): number {
@@ -1707,7 +1707,7 @@ interface TypescriptTwiddleTree<B> { /* Corresponds to Rust's core::poly::twiddl
 // TODO(Jules): Refine TypescriptSecureEvaluation to match Rust's `core::poly::circle::SecureEvaluation<B, O>`.
 // Key properties: `domain` (actual CircleDomain type), `values` (actual SecureColumnByCoords type or similar).
 // Key methods: `len()`, `at(index)`, `is_canonic()` (on domain).
-interface TypescriptSecureEvaluation<B, O> {
+export interface TypescriptSecureEvaluation<B, O> {
   domain: { // Should be the actual CircleDomain type.
     is_canonic(): boolean;
     // TODO(Jules): Add `log_size(): number` to CircleDomain placeholder/implementation.
@@ -1723,7 +1723,7 @@ interface TypescriptSecureEvaluation<B, O> {
   // Or ensure `this.values.at(index)` is available if `values` is `SecureColumnByCoords`.
 }
 // TODO(Jules): Define TypescriptBitReversedOrder if it has specific structural requirements beyond `any`.
-type TypescriptBitReversedOrder = any; 
+export type TypescriptBitReversedOrder = any;
 
 // Constants defined from Rust code
 const CIRCLE_TO_LINE_FOLD_STEP = 1; // Matches Rust's `CIRCLE_TO_LINE_FOLD_STEP`
@@ -1908,33 +1908,6 @@ class TypescriptFriInnerLayerProverImpl<B, H extends TypescriptHasher>
   }
 }
 
-// TODO(Jules): Refine TypescriptLinePoly to match Rust's `core::poly::line::LinePoly`.
-// Key methods: constructor from coefficients, `eval_at_point()`, `len()`.
-interface TypescriptLinePoly {
-  getCoefficients(): SecureField[];
-  // TODO(Jules): Add `len(): number` method to TypescriptLinePoly, returning number of coefficients.
-  // TODO(Jules): Add `eval_at_point(p: SecureField): SecureField` method to TypescriptLinePoly.
-}
-
-// Placeholder implementation for TypescriptLinePoly
-// TODO(Jules): Replace with full implementation matching Rust's `core::poly::line::LinePoly`.
-class TypescriptLinePolyImpl implements TypescriptLinePoly {
-  private readonly coeffs_ordered: SecureField[];
-
-  constructor(coeffs: SecureField[]) {
-    this.coeffs_ordered = coeffs;
-  }
-
-  getCoefficients(): SecureField[] {
-    return [...this.coeffs_ordered];
-  }
-
-  static from_ordered_coefficients(coeffs: SecureField[]): TypescriptLinePoly {
-    return new TypescriptLinePolyImpl(coeffs);
-  }
-  // TODO(Jules): Implement `len(): number` for TypescriptLinePolyImpl. Corresponds to `self.coeffs.len()` in Rust.
-  // TODO(Jules): Implement `eval_at_point(p: SecureField): SecureField` for TypescriptLinePolyImpl. Corresponds to `self.eval_at_point(p)` in Rust.
-}
 
 
 /**
@@ -2231,14 +2204,14 @@ class TypescriptFriLayerProofImpl<H extends TypescriptHasher> implements Typescr
 
 // TODO(Jules): Refine TypescriptFriProof to match Rust's `FriProof<H>`.
 // Key properties: `first_layer`, `inner_layers`, `last_layer_poly`.
-interface TypescriptFriProof<H extends TypescriptHasher> {
+export interface TypescriptFriProof<H extends TypescriptHasher> {
   first_layer: TypescriptFriLayerProof<H>; // Should be actual FriLayerProof type
   inner_layers: TypescriptFriLayerProof<H>[]; // Should be array of actual FriLayerProof type
   last_layer_poly: TypescriptLinePoly; // Should be actual LinePoly type
 }
 
 // TODO(Jules): Replace with full implementation matching Rust's `FriProof<H>`.
-class TypescriptFriProofImpl<H extends TypescriptHasher> implements TypescriptFriProof<H> {
+export class TypescriptFriProofImpl<H extends TypescriptHasher> implements TypescriptFriProof<H> {
   constructor(
     public first_layer: TypescriptFriLayerProof<H>,
     public inner_layers: TypescriptFriLayerProof<H>[],
@@ -2248,14 +2221,14 @@ class TypescriptFriProofImpl<H extends TypescriptHasher> implements TypescriptFr
 
 // TODO(Jules): Refine TypescriptQueries to match Rust's `core::queries::Queries`.
 // Key methods: `new(positions, log_domain_size)`, `fold(n_folds)`, `generate(channel, log_domain_size, n_queries)`.
-interface TypescriptQueries {
+export interface TypescriptQueries {
   log_domain_size: number;
   positions: number[];
   fold(count: number): TypescriptQueries;
 }
 
 // TODO(Jules): Replace with full implementation of `Queries` from `core::queries.rs`.
-class TypescriptQueriesImpl implements TypescriptQueries {
+export class TypescriptQueriesImpl implements TypescriptQueries {
   constructor(public log_domain_size: number, public positions: number[]) {}
 
   fold(count: number): TypescriptQueries {
@@ -2291,13 +2264,13 @@ class TypescriptQueriesImpl implements TypescriptQueries {
 
 // TODO(Jules): Refine TypescriptLinePolyDegreeBound to match Rust's `LinePolyDegreeBound`.
 // Key method: `fold(n_folds)`.
-interface TypescriptLinePolyDegreeBound {
+export interface TypescriptLinePolyDegreeBound {
   log_degree_bound: number;
   fold(n_folds: number): TypescriptLinePolyDegreeBound | null;
 }
 
 // TODO(Jules): Replace with full implementation matching Rust's `LinePolyDegreeBound`.
-class TypescriptLinePolyDegreeBoundImpl implements TypescriptLinePolyDegreeBound {
+export class TypescriptLinePolyDegreeBoundImpl implements TypescriptLinePolyDegreeBound {
   constructor(public log_degree_bound: number) {}
 
   fold(n_folds: number): TypescriptLinePolyDegreeBound | null {
@@ -2312,13 +2285,13 @@ class TypescriptLinePolyDegreeBoundImpl implements TypescriptLinePolyDegreeBound
 
 // TODO(Jules): Refine TypescriptCirclePolyDegreeBound to match Rust's `CirclePolyDegreeBound`.
 // Key method: `fold_to_line()`.
-interface TypescriptCirclePolyDegreeBound {
+export interface TypescriptCirclePolyDegreeBound {
   log_degree_bound: number;
   fold_to_line(): TypescriptLinePolyDegreeBound; // Should return actual LinePolyDegreeBound type
 }
 
 // TODO(Jules): Replace with full implementation matching Rust's `CirclePolyDegreeBound`.
-class TypescriptCirclePolyDegreeBoundImpl implements TypescriptCirclePolyDegreeBound {
+export class TypescriptCirclePolyDegreeBoundImpl implements TypescriptCirclePolyDegreeBound {
   constructor(public log_degree_bound: number) {}
 
   fold_to_line(): TypescriptLinePolyDegreeBound {
@@ -2340,7 +2313,7 @@ interface TypescriptCircleDomain {
 }
 // TODO(Jules): Replace TypescriptCanonicCosetImpl with a full implementation of CanonicCoset from Rust's `core::poly::circle::CanonicCoset`.
 // Key methods: `new(log_size)`, `circle_domain()`.
-class TypescriptCanonicCosetImpl {
+export class TypescriptCanonicCosetImpl {
   constructor(public log_size: number) {}
   circle_domain(): TypescriptCircleDomain {
     console.warn("Placeholder: TypescriptCanonicCosetImpl.circle_domain() called. Needs actual CircleDomain implementation.");
@@ -2360,7 +2333,7 @@ class TypescriptCanonicCosetImpl {
 
 // TODO(Jules): Replace TypescriptLineDomainImpl with a full implementation of LineDomain from Rust's `core::poly::line::LineDomain`.
 // Key methods: constructor from coset, `log_size()`, `at(index)`, `double()`, `coset().index_at()`.
-class TypescriptLineDomainImpl {
+export class TypescriptLineDomainImpl {
   public log_size: number;
   private coset_details: any; // Placeholder for actual coset data
 
@@ -2868,14 +2841,14 @@ class TypescriptFriInnerLayerVerifierImpl<H extends TypescriptHasher> implements
 // Ensure TypescriptLinePoly has len() for FriVerifier commit
 // TODO(Jules): Refine TypescriptLinePoly to match Rust's `core::poly::line::LinePoly`.
 // Key methods: constructor from coefficients, `eval_at_point()`, `len()`.
-interface TypescriptLinePoly {
+export interface TypescriptLinePoly {
   getCoefficients(): SecureField[];
   len(): number; 
   eval_at_point(p: SecureField): SecureField; 
 }
 // Adjust Impl
 // TODO(Jules): Replace with full implementation of `LinePoly` from `core::poly::line.rs`.
-class TypescriptLinePolyImpl implements TypescriptLinePoly {
+export class TypescriptLinePolyImpl implements TypescriptLinePoly {
   private readonly coeffs_ordered: SecureField[];
   constructor(coeffs: SecureField[]) {
     this.coeffs_ordered = coeffs;
