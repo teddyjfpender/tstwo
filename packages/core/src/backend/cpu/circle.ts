@@ -413,6 +413,191 @@ mod tests {
 // Note: The Rust code uses `Col<B, F>` for collections; in TypeScript, this will
 // likely be native arrays (`F[]`) for the CPU backend.
 
-export function evaluateCircle(): never {
-  throw new Error("evaluateCircle not yet implemented");
+// -----------------------------------------------------------------------------
+// TypeScript port of CpuBackend circle polynomial operations.
+// -----------------------------------------------------------------------------
+import { butterfly, ibutterfly } from "../../fft";
+import { M31 } from "../../fields/m31";
+import { QM31 as SecureField } from "../../fields/qm31";
+import { CirclePoint, Coset } from "../../circle";
+import type { CircleDomain } from "../../poly/circle/domain";
+import { CircleEvaluation, BitReversedOrder } from "../../poly/circle/evaluation";
+import { CirclePoly } from "../../poly/circle/poly";
+import { TwiddleTree } from "../../poly/twiddles";
+import { domainLineTwiddlesFromTree, fold } from "../../poly/utils";
+
+export type CpuCircleEvaluation<F, EvalOrder = BitReversedOrder> = CircleEvaluation<CpuBackend, F, EvalOrder>;
+
+export class CpuCirclePoly extends CirclePoly<CpuBackend> {
+  static interpolate(
+    eval_: CpuCircleEvaluation<M31, BitReversedOrder>,
+    twiddles: TwiddleTree<CpuBackend, M31[]>,
+  ): CpuCirclePoly {
+    if (!eval_.domain.half_coset.is_doubling_of(twiddles.rootCoset)) {
+      throw new Error("twiddle tree mismatch");
+    }
+    const values = [...eval_.values];
+    if (eval_.domain.log_size() === 1) {
+      const y = eval_.domain.half_coset.initial.y;
+      const n = M31.from(2);
+      const ynInv = y.mul(n).inverse();
+      const yInv = ynInv.mul(n);
+      const nInv = ynInv.mul(y);
+      let v0 = values[0];
+      let v1 = values[1];
+      [v0, v1] = ibutterfly(v0, v1, yInv);
+      return new CpuCirclePoly([v0.mul(nInv), v1.mul(nInv)]);
+    }
+    if (eval_.domain.log_size() === 2) {
+      const { x, y } = eval_.domain.half_coset.initial;
+      const n = M31.from(4);
+      const xynInv = x.mul(y).mul(n).inverse();
+      const xInv = xynInv.mul(y).mul(n);
+      const yInv = xynInv.mul(x).mul(n);
+      const nInv = xynInv.mul(x).mul(y);
+      let v0 = values[0];
+      let v1 = values[1];
+      let v2 = values[2];
+      let v3 = values[3];
+      [v0, v1] = ibutterfly(v0, v1, yInv);
+      [v2, v3] = ibutterfly(v2, v3, yInv.neg());
+      [v0, v2] = ibutterfly(v0, v2, xInv);
+      [v1, v3] = ibutterfly(v1, v3, xInv);
+      return new CpuCirclePoly([
+        v0.mul(nInv),
+        v1.mul(nInv),
+        v2.mul(nInv),
+        v3.mul(nInv),
+      ]);
+    }
+    const lineTw = domainLineTwiddlesFromTree(eval_.domain, twiddles.itwiddles);
+    const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0]);
+    for (let h = 0; h < circleTw.length; h++) {
+      fftLayerLoop(values, 0, h, circleTw[h], ibutterfly);
+    }
+    lineTw.forEach((layerTw, layer) => {
+      layerTw.forEach((t, h) => fftLayerLoop(values, layer + 1, h, t, ibutterfly));
+    });
+    const inv = M31.from_u32_unchecked(eval_.domain.size()).inverse();
+    for (let i = 0; i < values.length; i++) values[i] = values[i].mul(inv);
+    return new CpuCirclePoly(values);
+  }
+
+  static eval_at_point(poly: CpuCirclePoly, point: CirclePoint<SecureField>): SecureField {
+    if (poly.logSize() === 0) {
+      return (poly.coeffs[0] as any).toSecureField();
+    }
+    const mappings: SecureField[] = [point.y];
+    let x = point.x;
+    for (let i = 1; i < poly.logSize(); i++) {
+      mappings.push(x);
+      x = CirclePoint.double_x(x, SecureField);
+    }
+    mappings.reverse();
+    return fold(poly.coeffs as any, mappings);
+  }
+
+  static extend(poly: CpuCirclePoly, logSize: number): CpuCirclePoly {
+    if (logSize < poly.logSize()) throw new Error("log size too small");
+    const coeffs = poly.coeffs.slice();
+    const target = 1 << logSize;
+    while (coeffs.length < target) coeffs.push(M31.zero());
+    return new CpuCirclePoly(coeffs);
+  }
+
+  static evaluate(
+    poly: CpuCirclePoly,
+    domain: CircleDomain,
+    twiddles: TwiddleTree<CpuBackend, M31[]>,
+  ): CpuCircleEvaluation<M31, BitReversedOrder> {
+    if (!domain.half_coset.is_doubling_of(twiddles.rootCoset)) {
+      throw new Error("twiddle tree mismatch");
+    }
+    const values = CpuCirclePoly.extend(poly, domain.log_size()).coeffs.slice();
+    if (domain.log_size() === 1) {
+      let v0 = values[0];
+      let v1 = values[1];
+      [v0, v1] = butterfly(v0, v1, domain.half_coset.initial.y);
+      return new CircleEvaluation(domain, [v0, v1]);
+    }
+    if (domain.log_size() === 2) {
+      let v0 = values[0];
+      let v1 = values[1];
+      let v2 = values[2];
+      let v3 = values[3];
+      const { x, y } = domain.half_coset.initial;
+      [v0, v2] = butterfly(v0, v2, x);
+      [v1, v3] = butterfly(v1, v3, x);
+      [v0, v1] = butterfly(v0, v1, y);
+      [v2, v3] = butterfly(v2, v3, y.neg());
+      return new CircleEvaluation(domain, [v0, v1, v2, v3]);
+    }
+    const lineTw = domainLineTwiddlesFromTree(domain, twiddles.twiddles);
+    const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0]);
+    lineTw.slice().reverse().forEach((layerTw, rLayer) => {
+      const layer = lineTw.length - 1 - rLayer;
+      layerTw.forEach((t, h) => fftLayerLoop(values, layer + 1, h, t, butterfly));
+    });
+    for (let h = 0; h < circleTw.length; h++) {
+      fftLayerLoop(values, 0, h, circleTw[h], butterfly);
+    }
+    return new CircleEvaluation(domain, values);
+  }
+}
+
+export function slowPrecomputeTwiddles(coset: Coset): M31[] {
+  let c = coset;
+  const tw: M31[] = [];
+  for (let i = 0; i < coset.log_size; i++) {
+    const pts = Array.from(c.iter()).slice(0, c.size() / 2).map((p) => p.x);
+    bitReverse(pts);
+    tw.push(...pts);
+    c = c.double();
+  }
+  tw.push(M31.one());
+  return tw;
+}
+
+export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
+  const CHUNK_SIZE = 1 << 12;
+  const rootCoset = coset;
+  const twiddles = slowPrecomputeTwiddles(coset);
+  if (CHUNK_SIZE > rootCoset.size()) {
+    const itw = twiddles.map((t) => t.inverse());
+    return new TwiddleTree(rootCoset, twiddles, itw);
+  }
+  const itw: M31[] = new Array(twiddles.length).fill(M31.zero());
+  for (let i = 0; i < twiddles.length; i += CHUNK_SIZE) {
+    const src = twiddles.slice(i, i + CHUNK_SIZE);
+    const dst = new Array<M31>(src.length).fill(M31.zero());
+    batchInverseInPlace(src, dst);
+    for (let j = 0; j < dst.length; j++) itw[i + j] = dst[j];
+  }
+  return new TwiddleTree(rootCoset, twiddles, itw);
+}
+
+function fftLayerLoop(
+  values: M31[],
+  i: number,
+  h: number,
+  t: M31,
+  fn: (a: M31, b: M31, tw: M31) => [M31, M31],
+): void {
+  for (let l = 0; l < (1 << i); l++) {
+    const idx0 = (h << (i + 1)) + l;
+    const idx1 = idx0 + (1 << i);
+    const [v0, v1] = fn(values[idx0], values[idx1], t);
+    values[idx0] = v0;
+    values[idx1] = v1;
+  }
+}
+
+function circleTwiddlesFromLineTwiddles(first: M31[]): M31[] {
+  const res: M31[] = [];
+  for (let i = 0; i < first.length; i += 2) {
+    const x = first[i];
+    const y = first[i + 1];
+    res.push(y, y.neg(), x.neg(), x);
+  }
+  return res;
 }
