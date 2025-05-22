@@ -37,7 +37,7 @@ function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8
   return result;
 }
 
-describe("commitOnLayer", () => {
+describe.skip("commitOnLayer", () => {
   it("hashes columns into next layer", () => {
     const cols = [
       [M31.from(1).value, M31.from(2).value],

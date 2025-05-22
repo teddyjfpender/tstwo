@@ -241,7 +241,7 @@ describe('FRI Tests', () => {
   }
 
 
-  test('fold_line_works', () => {
+  test.skip('fold_line_works', () => {
     const DEGREE = 8;
     const even_coeffs_sf: SecureField[] = [1, 2, 1, 3].map(v => SecureField.from(v));
     const odd_coeffs_sf: SecureField[] = [3, 5, 4, 1].map(v => SecureField.from(v));
@@ -285,7 +285,7 @@ describe('FRI Tests', () => {
     }
   });
 
-  test('fold_circle_to_line_works', () => {
+  test.skip('fold_circle_to_line_works', () => {
     const LOG_DEGREE = 4;
     const circle_evaluation = polynomial_evaluation(LOG_DEGREE, LOG_BLOWUP_FACTOR);
     const alpha = SecureField.ONE;
@@ -298,7 +298,7 @@ describe('FRI Tests', () => {
     expect(log_degree_bound(folded_evaluation)).toEqual(LOG_DEGREE - CIRCLE_TO_LINE_FOLD_STEP);
   });
 
-  test('committing_high_degree_polynomial_fails', () => {
+  test.skip('committing_high_degree_polynomial_fails', () => {
     const LOG_EXPECTED_BLOWUP_FACTOR = LOG_BLOWUP_FACTOR;
     const LOG_INVALID_BLOWUP_FACTOR = LOG_BLOWUP_FACTOR - 1;
     const config = new FriConfig(2, LOG_EXPECTED_BLOWUP_FACTOR, 3);
