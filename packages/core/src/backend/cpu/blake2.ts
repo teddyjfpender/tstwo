@@ -64,7 +64,12 @@ impl MerkleOps<Blake2sMerkleHasher> for CpuBackend {
 // outputs with the Rust version if possible, or by testing against known Merkle
 // tree structures.
 
-import { blake2s } from '@noble/hashes/blake2';
+let blake2s: any;
+try {
+  blake2s = require('@noble/hashes/blake2').blake2s;
+} catch {
+  blake2s = () => { throw new Error('blake2s unavailable'); };
+}
 
 export type Blake2sHash = Uint8Array; // Represents a 32-byte hash
 

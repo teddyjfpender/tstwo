@@ -237,6 +237,11 @@ export class Coset {
     return 1 << this.log_size;
   }
 
+  /** Return the logarithmic size of the coset. */
+  logSize(): number {
+    return this.log_size;
+  }
+
   iter(): CosetIterator<CirclePoint<M31>> {
     return new CosetIterator(this.initial, this.step, this.size());
   }

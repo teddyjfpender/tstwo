@@ -30,7 +30,7 @@ export class LineDomain {
   }
 
   logSize(): number {
-    return this._coset.log_size();
+    return this._coset.logSize();
   }
 
   /** Alias for Rust-style `log_size` method name. */

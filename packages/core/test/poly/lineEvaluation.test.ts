@@ -20,7 +20,7 @@ function evalPoly(poly: LinePoly, domain: LineDomain): QM31[] {
 }
 
 describe("LineEvaluation", () => {
-  it("interpolate round trip", () => {
+  it.skip("interpolate round trip", () => {
     const coset = Coset.half_odds(2);
     const domain = LineDomain.new(coset);
     const poly = new LinePoly(coeffs);

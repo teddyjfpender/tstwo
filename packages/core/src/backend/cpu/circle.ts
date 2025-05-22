@@ -509,8 +509,9 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
 
   static eval_at_point(poly: CpuCirclePoly, point: CirclePoint<SecureField>): SecureField {
     if (poly.logSize() === 0) {
-      return (poly.coeffs[0] as any).toSecureField();
+      return SecureField.from(poly.coeffs[0]);
     }
+    const coeffs = poly.coeffs.map((c) => SecureField.from(c));
     const mappings: SecureField[] = [point.y];
     let x = point.x;
     for (let i = 1; i < poly.logSize(); i++) {
@@ -518,7 +519,7 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
       x = CirclePoint.double_x(x, SecureField);
     }
     mappings.reverse();
-    return fold(poly.coeffs as any, mappings);
+    return fold(coeffs, mappings);
   }
 
   static extend(poly: CpuCirclePoly, logSize: number): CpuCirclePoly {
