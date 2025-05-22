@@ -24,6 +24,7 @@ import {
 
 import { M31 as BaseField } from './fields/m31';
 import { QM31 as SecureField } from './fields/qm31';
+import { SecureColumnByCoords } from './fields/secure_columns';
 import { CpuCirclePoly } from './backend/cpu/circle';
 import { bitReverse as cpuBitReverse, precomputeTwiddles as cpuPrecomputeTwiddles } from './backend/cpu';
 
@@ -92,20 +93,8 @@ function polynomial_evaluation(
   const values_base = evalRes.values;
   const values_secure = values_base.map((bf) => SecureField.from(bf));
   
-  // TODO(Jules): Replace with actual SecureEvaluation port.
-  // The 'values' field in SecureEvaluation (Rust) is SecureColumnByCoords.
-  // This placeholder assumes it can take SecureField[] directly for simplicity.
-  const secure_eval_values = {
-    columns: [[], [], [], []] as BaseField[][],
-    at: (idx: number) => values_secure[idx],
-  } as unknown as TypescriptSecureColumnByCoords<any>;
-  values_secure.forEach((sf) => {
-    const [a, b, c, d] = sf.toM31Array();
-    secure_eval_values.columns[0]!.push(a);
-    secure_eval_values.columns[1]!.push(b);
-    secure_eval_values.columns[2]!.push(c);
-    secure_eval_values.columns[3]!.push(d);
-  });
+  // Construct SecureColumnByCoords from the secure field values.
+  const secure_eval_values = SecureColumnByCoords.from(values_secure) as unknown as TypescriptSecureColumnByCoords<any>;
 
   return {
     domain: domain as any, // Cast to any to satisfy placeholder
