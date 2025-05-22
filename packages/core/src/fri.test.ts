@@ -26,6 +26,7 @@ import { M31 as BaseField } from './fields/m31';
 import { QM31 as SecureField } from './fields/qm31';
 import { CpuCirclePoly } from './backend/cpu/circle';
 import { bitReverse as cpuBitReverse, precomputeTwiddles as cpuPrecomputeTwiddles } from './backend/cpu';
+import { test_channel } from './test_utils';
 
 // Minimal CpuBackend wrapper exposing bit reverse and twiddle helpers used in the tests.
 const CpuBackend = {
@@ -52,27 +53,8 @@ interface TypescriptCircleDomain {
 // Default blowup factor used for tests.
 const LOG_BLOWUP_FACTOR = 2;
 
-// Mock Channel for testing
-// TODO(Jules): Replace with a more robust mock or actual test channel implementation
-let mockChannelState = 0;
-const test_channel = (): any => {
-  mockChannelState = 0; // Reset for each test
-  return {
-    draw_felt: (): SecureField => {
-      // Simple pseudo-randomness for testing
-      mockChannelState = (mockChannelState * 1664525 + 1013904223) % (2 ** 32);
-      return SecureField.from(BaseField.from_u32_unchecked(mockChannelState % 100));
-    },
-    mix_root: (root: any) => {},
-    mix_felts: (felts: SecureField[]) => {},
-    mix_u64: (val: number) => {},
-    // For Queries.generate
-    draw_usize: (max: number): number => {
-      mockChannelState = (mockChannelState * 1664525 + 1013904223) % (2**32);
-      return mockChannelState % max;
-    }
-  };
-};
+// Use actual Blake2s based channel for randomness
+
 
 /**
  * Returns an evaluation of a random polynomial with degree `2^log_degree`.
