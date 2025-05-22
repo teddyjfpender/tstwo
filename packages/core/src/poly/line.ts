@@ -68,6 +68,16 @@ export class LinePoly {
     this.log_size = Math.log2(coeffs.length);
   }
 
+  /** Logarithmic size of the polynomial. */
+  logSize(): number {
+    return this.log_size;
+  }
+
+  /** Alias for Rust-style `log_size` method name. */
+  log_size(): number {
+    return this.logSize();
+  }
+
   static new(coeffs: QM31[]): LinePoly {
     return new LinePoly(coeffs);
   }

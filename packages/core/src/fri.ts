@@ -1636,70 +1636,26 @@ export class FriConfig {
 
 import { QM31 as SecureField } from "./fields/qm31";
 import { Queries } from "./queries";
+import { LineDomain, LineEvaluation, LinePoly } from "./poly/line";
+import { CircleDomain, CanonicCoset, SecureEvaluation } from "./poly/circle";
 
 // Placeholder types for FriOps dependencies
 // TODO(Jules): Refine these placeholder types. For example, TypescriptBaseField should be replaced with the actual BaseField type (e.g., M31).
 // TODO(Jules): Define TypescriptColumnOps<T> to mirror Rust's `core::backend::ColumnOps<F>` trait.
 // TODO(Jules): Define TypescriptPolyOps to mirror Rust's `core::poly::PolyOps` trait.
-type TypescriptBaseField = any; 
+type TypescriptBaseField = any;
 interface TypescriptColumnOps<T> { /* Corresponds to Rust's core::backend::ColumnOps<F> */ }
 interface TypescriptPolyOps { /* Corresponds to Rust's core::poly::PolyOps */ }
 
 // Domain Placeholders
 // TODO(Jules): Replace TypescriptLineDomainPlaceholder with a full implementation of LineDomain from Rust's `core::poly::line::LineDomain`.
 // Key methods: constructor, at(index), log_size(), double(), coset().index_at().
-export class TypescriptLineDomainPlaceholder {
-  constructor(public log_size: number) {}
-  // TODO(Jules): Implement `at(index: number): SecureField` (or appropriate point type) as per Rust's `LineDomain::at()`.
-  // TODO(Jules): Implement `double(): TypescriptLineDomainPlaceholder` as per Rust's `LineDomain::double()`.
-  // TODO(Jules): Implement `coset(): { index_at(index: number): any }` (placeholder for Coset operations).
-}
+export { LineDomain as TypescriptLineDomainPlaceholder } from "./poly/line";
 
 
-// Evaluation and Poly Placeholders (refined)
-// TODO(Jules): Refine TypescriptLineEvaluation to match Rust's `core::poly::line::LineEvaluation<B>`.
-export interface TypescriptLineEvaluation<B> {
-  domain: TypescriptLineDomainPlaceholder; // Should be the actual LineDomain type.
-  values: SecureField[]; 
-  len(): number;
-  // TODO(Jules): Implement `to_cpu(): TypescriptLineEvaluation<B>` as per Rust's `LineEvaluation::to_cpu()`.
-  to_cpu(): TypescriptLineEvaluation<B>;
-  // TODO(Jules): Implement `interpolate(): { into_ordered_coefficients(): SecureField[] }` as per Rust's `LineEvaluation::interpolate()` and `LinePoly::into_ordered_coefficients()`.
-  interpolate(): { into_ordered_coefficients(): SecureField[] };
-  // TODO(Jules): Implement static `new_zero(domain: TypescriptLineDomainPlaceholder, zeroValue: SecureField): TypescriptLineEvaluation<B>` as per Rust's `LineEvaluation::new_zero()`.
-}
-
-// Placeholder implementation for TypescriptLineEvaluation
-// TODO(Jules): Replace with full implementation matching Rust's `core::poly::line::LineEvaluation`.
-export class TypescriptLineEvaluationImpl<B> implements TypescriptLineEvaluation<B> {
-  constructor(public domain: TypescriptLineDomainPlaceholder, public values: SecureField[]) {}
-
-  len(): number {
-    return this.values.length;
-  }
-
-  to_cpu(): TypescriptLineEvaluation<B> {
-    // Placeholder: actual CPU conversion logic from Rust needed.
-    console.warn("Placeholder: TypescriptLineEvaluationImpl.to_cpu() called");
-    return new TypescriptLineEvaluationImpl<B>(this.domain, [...this.values]);
-  }
-
-  interpolate(): { into_ordered_coefficients(): SecureField[] } {
-    // Placeholder: actual interpolation logic from Rust needed.
-    return {
-      into_ordered_coefficients: () => {
-        console.warn("Placeholder: TypescriptLineEvaluationImpl.interpolate().into_ordered_coefficients() called");
-        return [...this.values];
-      }
-    };
-  }
-
-  static new_zero<B>(domain: TypescriptLineDomainPlaceholder, zeroValue: SecureField): TypescriptLineEvaluation<B> {
-    // TODO(Jules): Ensure SecureField.ZERO or equivalent is correctly used if `zeroValue` is not directly provided.
-    const length = 1 << domain.log_size; 
-    return new TypescriptLineEvaluationImpl<B>(domain, Array(length).fill(zeroValue));
-  }
-}
+// Evaluation and Poly aliases
+export type TypescriptLineEvaluation<B> = LineEvaluation<B>;
+export { LineEvaluation as TypescriptLineEvaluationImpl } from "./poly/line";
 
 // TODO(Jules): Define TypescriptTwiddleTree<B> to match Rust's `core::poly::twiddles::TwiddleTree<B>`.
 interface TypescriptTwiddleTree<B> { /* Corresponds to Rust's core::poly::twiddles::TwiddleTree<B> */ }
@@ -1707,21 +1663,7 @@ interface TypescriptTwiddleTree<B> { /* Corresponds to Rust's core::poly::twiddl
 // TODO(Jules): Refine TypescriptSecureEvaluation to match Rust's `core::poly::circle::SecureEvaluation<B, O>`.
 // Key properties: `domain` (actual CircleDomain type), `values` (actual SecureColumnByCoords type or similar).
 // Key methods: `len()`, `at(index)`, `is_canonic()` (on domain).
-export interface TypescriptSecureEvaluation<B, O> {
-  domain: { // Should be the actual CircleDomain type.
-    is_canonic(): boolean;
-    // TODO(Jules): Add `log_size(): number` to CircleDomain placeholder/implementation.
-    // TODO(Jules): Add `at(index: number): CirclePoint` (or appropriate point type) to CircleDomain placeholder/implementation.
-    // TODO(Jules): Add `index_at(index: number): any` (placeholder for point index logic) to CircleDomain placeholder/implementation.
-    // TODO(Jules): Add `half_coset: any` (placeholder for Coset structure) to CircleDomain placeholder/implementation.
-  };
-  values: any; // Should be SecureColumnByCoords or similar structure holding column data.
-               // For `extract_coordinate_columns`, this needs to provide access to base field columns, e.g., `base_columns: TypescriptBaseFieldColumn[]`.
-               // For `compute_decommitment_positions_and_witness_evals`, this needs an `at(index)` method.
-  len(): number;
-  // TODO(Jules): Implement `at(index: number): SecureField` if SecureEvaluation itself provides direct access.
-  // Or ensure `this.values.at(index)` is available if `values` is `SecureColumnByCoords`.
-}
+export type TypescriptSecureEvaluation<B, O> = SecureEvaluation<B, O>;
 // TODO(Jules): Define TypescriptBitReversedOrder if it has specific structural requirements beyond `any`.
 export type TypescriptBitReversedOrder = any;
 
@@ -2304,79 +2246,12 @@ export class TypescriptCirclePolyDegreeBoundImpl implements TypescriptCirclePoly
 // Placeholder for actual CircleDomain, CanonicCoset, LineDomain
 // TODO(Jules): Replace TypescriptCircleDomain with a full implementation of CircleDomain from Rust's `core::poly::circle::CircleDomain`.
 // Key methods: constructor from coset, `log_size()`, `at(index)`, `index_at()`, `is_canonic()`.
-interface TypescriptCircleDomain { 
-  log_size(): number;
-  at(index: number): any; // Should return a CirclePoint like object
-  index_at(index: number): any; // Should return a CirclePointIndex like object
-  is_canonic(): boolean;
-  half_coset: any; // Placeholder for `Coset` structure or its properties.
-}
-// TODO(Jules): Replace TypescriptCanonicCosetImpl with a full implementation of CanonicCoset from Rust's `core::poly::circle::CanonicCoset`.
-// Key methods: `new(log_size)`, `circle_domain()`.
-export class TypescriptCanonicCosetImpl {
-  constructor(public log_size: number) {}
-  circle_domain(): TypescriptCircleDomain {
-    console.warn("Placeholder: TypescriptCanonicCosetImpl.circle_domain() called. Needs actual CircleDomain implementation.");
-    // This should return an instance of the actual (not placeholder) CircleDomain.
-    return { 
-        log_size: () => this.log_size, 
-        at: (idx:number) => { console.warn(`Placeholder CircleDomain.at(${idx})`); return {y:{inverse:() => SecureField.ONE}}; }, // Dummy point with y.inverse()
-        index_at: (idx:number) => { console.warn(`Placeholder CircleDomain.index_at(${idx})`); return {}; },
-        is_canonic: () => true, // Assuming canonic for placeholder
-        half_coset: { log_size: this.log_size -1 } // Dummy half_coset
-    } as TypescriptCircleDomain;
-  }
-  static new(log_size: number): TypescriptCanonicCosetImpl {
-    return new TypescriptCanonicCosetImpl(log_size);
-  }
-}
+export type TypescriptCircleDomain = CircleDomain;
+export { CanonicCoset as TypescriptCanonicCosetImpl } from "./poly/circle";
 
 // TODO(Jules): Replace TypescriptLineDomainImpl with a full implementation of LineDomain from Rust's `core::poly::line::LineDomain`.
 // Key methods: constructor from coset, `log_size()`, `at(index)`, `double()`, `coset().index_at()`.
-export class TypescriptLineDomainImpl {
-  public log_size: number;
-  private coset_details: any; // Placeholder for actual coset data
-
-  constructor(log_size_param: number | any) { 
-    if (typeof log_size_param === 'number') {
-        this.log_size = log_size_param;
-        this.coset_details = { type: "simple", log_size: log_size_param }; // Simplified coset representation
-    } else {
-        this.log_size = log_size_param.log_size || 0; 
-        this.coset_details = log_size_param; // Store the coset details passed (e.g. from half_odds)
-        console.warn("TypescriptLineDomainImpl constructed with complex object, using .log_size or default. Ensure this matches Rust's LineDomain::new(Coset) behavior.");
-    }
-  }
-
-  double(): TypescriptLineDomainImpl {
-    // Placeholder: Actual logic for domain doubling from Rust's `LineDomain::double()` needed.
-    // This typically involves adjusting the coset.
-    console.warn("Placeholder: TypescriptLineDomainImpl.double() called. Needs actual Rust logic for coset doubling.");
-    return new TypescriptLineDomainImpl(this.log_size + 1); 
-  }
-  
-  static half_odds(log_size: number): any { 
-      // Placeholder: This should return a structure compatible with LineDomain constructor, representing Rust's `Coset::half_odds()`.
-      console.warn("Placeholder: TypescriptLineDomainImpl.half_odds() called. Needs actual Coset structure.");
-      return { type: "half_odds", log_size: log_size, initial_index: 1 /* Example */ }; // Placeholder structure
-  }
-  
-  at(index: number): any { 
-    // Placeholder: Actual logic from Rust's `LineDomain::at()` needed. Requires proper Coset implementation.
-    console.warn(`Placeholder: TypescriptLineDomainImpl.at(${index}) called. Needs actual point calculation based on coset.`);
-    // Should return an object representing a point, with an `inverse()` method for `fold_line`.
-    return { inverse: () => SecureField.ONE }; // Dummy point with inverse
-  }
-
-  coset(): { index_at(index: number): any } {
-      // Placeholder for LineDomain.coset().index_at()
-      console.warn("Placeholder: TypescriptLineDomainImpl.coset() called. Needs actual Coset object with index_at().");
-      return { index_at: (idx: number) => {
-          console.warn(`Placeholder: TypescriptLineDomainImpl.coset().index_at(${idx}) called.`);
-          return this.coset_details?.initial_index + idx; // Very simplified placeholder
-      }};
-  }
-}
+export { LineDomain as TypescriptLineDomainImpl } from "./poly/line";
 
 
 // FriVerificationError Enum (as an object)
@@ -2848,38 +2723,8 @@ export interface TypescriptLinePoly {
 }
 // Adjust Impl
 // TODO(Jules): Replace with full implementation of `LinePoly` from `core::poly::line.rs`.
-export class TypescriptLinePolyImpl implements TypescriptLinePoly {
-  private readonly coeffs_ordered: SecureField[];
-  constructor(coeffs: SecureField[]) {
-    this.coeffs_ordered = coeffs;
-  }
-  getCoefficients(): SecureField[] {
-    return [...this.coeffs_ordered];
-  }
-  static from_ordered_coefficients(coeffs: SecureField[]): TypescriptLinePolyImpl {
-    return new TypescriptLinePolyImpl(coeffs);
-  }
-  len(): number { 
-    return this.coeffs_ordered.length;
-  }
-  eval_at_point(p: SecureField): SecureField {
-    // Placeholder: Actual polynomial evaluation logic from Rust's `LinePoly::eval_at_point` needed.
-    // This involves Horner's method or similar.
-    // TODO(Jules): Implement proper polynomial evaluation for TypescriptLinePolyImpl.eval_at_point.
-    // TODO(Jules): Ensure SecureField has `add`, `mul`, `is_zero`, `one`, `zero` for polynomial evaluation.
-    console.warn("Placeholder: TypescriptLinePolyImpl.eval_at_point called. Needs actual polynomial evaluation logic.");
-    if (this.coeffs_ordered.length === 0) return SecureField.ZERO; // Or throw error
-    // Simplified: return c0 + c1*p + c2*p^2 ... (example for very low degree or just c0)
-    let res = this.coeffs_ordered[this.coeffs_ordered.length -1];
-    for (let i = this.coeffs_ordered.length - 2; i >=0; i--) {
-        res = res.mul(p).add(this.coeffs_ordered[i]);
-    }
-    return res;
-    // Fallback for empty or simple case:
-    // if (this.coeffs_ordered.length > 0) return this.coeffs_ordered[0]; 
-    // return SecureField.ZERO; 
-  }
-}
+export { LinePoly as TypescriptLinePolyImpl } from "./poly/line";
+export type TypescriptLinePoly = LinePoly;
 
 // --- FriVerifier Class Definition ---
 // TODO(Jules): Ensure FriVerifier generic constraints and types match Rust structure.

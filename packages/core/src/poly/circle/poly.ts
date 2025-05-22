@@ -26,6 +26,11 @@ export class CirclePoly<B extends ColumnOps<any>> {
     return this.logSizeValue;
   }
 
+  /** Alias for Rust-style `log_size` method name. */
+  log_size(): number {
+    return this.logSize();
+  }
+
   evalAtPoint(point: any): any {
     const BClass: any = (this.constructor as any);
     return BClass.eval_at_point(this, point);
