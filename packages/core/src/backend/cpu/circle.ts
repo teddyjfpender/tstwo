@@ -419,18 +419,39 @@ mod tests {
 import { butterfly, ibutterfly } from "../../fft";
 import { M31 } from "../../fields/m31";
 import { QM31 as SecureField } from "../../fields/qm31";
+import { batchInverseInPlace } from "../../fields/fields";
 import { CirclePoint, Coset } from "../../circle";
+import { bitReverse } from "./index";
 import type { CircleDomain } from "../../poly/circle/domain";
 import { CircleEvaluation, BitReversedOrder } from "../../poly/circle/evaluation";
 import { CirclePoly } from "../../poly/circle/poly";
 import { TwiddleTree } from "../../poly/twiddles";
 import { domainLineTwiddlesFromTree, fold } from "../../poly/utils";
 
-export type CpuCircleEvaluation<F, EvalOrder = BitReversedOrder> = CircleEvaluation<CpuBackend, F, EvalOrder>;
+export class CpuCircleEvaluation<EvalOrder = BitReversedOrder> extends CircleEvaluation<CpuBackend, M31, EvalOrder> {
+  static bitReverseColumn(col: M31[]): void {
+    bitReverse(col);
+  }
+
+  static precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
+    return _precomputeTwiddles(coset);
+  }
+
+  static interpolate(
+    eval_: CpuCircleEvaluation<BitReversedOrder>,
+    twiddles: TwiddleTree<CpuBackend, M31[]>,
+  ): CpuCirclePoly {
+    return CpuCirclePoly.interpolate(eval_ as any, twiddles);
+  }
+
+  static to_cpu(values: M31[]): M31[] {
+    return values.slice();
+  }
+}
 
 export class CpuCirclePoly extends CirclePoly<CpuBackend> {
   static interpolate(
-    eval_: CpuCircleEvaluation<M31, BitReversedOrder>,
+    eval_: CpuCircleEvaluation<BitReversedOrder>,
     twiddles: TwiddleTree<CpuBackend, M31[]>,
   ): CpuCirclePoly {
     if (!eval_.domain.half_coset.is_doubling_of(twiddles.rootCoset)) {
@@ -509,7 +530,7 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
     poly: CpuCirclePoly,
     domain: CircleDomain,
     twiddles: TwiddleTree<CpuBackend, M31[]>,
-  ): CpuCircleEvaluation<M31, BitReversedOrder> {
+  ): CpuCircleEvaluation {
     if (!domain.half_coset.is_doubling_of(twiddles.rootCoset)) {
       throw new Error("twiddle tree mismatch");
     }
@@ -518,7 +539,7 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
       let v0 = values[0];
       let v1 = values[1];
       [v0, v1] = butterfly(v0, v1, domain.half_coset.initial.y);
-      return new CircleEvaluation(domain, [v0, v1]);
+      return new CpuCircleEvaluation(domain, [v0, v1]);
     }
     if (domain.log_size() === 2) {
       let v0 = values[0];
@@ -530,7 +551,7 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
       [v1, v3] = butterfly(v1, v3, x);
       [v0, v1] = butterfly(v0, v1, y);
       [v2, v3] = butterfly(v2, v3, y.neg());
-      return new CircleEvaluation(domain, [v0, v1, v2, v3]);
+      return new CpuCircleEvaluation(domain, [v0, v1, v2, v3]);
     }
     const lineTw = domainLineTwiddlesFromTree(domain, twiddles.twiddles);
     const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0]);
@@ -541,7 +562,7 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
     for (let h = 0; h < circleTw.length; h++) {
       fftLayerLoop(values, 0, h, circleTw[h], butterfly);
     }
-    return new CircleEvaluation(domain, values);
+    return new CpuCircleEvaluation(domain, values);
   }
 }
 
@@ -558,7 +579,7 @@ export function slowPrecomputeTwiddles(coset: Coset): M31[] {
   return tw;
 }
 
-export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
+export function _precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
   const CHUNK_SIZE = 1 << 12;
   const rootCoset = coset;
   const twiddles = slowPrecomputeTwiddles(coset);
@@ -575,6 +596,8 @@ export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]>
   }
   return new TwiddleTree(rootCoset, twiddles, itw);
 }
+
+export { _precomputeTwiddles as precomputeTwiddles };
 
 function fftLayerLoop(
   values: M31[],
