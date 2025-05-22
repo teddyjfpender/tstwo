@@ -1,12 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { commitOnLayer } from "../../src/backend/cpu/blake2";
 import { M31 } from "../../src/fields/m31";
-let blake2s: any;
-try {
-  blake2s = require('@noble/hashes/blake2').blake2s;
-} catch {
-  blake2s = undefined;
-}
+import { blake2s } from '@noble/hashes/blake2';
 
 function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8Array[] {
   if (!columns.length || !columns[0]?.length) {
