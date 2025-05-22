@@ -28,6 +28,7 @@ import { SecureColumnByCoords } from './fields/secure_columns';
 import { CpuCirclePoly } from './backend/cpu/circle';
 import { bitReverse as cpuBitReverse, precomputeTwiddles as cpuPrecomputeTwiddles } from './backend/cpu';
 import { test_channel } from './test_utils';
+import { Blake2sMerkleChannel } from './vcs/blake2_merkle';
 
 // Minimal CpuBackend wrapper exposing bit reverse and twiddle helpers used in the tests.
 const CpuBackend = {
@@ -238,13 +239,13 @@ describe('FRI Tests', () => {
     const column = polynomial_evaluation(6, LOG_INVALID_BLOWUP_FACTOR);
     const twiddles = CpuBackend.precompute_twiddles((column.domain as any).half_coset);
     
-    // TODO(Jules): Define channelOps and bOps (FriOps instance) for FriProver.commit
-    const mockChannelOps = { mix_root: jest.fn(), draw_felt: jest.fn(() => SecureField.one()), mix_felts: jest.fn() };
+    // Use real channel operations
+    const channelOps = new Blake2sMerkleChannel();
     const mockBOps = { fold_line: jest.fn(), fold_circle_into_line: jest.fn(), decompose: jest.fn() } as any;
 
 
     expect(() => {
-      FriProver.commit(test_channel(), config, [column], twiddles, mockChannelOps, mockBOps);
+      FriProver.commit(test_channel(), config, [column], twiddles, channelOps, mockBOps);
     }).toThrowError(/invalid degree/);
   });
   
@@ -267,20 +268,16 @@ describe('FRI Tests', () => {
     const twiddles = CpuBackend.precompute_twiddles(invalid_domain.half_coset);
     const columns = [column];
     
-    // Simple function stubs instead of Jest mocks
-    const mockChannelOps = { 
-      mix_root: () => {}, 
-      draw_felt: () => SecureField.one(),
-      mix_felts: () => {} 
-    };
-    const mockBOps = { 
-      fold_line: () => {}, 
-      fold_circle_into_line: () => {}, 
-      decompose: () => {} 
+    // Use real channel operations
+    const channelOps = new Blake2sMerkleChannel();
+    const mockBOps = {
+      fold_line: () => {},
+      fold_circle_into_line: () => {},
+      decompose: () => {}
     } as any;
 
     expect(() => {
-      FriProver.commit(test_channel(), config, columns, twiddles, mockChannelOps, mockBOps);
+      FriProver.commit(test_channel(), config, columns, twiddles, channelOps, mockBOps);
     }).toThrowError(/not canonic/);
   });
   
