@@ -20,6 +20,14 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
     return new QM31(CM31.fromUnchecked(a, b), CM31.fromUnchecked(c, d));
   }
 
+  /**
+   * Constructs a QM31 element from raw u32 components without range checks.
+   * Mirrors the Rust `from_u32_unchecked` helper.
+   */
+  static from_u32_unchecked(a: number, b: number, c: number, d: number): QM31 {
+    return new QM31(CM31.fromUnchecked(a, b), CM31.fromUnchecked(c, d));
+  }
+
   static fromM31(a: M31, b: M31, c: M31, d: M31): QM31 {
     return new QM31(CM31.fromM31(a, b), CM31.fromM31(c, d));
   }

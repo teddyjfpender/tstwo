@@ -231,6 +231,11 @@ export class CircleDomain {
     return this.halfCoset.log_size + 1;
   }
 
+  /** Alias for Rust-style `log_size` method name. */
+  log_size(): number {
+    return this.logSize();
+  }
+
   /** Returns the `i`th domain element. */
   at(i: number): CirclePoint<M31> {
     return this.indexAt(i).to_point();
@@ -246,6 +251,11 @@ export class CircleDomain {
     // Assuming CirclePointIndex supports negation in some way
     // Use a type assertion to handle this for now
     return -index as unknown as CirclePointIndex;
+  }
+
+  /** Alias for Rust-style `index_at` method name. */
+  index_at(i: number): CirclePointIndex {
+    return this.indexAt(i);
   }
 
   /** Returns true if the domain is canonic. */
@@ -271,6 +281,11 @@ export class CircleDomain {
   /** Returns a shifted domain by the given offset. */
   shift(shift: CirclePointIndex): CircleDomain {
     return CircleDomain.new(this.halfCoset.shift(shift));
+  }
+
+  /** Returns the underlying half coset. */
+  coset(): Coset {
+    return this.halfCoset;
   }
 
   /** Enables `for...of` iteration over the domain points. */
