@@ -148,83 +148,50 @@ mod tests {
 ```
 */
 
-// TODO(Jules): Port the Rust `impl FriOps for CpuBackend` and the associated private method
-// `decomposition_coefficient` to TypeScript.
-//
-// Task: Port the Rust `impl FriOps for CpuBackend` and the associated private method
-// `decomposition_coefficient` to TypeScript.
-//
-// Details:
-// - `FriOps` methods to implement for `CpuBackend`:
-//   - `fold_line()`: Folds a line evaluation. The Rust implementation calls a
-//     generic `fold_line` function (likely from `core/src/fri/`).
-//   - `fold_circle_into_line()`: Folds a circle evaluation into a line evaluation.
-//     The Rust implementation calls a generic `fold_circle_into_line` function
-//     (likely from `core/src/fri/`).
-//   - `decompose()`: Decomposes a `SecureEvaluation` into another `SecureEvaluation`
-//     and a `SecureField` coefficient (`lambda`). This uses the
-//     `decomposition_coefficient` method and `SecureColumnByCoords::uninitialized`.
-// - `decomposition_coefficient()`: A private helper method on `CpuBackend` (or a
-//   static/standalone function if `CpuBackend` is not yet a class) to calculate a
-//   coefficient used in the FRI decomposition. It assumes a blowup factor of 2.
-// - These methods would ideally belong to a `CpuBackend` class that implements a
-//   `FriOps` interface (which would be defined based on `core/src/fri/mod.rs` or a
-//   similar top-level FRI definitions file if `core/src/fri/` is empty).
-//
-// Dependencies:
-// - `SecureField`, `BaseField` from `core/src/fields/`.
-// - `SecureColumnByCoords` from `core/src/fields/secure_columns.ts`.
-// - `SecureEvaluation`, `BitReversedOrder` from `core/src/poly/circle/`.
-// - `LineEvaluation` from `core/src/poly/line.ts`.
-// - `TwiddleTree` from `core/src/poly/twiddles.ts`.
-// - Generic `fold_line` and `fold_circle_into_line` functions (these will need to
-//   be ported first, likely in a general `core/src/fri/` module).
-// - The future `FriOps` interface (from `core/src/fri/mod.rs` or similar).
-//
-// Goal: Provide CPU-specific implementations for FRI folding and decomposition
-// operations, crucial for the FRI protocol.
-//
-// Tests: Port the Rust test `decompose_coeff_out_fft_space_test` to TypeScript.
-//
-// Note: The `_twiddles` argument in `fold_line` and `fold_circle_into_line` is
-// unused in the Rust `CpuBackend` impl, but the generic functions they call might use
-// them. This detail should be preserved or clarified during porting.
-
-import { fold_line as genericFoldLine, fold_circle_into_line as genericFoldCircleIntoLine } from "../../fri";
+import { CpuBackend } from "./index";
+import {
+  fold_line as genericFoldLine,
+  fold_circle_into_line as genericFoldCircleIntoLine,
+} from "../../fri";
 import { LineEvaluation } from "../../poly/line";
 import { SecureEvaluation, BitReversedOrder } from "../../poly/circle";
 import { QM31 as SecureField } from "../../fields/qm31";
 import { M31 } from "../../fields/m31";
 import { SecureColumnByCoords } from "../../fields/secure_columns";
+import { TwiddleTree } from "../../poly/twiddles";
 
 export function foldLine(
-  eval_: LineEvaluation,
+  eval_: LineEvaluation<CpuBackend>,
   alpha: SecureField,
-): LineEvaluation {
+  _twiddles?: TwiddleTree<CpuBackend>,
+): LineEvaluation<CpuBackend> {
   return genericFoldLine(eval_, alpha);
 }
 
 export function foldCircleIntoLine(
-  dst: LineEvaluation,
-  src: SecureEvaluation<unknown, BitReversedOrder>,
+  dst: LineEvaluation<CpuBackend>,
+  src: SecureEvaluation<CpuBackend, BitReversedOrder>,
   alpha: SecureField,
+  _twiddles?: TwiddleTree<CpuBackend>,
 ): void {
   genericFoldCircleIntoLine(dst, src, alpha);
 }
 
-function decompositionCoefficient(eval_: SecureEvaluation<unknown, BitReversedOrder>): SecureField {
+function decompositionCoefficient(
+  eval_: SecureEvaluation<CpuBackend, BitReversedOrder>,
+): SecureField {
   const domainSize = 1 << eval_.domain.log_size();
   const half = domainSize / 2;
   let aSum = SecureField.from_u32_unchecked(0,0,0,0);
   for (let i = 0; i < half; i++) aSum = aSum.add(eval_.values.at(i));
   let bSum = SecureField.from_u32_unchecked(0,0,0,0);
   for (let i = half; i < domainSize; i++) bSum = bSum.add(eval_.values.at(i));
-  return aSum.sub(bSum).div(M31.from_u32_unchecked(domainSize));
+  return aSum.sub(bSum).divM31(M31.from_u32_unchecked(domainSize));
 }
 
 export function decompose(
-  eval_: SecureEvaluation<unknown, BitReversedOrder>,
-): [SecureEvaluation<unknown, BitReversedOrder>, SecureField] {
+  eval_: SecureEvaluation<CpuBackend, BitReversedOrder>,
+): [SecureEvaluation<CpuBackend, BitReversedOrder>, SecureField] {
   const lambda = decompositionCoefficient(eval_);
   const gValues = SecureColumnByCoords.uninitialized(eval_.len());
   const half = eval_.len() / 2;
@@ -236,6 +203,6 @@ export function decompose(
     const val = eval_.values.at(i).add(lambda);
     gValues.set(i, val);
   }
-  const g = new SecureEvaluation(eval_.domain, gValues) as SecureEvaluation<unknown, BitReversedOrder>;
+  const g = new SecureEvaluation<CpuBackend, BitReversedOrder>(eval_.domain, gValues);
   return [g, lambda];
 }
