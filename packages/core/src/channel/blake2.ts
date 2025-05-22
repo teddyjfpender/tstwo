@@ -240,7 +240,11 @@ export class Blake2sChannel implements Channel {
   public channel_time: ChannelTime = new ChannelTime();
   private baseQueue: M31[] = [];
 
-  private updateDigest(newDigest: Blake2sHash): void {
+  /** Current digest of the channel. Mirrors Rust's `digest()` accessor. */
+  digest(): Blake2sHash { return this.digest; }
+
+  /** Updates the digest and increments the challenge counter. */
+  updateDigest(newDigest: Blake2sHash): void {
     this.digest = newDigest;
     this.channel_time.inc_challenges();
   }

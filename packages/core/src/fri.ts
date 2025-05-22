@@ -3019,16 +3019,16 @@ export function accumulate_line(
  * Returns column query positions mapped by their log size.
  * Mirrors `get_query_positions_by_log_size` from Rust.
  */
+import type { Queries } from './queries';
+
 export function get_query_positions_by_log_size(
-  queries: TypescriptQueries, 
-  column_log_sizes: Set<number>, 
+  queries: Queries,
+  column_log_sizes: Set<number>,
 ): Map<number, number[]> {
   const res = new Map<number, number[]>();
-  const tsQueries = queries as TypescriptQueriesImpl; 
-  // TODO(Jules): Ensure `queries.fold()` is correctly implemented in `TypescriptQueriesImpl`.
-  for (const logSize of Array.from(column_log_sizes).sort((a,b) => b-a)) { 
-    const folded = tsQueries.fold(tsQueries.log_domain_size - logSize);
-    res.set(logSize, folded.positions);
+  for (const logSize of Array.from(column_log_sizes).sort((a, b) => b - a)) {
+    const folded = queries.fold(queries.log_domain_size - logSize);
+    res.set(logSize, [...folded]);
   }
   return res;
 }
