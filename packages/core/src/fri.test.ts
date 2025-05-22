@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest';
 import {
   FriConfig,
   FriProver,
@@ -334,8 +335,17 @@ describe('FRI Tests', () => {
     const twiddles = CpuBackend.precompute_twiddles(invalid_domain.half_coset);
     const columns = [column];
     
-    const mockChannelOps = { mix_root: jest.fn(), draw_felt: jest.fn(() => SecureField.ONE), mix_felts: jest.fn() };
-    const mockBOps = { fold_line: jest.fn(), fold_circle_into_line: jest.fn(), decompose: jest.fn() } as any;
+    // Simple function stubs instead of Jest mocks
+    const mockChannelOps = { 
+      mix_root: () => {}, 
+      draw_felt: () => SecureField.ONE, 
+      mix_felts: () => {} 
+    };
+    const mockBOps = { 
+      fold_line: () => {}, 
+      fold_circle_into_line: () => {}, 
+      decompose: () => {} 
+    } as any;
 
     expect(() => {
       FriProver.commit(test_channel(), config, columns, twiddles, mockChannelOps, mockBOps);
