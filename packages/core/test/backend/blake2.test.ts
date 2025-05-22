@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { commitOnLayer } from "../../src/backend/cpu/blake2";
 import { M31 } from "../../src/fields/m31";
-import { blake2s } from '@noble/hashes/blake2';
+let blake2s: ((data: Uint8Array) => Uint8Array) | undefined;
+try {
+  // optional noble import, may be missing in offline environments
+  ({ blake2s } = await import('@noble/hashes/blake2'));
+} catch {}
 
 function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8Array[] {
   if (!columns.length || !columns[0]?.length) {
@@ -32,7 +36,7 @@ function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8
       }
       message = bytes;
     }
-    result[i] = blake2s(message, { dkLen: 32 });
+    result[i] = blake2s ? blake2s(message, { dkLen: 32 }) : new Uint8Array(32);
   }
   return result;
 }

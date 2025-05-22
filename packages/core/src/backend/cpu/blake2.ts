@@ -64,7 +64,11 @@ impl MerkleOps<Blake2sMerkleHasher> for CpuBackend {
 // outputs with the Rust version if possible, or by testing against known Merkle
 // tree structures.
 
-import { blake2s } from '@noble/hashes/blake2';
+import { createHash } from 'crypto';
+let nobleBlake2s: ((data: Uint8Array) => Uint8Array) | undefined;
+try {
+  ({ blake2s: nobleBlake2s } = await import('@noble/hashes/blake2'));
+} catch {}
 
 export type Blake2sHash = Uint8Array; // Represents a 32-byte hash
 
@@ -151,7 +155,13 @@ export function commitOnLayer(
       message = numbersToLEUint8Array(leafNumbers);
     }
     
-    result[i] = blake2s(message, { dkLen: 32 });
+    if (nobleBlake2s) {
+      result[i] = nobleBlake2s(message);
+    } else {
+      const h = createHash('blake2s256');
+      h.update(message);
+      result[i] = new Uint8Array(h.digest());
+    }
   }
   return result;
 }
