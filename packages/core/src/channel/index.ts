@@ -64,7 +64,7 @@ import type { QM31 as SecureField } from '../fields/qm31';
 import type { MerkleHasher } from '../vcs/ops';
 
 export { Blake2sChannel } from './blake2';
-// TODO: export Poseidon252Channel when implemented
+export { Poseidon252Channel } from './poseidon';
 
 export const EXTENSION_FELTS_PER_HASH = 2;
 

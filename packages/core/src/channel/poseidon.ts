@@ -1,6 +1,301 @@
+import { poseidonHashMany, poseidonHash } from '@scure/starknet';
+import type { Channel } from './index';
+import { ChannelTime } from './index';
+import { M31 as BaseField } from '../fields/m31';
+import { QM31 as SecureField, SECURE_EXTENSION_DEGREE } from '../fields/qm31';
+
+// Number of bytes that fit into a felt252.
+export const BYTES_PER_FELT252 = Math.floor(252 / 8); // 31 bytes
+export const FELTS_PER_HASH = 8;
+
+/**
+ * Represents a 252-bit field element compatible with Starknet's field.
+ * This is a simplified implementation for the purposes of the Poseidon channel.
+ * 
+ * TODO(Sonnet4): when the dependency on a full FieldElement252 implementation
+ * compatible with starknet_ff::FieldElement is available, replace this with
+ * that implementation.
+ */
+export class FieldElement252 {
+  private readonly value: bigint;
+
+  constructor(value: bigint | number | string) {
+    if (typeof value === 'string') {
+      // Handle hex strings
+      this.value = BigInt(value.startsWith('0x') ? value : `0x${value}`);
+    } else {
+      this.value = BigInt(value);
+    }
+    
+    // Ensure value is within the field (simplified modulo operation)
+    // In a full implementation, this would use the actual Starknet field modulus
+    const STARKNET_PRIME = 0x800000000000011000000000000000000000000000000000000000000000001n;
+    this.value = this.value % STARKNET_PRIME;
+  }
+
+  static zero(): FieldElement252 {
+    return new FieldElement252(0n);
+  }
+
+  static from(value: bigint | number): FieldElement252 {
+    return new FieldElement252(value);
+  }
+
+  static fromHexBe(hex: string): FieldElement252 | null {
+    try {
+      return new FieldElement252(hex);
+    } catch {
+      return null;
+    }
+  }
+
+  add(other: FieldElement252): FieldElement252 {
+    return new FieldElement252(this.value + other.value);
+  }
+
+  sub(other: FieldElement252): FieldElement252 {
+    return new FieldElement252(this.value - other.value);
+  }
+
+  mul(other: FieldElement252): FieldElement252 {
+    return new FieldElement252(this.value * other.value);
+  }
+
+  floorDiv(other: FieldElement252): FieldElement252 {
+    return new FieldElement252(this.value / other.value);
+  }
+
+  toBigInt(): bigint {
+    return this.value;
+  }
+
+  toBytesBe(): Uint8Array {
+    const bytes = new Uint8Array(32);
+    let val = this.value;
+    for (let i = 31; i >= 0; i--) {
+      bytes[i] = Number(val & 0xffn);
+      val = val >> 8n;
+    }
+    return bytes;
+  }
+
+  equals(other: FieldElement252): boolean {
+    return this.value === other.value;
+  }
+
+  tryIntoU32(): number | null {
+    if (this.value <= 0xffffffffn) {
+      return Number(this.value);
+    }
+    return null;
+  }
+
+  tryIntoU8(): number | null {
+    if (this.value <= 0xffn) {
+      return Number(this.value);
+    }
+    return null;
+  }
+}
+
+/**
+ * A channel that can be used to draw random elements from a Poseidon252 hash.
+ */
+export class Poseidon252Channel implements Channel {
+  readonly BYTES_PER_HASH = BYTES_PER_FELT252;
+  
+  private digest_value: FieldElement252;
+  public channel_time: ChannelTime;
+
+  constructor() {
+    this.digest_value = FieldElement252.zero();
+    this.channel_time = new ChannelTime();
+  }
+
+  clone(): Poseidon252Channel {
+    const cloned = new Poseidon252Channel();
+    cloned.digest_value = this.digest_value;
+    cloned.channel_time = new ChannelTime();
+    cloned.channel_time.n_challenges = this.channel_time.n_challenges;
+    cloned.channel_time.n_sent = this.channel_time.n_sent;
+    return cloned;
+  }
+
+  digest(): FieldElement252 {
+    return this.digest_value;
+  }
+
+  updateDigest(newDigest: FieldElement252): void {
+    this.digest_value = newDigest;
+    this.channel_time.n_challenges += 1;
+    this.channel_time.n_sent = 0;
+  }
+
+  private drawFelt252(): FieldElement252 {
+    const res = new FieldElement252(poseidonHash(
+      this.digest_value.toBigInt(),
+      BigInt(this.channel_time.n_sent)
+    ));
+    this.channel_time.n_sent += 1;
+    return res;
+  }
+
+  // TODO(shahars): Understand if we really need uniformity here.
+  /// Generates a close-to uniform random vector of BaseField elements.
+  private drawBaseFelts(): [BaseField, BaseField, BaseField, BaseField, BaseField, BaseField, BaseField, BaseField] {
+    const shift = new FieldElement252(1n << 31n);
+
+    let cur = this.drawFelt252();
+    const u32s: number[] = [];
+    
+    for (let i = 0; i < 8; i++) {
+      const next = cur.floorDiv(shift);
+      const res = cur.sub(next.mul(shift));
+      cur = next;
+      const u32Val = res.tryIntoU32();
+      if (u32Val === null) {
+        throw new Error('Failed to convert to u32');
+      }
+      u32s.push(u32Val);
+    }
+
+    const baseFields = u32s.map(x => BaseField.reduce(x));
+    if (baseFields.length !== 8) {
+      throw new Error('Expected exactly 8 base fields');
+    }
+    return baseFields as [BaseField, BaseField, BaseField, BaseField, BaseField, BaseField, BaseField, BaseField];
+  }
+
+  trailing_zeros(): number {
+    const bytes = this.digest_value.toBytesBe();
+    // Take first 16 bytes
+    const data = bytes.slice(0, 16);
+    
+    // Convert bytes to little-endian u128 for trailing zeros calculation
+    let val = 0n;
+    for (let i = 0; i < 16; i++) {
+      val = val | (BigInt(data[i] ?? 0) << BigInt(i * 8));
+    }
+    
+    // Count trailing zeros
+    let count = 0;
+    if (val === 0n) return 128; // All zeros
+    
+    while ((val & 1n) === 0n) {
+      count++;
+      val = val >> 1n;
+    }
+    
+    return count;
+  }
+
+  mix_felts(felts: readonly SecureField[]): void {
+    const shift = new FieldElement252(1n << 31n);
+    const res: bigint[] = [];
+    res.push(this.digest_value.toBigInt());
+    
+    for (let i = 0; i < felts.length; i += 2) {
+      const chunk = felts.slice(i, i + 2);
+      let accumulator = FieldElement252.zero();
+      
+      for (const felt of chunk) {
+        const m31Array = felt.toM31Array();
+        for (const m31 of m31Array) {
+          accumulator = accumulator.mul(shift).add(FieldElement252.from(m31.value));
+        }
+      }
+      res.push(accumulator.toBigInt());
+    }
+
+    // TODO(shahars): do we need length padding?
+    this.updateDigest(new FieldElement252(poseidonHashMany(res)));
+  }
+
+  /// Mix a slice of u32s in chunks of 7 representing big endian felt252s.
+  mix_u32s(data: readonly number[]): void {
+    const shift = new FieldElement252(1n << 32n);
+    const paddingLen = 6 - ((data.length + 6) % 7);
+    
+    // Pad data to multiple of 7
+    const paddedData: number[] = [...data];
+    for (let i = 0; i < paddingLen; i++) {
+      paddedData.push(0);
+    }
+    
+    const felts: bigint[] = [];
+    
+    for (let i = 0; i < paddedData.length; i += 7) {
+      const chunk = paddedData.slice(i, i + 7);
+      let accumulator = FieldElement252.zero();
+      
+      for (const val of chunk) {
+        accumulator = accumulator.mul(shift).add(FieldElement252.from(val));
+      }
+      felts.push(accumulator.toBigInt());
+    }
+
+    // TODO(shahars): do we need length padding?
+    const allFelts = [this.digest_value.toBigInt(), ...felts];
+    this.updateDigest(new FieldElement252(poseidonHashMany(allFelts)));
+  }
+
+  mix_u64(value: number | bigint): void {
+    const val = typeof value === 'bigint' ? value : BigInt(value);
+    // Split value to 32-bit limbs representing a big endian felt252.
+    const high = Number((val >> 32n) & 0xffffffffn);
+    const low = Number(val & 0xffffffffn);
+    this.mix_u32s([0, 0, 0, 0, 0, high, low]);
+  }
+
+  draw_felt(): SecureField {
+    const felts = this.drawBaseFelts();
+    return SecureField.fromM31Array([felts[0], felts[1], felts[2], felts[3]]);
+  }
+
+  draw_felts(nFelts: number): SecureField[] {
+    const result: SecureField[] = [];
+    let feltBuffer: BaseField[] = [];
+    
+    while (result.length < nFelts) {
+      if (feltBuffer.length < SECURE_EXTENSION_DEGREE) {
+        const newFelts = this.drawBaseFelts();
+        feltBuffer.push(...newFelts);
+      }
+      
+      const secureFelt = SecureField.fromM31Array([
+        feltBuffer.shift()!,
+        feltBuffer.shift()!,
+        feltBuffer.shift()!,
+        feltBuffer.shift()!,
+      ]);
+      result.push(secureFelt);
+    }
+    
+    return result;
+  }
+
+  draw_random_bytes(): Uint8Array {
+    const shift = new FieldElement252(1n << 8n);
+    let cur = this.drawFelt252();
+    const bytes = new Uint8Array(31);
+    
+    for (let i = 0; i < 31; i++) {
+      const next = cur.floorDiv(shift);
+      const res = cur.sub(next.mul(shift));
+      cur = next;
+      const byteVal = res.tryIntoU8();
+      if (byteVal === null) {
+        throw new Error('Failed to convert to u8');
+      }
+      bytes[i] = byteVal;
+    }
+    
+    return bytes;
+  }
+}
+
 /*
-This is the Rust code from channel/poseidon.rs that needs to be ported to Typescript in this channel/poseidon.ts file:
-```rs
+````rs
 use std::iter;
 
 use itertools::Itertools;
