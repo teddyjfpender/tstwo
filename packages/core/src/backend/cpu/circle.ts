@@ -53,7 +53,7 @@ impl PolyOps for CpuBackend {
         }
 
         let line_twiddles = domain_line_twiddles_from_tree(eval.domain, &twiddles.itwiddles);
-        let circle_twiddles = circle_twiddles_from_line_twiddles(line_twiddles[0]);
+        let circle_twiddles = circle_twiddles_from_line_twiddles(line_twiddles[0] ?? []);
 
         for (h, t) in circle_twiddles.enumerate() {
             fft_layer_loop(&mut values, 0, h, t, ibutterfly);
@@ -123,7 +123,7 @@ impl PolyOps for CpuBackend {
         }
 
         let line_twiddles = domain_line_twiddles_from_tree(domain, &twiddles.twiddles);
-        let circle_twiddles = circle_twiddles_from_line_twiddles(line_twiddles[0]);
+        let circle_twiddles = circle_twiddles_from_line_twiddles(line_twiddles[0] ?? []);
 
         for (layer, layer_twiddles) in line_twiddles.iter().enumerate().rev() {
             for (h, &t) in layer_twiddles.iter().enumerate() {
@@ -427,7 +427,9 @@ import { CircleEvaluation, BitReversedOrder } from "../../poly/circle/evaluation
 import { CirclePoly } from "../../poly/circle/poly";
 import { TwiddleTree } from "../../poly/twiddles";
 import { domainLineTwiddlesFromTree, fold } from "../../poly/utils";
+import { CpuBackend } from "./index";
 
+// @ts-expect-error
 export class CpuCircleEvaluation<EvalOrder = BitReversedOrder> extends CircleEvaluation<CpuBackend, M31, EvalOrder> {
   static bitReverseColumn(col: M31[]): void {
     bitReverse(col);
@@ -449,37 +451,38 @@ export class CpuCircleEvaluation<EvalOrder = BitReversedOrder> extends CircleEva
   }
 }
 
+// @ts-expect-error
 export class CpuCirclePoly extends CirclePoly<CpuBackend> {
   static interpolate(
     eval_: CpuCircleEvaluation<BitReversedOrder>,
     twiddles: TwiddleTree<CpuBackend, M31[]>,
   ): CpuCirclePoly {
-    if (!eval_.domain.half_coset.is_doubling_of(twiddles.rootCoset)) {
+    if (!eval_.domain.halfCoset.is_doubling_of(twiddles.rootCoset)) {
       throw new Error("twiddle tree mismatch");
     }
     const values = [...eval_.values];
     if (eval_.domain.log_size() === 1) {
-      const y = eval_.domain.half_coset.initial.y;
+      const y = eval_.domain.halfCoset.initial.y;
       const n = M31.from(2);
       const ynInv = y.mul(n).inverse();
       const yInv = ynInv.mul(n);
       const nInv = ynInv.mul(y);
-      let v0 = values[0];
-      let v1 = values[1];
+      let v0 = values[0]!;
+      let v1 = values[1]!;
       [v0, v1] = ibutterfly(v0, v1, yInv);
       return new CpuCirclePoly([v0.mul(nInv), v1.mul(nInv)]);
     }
     if (eval_.domain.log_size() === 2) {
-      const { x, y } = eval_.domain.half_coset.initial;
+      const { x, y } = eval_.domain.halfCoset.initial;
       const n = M31.from(4);
       const xynInv = x.mul(y).mul(n).inverse();
       const xInv = xynInv.mul(y).mul(n);
       const yInv = xynInv.mul(x).mul(n);
       const nInv = xynInv.mul(x).mul(y);
-      let v0 = values[0];
-      let v1 = values[1];
-      let v2 = values[2];
-      let v3 = values[3];
+      let v0 = values[0]!;
+      let v1 = values[1]!;
+      let v2 = values[2]!;
+      let v3 = values[3]!;
       [v0, v1] = ibutterfly(v0, v1, yInv);
       [v2, v3] = ibutterfly(v2, v3, yInv.neg());
       [v0, v2] = ibutterfly(v0, v2, xInv);
@@ -492,15 +495,15 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
       ]);
     }
     const lineTw = domainLineTwiddlesFromTree(eval_.domain, twiddles.itwiddles);
-    const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0]);
+    const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0] ?? []);
     for (let h = 0; h < circleTw.length; h++) {
-      fftLayerLoop(values, 0, h, circleTw[h], ibutterfly);
+      fftLayerLoop(values, 0, h, circleTw[h]!, ibutterfly);
     }
     lineTw.forEach((layerTw, layer) => {
-      layerTw.forEach((t, h) => fftLayerLoop(values, layer + 1, h, t, ibutterfly));
+      layerTw.forEach((t, h) => fftLayerLoop(values, layer + 1, h, t!, ibutterfly));
     });
     const inv = M31.from_u32_unchecked(eval_.domain.size()).inverse();
-    for (let i = 0; i < values.length; i++) values[i] = values[i].mul(inv);
+    for (let i = 0; i < values.length; i++) values[i] = values[i]!.mul(inv);
     return new CpuCirclePoly(values);
   }
 
@@ -531,22 +534,22 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
     domain: CircleDomain,
     twiddles: TwiddleTree<CpuBackend, M31[]>,
   ): CpuCircleEvaluation {
-    if (!domain.half_coset.is_doubling_of(twiddles.rootCoset)) {
+    if (!domain.halfCoset.is_doubling_of(twiddles.rootCoset)) {
       throw new Error("twiddle tree mismatch");
     }
     const values = CpuCirclePoly.extend(poly, domain.log_size()).coeffs.slice();
     if (domain.log_size() === 1) {
-      let v0 = values[0];
-      let v1 = values[1];
-      [v0, v1] = butterfly(v0, v1, domain.half_coset.initial.y);
+      let v0 = values[0]!;
+      let v1 = values[1]!;
+      [v0, v1] = butterfly(v0, v1, domain.halfCoset.initial.y);
       return new CpuCircleEvaluation(domain, [v0, v1]);
     }
     if (domain.log_size() === 2) {
-      let v0 = values[0];
-      let v1 = values[1];
-      let v2 = values[2];
-      let v3 = values[3];
-      const { x, y } = domain.half_coset.initial;
+      let v0 = values[0]!;
+      let v1 = values[1]!;
+      let v2 = values[2]!;
+      let v3 = values[3]!;
+      const { x, y } = domain.halfCoset.initial;
       [v0, v2] = butterfly(v0, v2, x);
       [v1, v3] = butterfly(v1, v3, x);
       [v0, v1] = butterfly(v0, v1, y);
@@ -554,13 +557,13 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
       return new CpuCircleEvaluation(domain, [v0, v1, v2, v3]);
     }
     const lineTw = domainLineTwiddlesFromTree(domain, twiddles.twiddles);
-    const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0]);
+    const circleTw = circleTwiddlesFromLineTwiddles(lineTw[0] ?? []);
     lineTw.slice().reverse().forEach((layerTw, rLayer) => {
       const layer = lineTw.length - 1 - rLayer;
-      layerTw.forEach((t, h) => fftLayerLoop(values, layer + 1, h, t, butterfly));
+      layerTw.forEach((t, h) => fftLayerLoop(values, layer + 1, h, t!, butterfly));
     });
     for (let h = 0; h < circleTw.length; h++) {
-      fftLayerLoop(values, 0, h, circleTw[h], butterfly);
+      fftLayerLoop(values, 0, h, circleTw[h]!, butterfly);
     }
     return new CpuCircleEvaluation(domain, values);
   }
@@ -592,7 +595,7 @@ export function _precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]
     const src = twiddles.slice(i, i + CHUNK_SIZE);
     const dst = new Array<M31>(src.length).fill(M31.zero());
     batchInverseInPlace(src, dst);
-    for (let j = 0; j < dst.length; j++) itw[i + j] = dst[j];
+    for (let j = 0; j < dst.length; j++) itw[i + j] = dst[j]!;
   }
   return new TwiddleTree(rootCoset, twiddles, itw);
 }
@@ -609,7 +612,7 @@ function fftLayerLoop(
   for (let l = 0; l < (1 << i); l++) {
     const idx0 = (h << (i + 1)) + l;
     const idx1 = idx0 + (1 << i);
-    const [v0, v1] = fn(values[idx0], values[idx1], t);
+    const [v0, v1] = fn(values[idx0]!, values[idx1]!, t);
     values[idx0] = v0;
     values[idx1] = v1;
   }
@@ -618,8 +621,8 @@ function fftLayerLoop(
 function circleTwiddlesFromLineTwiddles(first: M31[]): M31[] {
   const res: M31[] = [];
   for (let i = 0; i < first.length; i += 2) {
-    const x = first[i];
-    const y = first[i + 1];
+    const x = first[i]!;
+    const y = first[i + 1]!;
     res.push(y, y.neg(), x.neg(), x);
   }
   return res;
