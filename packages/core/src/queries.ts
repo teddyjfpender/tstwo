@@ -188,3 +188,20 @@ export class Queries {
     return this.positions[Symbol.iterator]();
   }
 }
+
+/**
+ * Returns column query positions mapped by their log size.
+ * Port of `get_query_positions_by_log_size` from Rust.
+ */
+export function get_query_positions_by_log_size(
+  queries: Queries,
+  column_log_sizes: Set<number>,
+): Map<number, number[]> {
+  const res = new Map<number, number[]>();
+  const sorted = Array.from(column_log_sizes).sort((a, b) => b - a);
+  for (const logSize of sorted) {
+    const folded = queries.fold(queries.log_domain_size - logSize);
+    res.set(logSize, folded.positions);
+  }
+  return res;
+}

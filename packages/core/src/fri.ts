@@ -1635,7 +1635,7 @@ export class FriConfig {
 }
 
 import { QM31 as SecureField } from "./fields/qm31";
-import { Queries } from "./queries";
+import { Queries, get_query_positions_by_log_size } from "./queries";
 
 // Placeholder types for FriOps dependencies
 // TODO(Jules): Refine these placeholder types. For example, TypescriptBaseField should be replaced with the actual BaseField type (e.g., M31).
@@ -3169,25 +3169,6 @@ export function accumulate_line(
     layer_query_evals[i] = layer_query_evals[i].mul(folding_alpha_squared).add(column_query_evals[i]);
   }
 }
-
-/**
- * Returns column query positions mapped by their log size.
- * Mirrors `get_query_positions_by_log_size` from Rust.
- */
-export function get_query_positions_by_log_size(
-  queries: TypescriptQueries, 
-  column_log_sizes: Set<number>, 
-): Map<number, number[]> {
-  const res = new Map<number, number[]>();
-  const tsQueries = queries as TypescriptQueriesImpl; 
-  // TODO(Jules): Ensure `queries.fold()` is correctly implemented in `TypescriptQueriesImpl`.
-  for (const logSize of Array.from(column_log_sizes).sort((a,b) => b-a)) { 
-    const folded = tsQueries.fold(tsQueries.log_domain_size - logSize);
-    res.set(logSize, folded.positions);
-  }
-  return res;
-}
-
 
 // fn compute_decommitment_positions_and_witness_evals(
 //     column: &SecureColumnByCoords<impl PolyOps>,

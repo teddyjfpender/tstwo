@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { commitOnLayer } from "../../src/backend/cpu/blake2";
 import { M31 } from "../../src/fields/m31";
-import { blake2s } from '@noble/hashes/blake2';
+import { createHash } from 'crypto';
 
 function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8Array[] {
   if (!columns.length || !columns[0]?.length) {
@@ -32,7 +32,7 @@ function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8
       }
       message = bytes;
     }
-    result[i] = blake2s(message, { dkLen: 32 });
+    result[i] = createHash('blake2s256').update(message).digest();
   }
   return result;
 }

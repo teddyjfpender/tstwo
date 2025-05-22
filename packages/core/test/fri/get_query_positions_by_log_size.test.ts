@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { Queries } from "../../src/queries";
-import { get_query_positions_by_log_size } from "../../src/fri";
+import { get_query_positions_by_log_size } from "../../src/queries";
 
 describe("get_query_positions_by_log_size", () => {
   it("maps queries by column log size", () => {
