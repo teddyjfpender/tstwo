@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import {
   FriConfig,
   FriProver,
@@ -241,7 +241,7 @@ describe('FRI Tests', () => {
     
     // Use real channel operations
     const channelOps = new Blake2sMerkleChannel();
-    const mockBOps = { fold_line: jest.fn(), fold_circle_into_line: jest.fn(), decompose: jest.fn() } as any;
+    const mockBOps = { fold_line: vi.fn(), fold_circle_into_line: vi.fn(), decompose: vi.fn() } as any;
 
 
     expect(() => {
