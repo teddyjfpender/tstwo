@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sha256 } from '@noble/hashes/sha256.js';
+import { blake2s } from '@noble/hashes/blake2.js';
 import { M31 } from '../../src/fields/m31';
 import type { MerkleHasher, MerkleOps } from '../../src/vcs/ops';
 import { MerkleProver } from '../../src/vcs/prover';
@@ -7,7 +7,7 @@ import { MerkleVerifier } from '../../src/vcs/verifier';
 
 class SimpleHasher implements MerkleHasher<Uint8Array> {
   hashNode(children: [Uint8Array, Uint8Array] | undefined, values: readonly M31[]): Uint8Array {
-    const h = sha256.create();
+    const h = blake2s.create();
     if (children) {
       h.update(children[0]);
       h.update(children[1]);
