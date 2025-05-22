@@ -246,11 +246,8 @@ export class CircleDomain {
     if (i < this.halfCoset.size()) {
       return this.halfCoset.index_at(i);
     }
-    // Handle negation using a type cast since we don't know CirclePointIndex's internal API
     const index = this.halfCoset.index_at(i - this.halfCoset.size());
-    // Assuming CirclePointIndex supports negation in some way
-    // Use a type assertion to handle this for now
-    return -index as unknown as CirclePointIndex;
+    return index.neg();
   }
 
   /** Alias for Rust-style `index_at` method name. */
