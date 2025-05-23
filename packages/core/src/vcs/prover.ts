@@ -187,6 +187,7 @@ impl<H: MerkleHasher> MerkleDecommitment<H> {
 import type { MerkleHasher, MerkleOps } from './ops';
 import type { M31 as BaseField } from '../fields/m31';
 import type { MerkleDecommitment } from './verifier';
+import { nextDecommitmentNode, makePeekable, optionFlattenPeekable } from './utils';
 
 export class MerkleProver<Hash> {
   layers: Hash[][];
@@ -221,57 +222,75 @@ export class MerkleProver<Hash> {
     const queried: BaseField[] = [];
     const decommitment: MerkleDecommitment<Hash> = { hashWitness: [], columnWitness: [] };
 
-    const cols = [...columns].sort((a, b) => b.length - a.length);
-    let colIndex = 0;
-    let lastLayerQueries: number[] = [];
-    for (let layer = this.layers.length - 1; layer >= 0; layer--) {
-      const logSize = layer;
-      const layerCols: Array<readonly BaseField[]> = [];
-      while (colIndex < cols.length && Math.log2(cols[colIndex].length) === logSize) {
-        layerCols.push(cols[colIndex++]);
+    const sortedColumns = [...columns].sort((a, b) => b.length - a.length);
+    let colProcessingIndex = 0; // To keep track of processed columns from sortedColumns
+    
+    let lastLayerNodeIndices: number[] = []; // Stores node indices from current layer to be used as parent queries for next layer
+
+    // Iterate from the largest layer (leaves or near-leaves) down to the root layer.
+    // `this.layers` is ordered from root (index 0) to largest layer (index this.layers.length - 1).
+    // So, `layer` index corresponds to `logSize`.
+    for (let currentLayerLogSize = this.layers.length - 1; currentLayerLogSize >= 0; currentLayerLogSize--) {
+      const currentLayerActualCols: Array<readonly BaseField[]> = [];
+      while (colProcessingIndex < sortedColumns.length && Math.log2(sortedColumns[colProcessingIndex].length) === currentLayerLogSize) {
+        currentLayerActualCols.push(sortedColumns[colProcessingIndex++]);
       }
-      const prevHashes = this.layers[layer + 1];
 
-      const prevQueries = [...lastLayerQueries];
-      const layerQueries = [...(queriesPerLogSize.get(logSize) ?? [])];
-      let pi = 0, li = 0;
-      const layerTotal: number[] = [];
+      // Hashes of the child layer (layer with logSize = currentLayerLogSize + 1)
+      // These are used if a node's children were not part of lastLayerNodeIndices
+      const childLayerHashes = this.layers[currentLayerLogSize + 1]; // This will be undefined for the largest layer, handled by `if (childLayerHashes)`
 
-      while (pi < prevQueries.length || li < layerQueries.length) {
-        const candPrev = pi < prevQueries.length ? Math.floor(prevQueries[pi] / 2) : Infinity;
-        const candLayer = li < layerQueries.length ? layerQueries[li] : Infinity;
-        if (candPrev <= candLayer) {
-          // candidate from prev
+      const currentNodeIndicesForNextLayer: number[] = [];
+
+      const parentQueriesIter = makePeekable(lastLayerNodeIndices); // Queries propagated from the previous (smaller logSize) layer processing
+      const directLayerQueriesIter = optionFlattenPeekable(queriesPerLogSize.get(currentLayerLogSize));
+
+      let nodeIndex: number | undefined;
+      while ((nodeIndex = nextDecommitmentNode(parentQueriesIter, directLayerQueriesIter)) !== undefined) {
+        // Process Child Hashes (if not leaf layer, i.e., if childLayerHashes exist)
+        if (childLayerHashes) {
+            // Determine if left child (2 * nodeIndex) was a result of a query from the parent perspective
+            if (parentQueriesIter.peek() === 2 * nodeIndex) {
+                parentQueriesIter.next(); // Consumed from parent layer calculations, hash already known by verifier implicitly
+            } else {
+                // Left child's hash needs to be added to witness
+                if (childLayerHashes[2 * nodeIndex] === undefined) {
+                    throw new Error(`MerkleProver.decommit: childLayerHashes[${2 * nodeIndex}] is undefined. Layer logSize: ${currentLayerLogSize}, nodeIndex: ${nodeIndex}`);
+                }
+                decommitment.hashWitness.push(childLayerHashes[2 * nodeIndex]);
+            }
+
+            // Determine if right child (2 * nodeIndex + 1) was a result of a query from the parent perspective
+            if (parentQueriesIter.peek() === 2 * nodeIndex + 1) {
+                parentQueriesIter.next(); // Consumed from parent layer calculations
+            } else {
+                // Right child's hash needs to be added to witness
+                if (childLayerHashes[2 * nodeIndex + 1] === undefined) {
+                    throw new Error(`MerkleProver.decommit: childLayerHashes[${2 * nodeIndex + 1}] is undefined. Layer logSize: ${currentLayerLogSize}, nodeIndex: ${nodeIndex}`);
+                }
+                decommitment.hashWitness.push(childLayerHashes[2 * nodeIndex + 1]);
+            }
         }
-        const nodeIndex = Math.min(candPrev, candLayer);
 
-        if (prevHashes) {
-          if (pi < prevQueries.length && prevQueries[pi] === 2 * nodeIndex) {
-            pi++;
-          } else {
-            decommitment.hashWitness.push(prevHashes[2 * nodeIndex]);
-          }
-          if (pi < prevQueries.length && prevQueries[pi] === 2 * nodeIndex + 1) {
-            pi++;
-          } else {
-            decommitment.hashWitness.push(prevHashes[2 * nodeIndex + 1]);
-          }
+        // Process Column Values for the current nodeIndex
+        // currentLayerActualCols are the columns relevant to the current layer (currentLayerLogSize)
+        const nodeValues = currentLayerActualCols.map(c => c[nodeIndex]);
+        if (nodeValues.some(val => val === undefined)) {
+             throw new Error(`MerkleProver.decommit: Column value at nodeIndex ${nodeIndex} is undefined for one of the currentLayerActualCols. Layer logSize: ${currentLayerLogSize}`);
         }
 
-        const nodeValues = layerCols.map(c => c[nodeIndex]);
-        if (li < layerQueries.length && layerQueries[li] === nodeIndex) {
-          li++;
-          queried.push(...nodeValues);
+        // Check if this node was directly queried at this layer
+        if (directLayerQueriesIter.peek() === nodeIndex) {
+            directLayerQueriesIter.next(); // Consumed from direct layer queries
+            queried.push(...nodeValues);
         } else {
-          decommitment.columnWitness.push(...nodeValues);
+            // If not directly queried, its column values go into the witness
+            decommitment.columnWitness.push(...nodeValues);
         }
-
-        layerTotal.push(nodeIndex);
+        currentNodeIndicesForNextLayer.push(nodeIndex);
       }
-
-      lastLayerQueries = layerTotal;
+      lastLayerNodeIndices = currentNodeIndicesForNextLayer;
     }
-
     return [queried, decommitment];
   }
 

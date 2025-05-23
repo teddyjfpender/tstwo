@@ -318,14 +318,16 @@ export class MerkleVerifier<Hash> {
     }
 
     const computedRoot = lastLayerHashes![0][1];
-    // naive comparison using JSON since Hash can be Uint8Array
-    const equal =
-      (computedRoot as any) instanceof Uint8Array && (this.root as any) instanceof Uint8Array
-        ? Buffer.from(computedRoot as unknown as Uint8Array).equals(
-            Buffer.from(this.root as unknown as Uint8Array),
-          )
-        : (computedRoot as any) === this.root;
-    if (!equal) {
+    // Assuming computedRoot and this.root are instances of a class that implements HashLike,
+    // which includes an equals method (e.g., Blake2sHash).
+    if (!(computedRoot as any).equals || typeof (computedRoot as any).equals !== 'function') {
+      throw new Error('Computed root does not have an equals method for comparison.');
+    }
+    if (!(this.root as any).equals || typeof (this.root as any).equals !== 'function') {
+      throw new Error('Expected root does not have an equals method for comparison.');
+    }
+
+    if (!(computedRoot as any).equals(this.root)) {
       throw new Error(MerkleVerificationError.RootMismatch);
     }
   }
