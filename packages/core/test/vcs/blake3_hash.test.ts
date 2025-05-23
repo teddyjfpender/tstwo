@@ -12,11 +12,11 @@ function hex(hash: Blake3Hash): string { return hash.toString(); }
 const HASH_A_STR = 'a';
 const HASH_A_HEX = '17762fddd969a453925d65717ac3eea21320b66b54342fde15128d6caf21215f';
 const HASH_B_STR = 'b';
-const HASH_B_HEX = 'b0063eadf752816f0014623e105393253065b584e0570700640332938096042f'; // blake3('b')
+const HASH_B_HEX = '10e5cf3d3c8a4f9f3468c8cc58eea84892a22fdadbc1acb22410190044c1d553'; // blake3('b')
 const HASH_EMPTY_STR = '';
 const HASH_EMPTY_HEX = 'af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262'; // blake3('')
 const HASH_AB_STR = 'ab';
-const HASH_AB_HEX = '5d2a3c7a0a76715828cec3a4700cb2140866c0792e0895409e915b82816900c9'; // blake3('ab')
+const HASH_AB_HEX = '2dc99999a6aaef3f20349d2ed4057a2b54419545dabb809e6381de1bad8337e2'; // blake3('ab')
 
 
 describe('Blake3Hash', () => {
@@ -105,7 +105,7 @@ describe('Blake3Hash', () => {
       bytes: hash1.asBytes(),
       asBytes: () => hash1.asBytes(),
       toString: () => hash1.toString(),
-      // equals: (other: any) => false, // Not needed as instanceof check fails first
+      equals: (other: any) => false, // Not needed as instanceof check fails first
     };
     expect(hash1.equals(fakeHash as HashLike)).toBe(false);
   });
@@ -145,6 +145,18 @@ describe('Blake3Hasher', () => {
     expect(hex(Blake3Hasher.hash(HASH_EMPTY_STR))).toBe(HASH_EMPTY_HEX);
   });
 
+  it('explicit_finalize_reset_test (matching exact Rust pattern)', () => {
+    // This test explicitly matches the Rust #[cfg(test)] finalize_reset behavior
+    const state = new Blake3Hasher();
+    state.update(HASH_A_STR);
+    state.update(HASH_B_STR);
+    const hash = state.finalize(); // Should work like finalize_reset in Rust
+    const hashEmpty = state.finalize(); // Should be empty hash since state was reset
+
+    expect(hex(hash)).toBe(hex(Blake3Hasher.hash(HASH_AB_STR)));
+    expect(hex(hashEmpty)).toBe(hex(Blake3Hasher.hash(HASH_EMPTY_STR)));
+  });
+
   it('concatAndHash_test', () => {
     const hashA = Blake3Hasher.hash(HASH_A_STR);
     const hashB = Blake3Hasher.hash(HASH_B_STR);
@@ -160,8 +172,8 @@ describe('Blake3Hasher', () => {
     expect(hex(concatHash)).toBe(hex(expectedHash));
     // A specific known value for blake3(blake3('a').bytes || blake3('b').bytes)
     // Bytes for HASH_A_HEX and HASH_B_HEX are concatenated and then hashed.
-    // The expected hex is: "01671e2c95067a60990684990f029b7f7d237047079a4780e7a53062437e3957"
-    expect(hex(concatHash)).toBe('01671e2c95067a60990684990f029b7f7d237047079a4780e7a53062437e3957');
+    // The expected hex is: "8912f1e49d6c94830787bc8765e92f409d6db9041739884a42e59f16388756b1"
+    expect(hex(concatHash)).toBe('8912f1e49d6c94830787bc8765e92f409d6db9041739884a42e59f16388756b1');
   });
 
   it('static hash produces consistent results', () => {

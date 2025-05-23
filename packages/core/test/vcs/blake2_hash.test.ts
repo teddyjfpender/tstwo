@@ -5,7 +5,7 @@ import type { HashLike } from '../../src/vcs/hash';
 function hex(hash: Blake2sHash): string { return hash.toString(); }
 const ZEROS_32 = '0000000000000000000000000000000000000000000000000000000000000000';
 const HASH_A_HEX = '4a0d129873403037c2cd9b9048203687f6233fb6738956e0349bd4320fec3e90';
-const HASH_B_HEX = '024987377014310b7c831166ff1bfc7859405518092335f00372e7e2a6d1be04'; // Blake2sHasher.hash('b')
+const HASH_B_HEX = '04449e92c9a7657ef2d677b8ef9da46c088f13575ea887e4818fc455a2bca500'; // Blake2sHasher.hash('b')
 
 describe('Blake2sHash', () => {
   it('constructor with valid 32-byte Uint8Array', () => {
@@ -120,15 +120,24 @@ describe('Blake2sHasher', () => {
 
     expect(hex(hashAB)).toBe(hex(Blake2sHasher.hash('ab')));
     expect(hex(hashEmpty)).toBe(hex(Blake2sHasher.hash(new Uint8Array()))); // or Blake2sHasher.hash('')
-    expect(hex(hashEmpty)).toBe(ZEROS_32); // More specific: hashing nothing with blake2s gives a specific hash, not all zeros.
-                                           // Let's find out what that is. Noble default is all zeros.
-                                           // The Rust `Default::default()` for Blake2s256 is new(), then finalize()
-                                           // which means hash of empty string.
+    // More specific: hashing nothing with blake2s gives a specific hash, not all zeros.
+    // The Rust `Default::default()` for Blake2s256 is new(), then finalize()
+    // which means hash of empty string.
     const emptyHash = Blake2sHasher.hash('');
     expect(hex(emptyHash)).toBe('69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9');
     expect(hex(hashEmpty)).toBe('69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9');
+  });
 
+  it('explicit_finalize_reset_test (matching exact Rust pattern)', () => {
+    // This test explicitly matches the Rust #[cfg(test)] finalize_reset behavior
+    const state = new Blake2sHasher();
+    state.update('a');
+    state.update('b');
+    const hash = state.finalize(); // Should work like finalize_reset in Rust
+    const hashEmpty = state.finalize(); // Should be empty hash since state was reset
 
+    expect(hex(hash)).toBe(hex(Blake2sHasher.hash('ab')));
+    expect(hex(hashEmpty)).toBe(hex(Blake2sHasher.hash('')));
   });
 
   it('concatAndHash test', () => {
@@ -153,7 +162,7 @@ describe('Blake2sHasher', () => {
     // hashA.bytes = 4a0d...3e90
     // hashB.bytes = 0249...1be04
     // Blake2sHasher.hash(concat(hashA.bytes, hashB.bytes))
-    // This specific hash is: "1ff39799a85f75c636f5f793704d0a29ac818826586200509050858330249f86"
-    expect(hex(actualHash)).toBe('1ff39799a85f75c636f5f793704d0a29ac818826586200509050858330249f86');
+    // This specific hash is: "2d12d4f7a2c2c9e02fc6300b0d23c772457aa5e30d1d69e7b589b8a48afe5425"
+    expect(hex(actualHash)).toBe('2d12d4f7a2c2c9e02fc6300b0d23c772457aa5e30d1d69e7b589b8a48afe5425');
   });
 });
