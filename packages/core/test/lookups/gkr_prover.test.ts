@@ -393,7 +393,8 @@ describe('GKR Prover', () => {
       expect(oracle.isConstant()).toBe(false);
       
       // Create output layer oracle with proper setup
-      const outputMle = createTestMle([SecureField.one()]);
+      // Need 2 elements for layer to have 1 variable, so oracle has 0 variables (constant)
+      const outputMle = createTestMle([SecureField.one(), SecureField.zero()]);
       const outputLayer: Layer = { type: 'GrandProduct', data: outputMle };
       const emptyEqEvals = EqEvals.generate([]); // Empty y for output layer
       const outputOracle = new GkrMultivariatePolyOracle(
@@ -424,7 +425,8 @@ describe('GKR Prover', () => {
 
     it('should try into mask for constant oracle', () => {
       // Create output layer oracle with proper setup for constant detection
-      const outputMle = createTestMle([SecureField.from(BaseField.from(42))]);
+      // Need 2 elements for layer to have 1 variable, so oracle has 0 variables (constant)
+      const outputMle = createTestMle([SecureField.from(BaseField.from(42)), SecureField.from(BaseField.from(24))]);
       const outputLayer: Layer = { type: 'GrandProduct', data: outputMle };
       const emptyEqEvals = EqEvals.generate([]); // Empty y for output layer
       const outputOracle = new GkrMultivariatePolyOracle(

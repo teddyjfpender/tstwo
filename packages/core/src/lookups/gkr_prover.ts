@@ -1,3 +1,662 @@
+import type { MultivariatePolyOracle } from './sumcheck';
+import { Mle } from './mle';
+import { UnivariatePoly, eq, randomLinearCombination } from './utils';
+import { GkrArtifact, GkrBatchProof, GkrMask } from './gkr_verifier';
+import { proveBatch as sumcheckProveBatch } from './sumcheck';
+import type { Channel } from '../channel';
+import { M31 as BaseField } from '../fields/m31';
+import { QM31 as SecureField } from '../fields/qm31';
+
+// TODO(Sonnet4): when the dependency on backend system is available, implement GkrOps trait and backend abstractions
+
+/**
+ * TypeScript interface equivalent to Rust trait GkrOps
+ * Provides operations for GKR proving with MLE operations on both BaseField and SecureField
+ */
+export interface GkrOps {
+  /**
+   * Returns evaluations `eq(x, y) * v` for all `x` in `{0, 1}^n`.
+   * 
+   * Note [`Mle`] stores values in bit-reversed order.
+   */
+  genEqEvals(y: SecureField[], v: SecureField): Mle<SecureField>;
+
+  /**
+   * Generates the next GKR layer from the current one.
+   */
+  nextLayer(layer: Layer): Layer;
+
+  /**
+   * Returns univariate polynomial `f(t) = sum_x h(t, x)` for all `x` in the boolean hypercube.
+   * 
+   * `claim` equals `f(0) + f(1)`.
+   */
+  sumAsPolyInFirstVariable(h: GkrMultivariatePolyOracle, claim: SecureField): UnivariatePoly<SecureField>;
+}
+
+/**
+ * Stores evaluations of [`eq(x, y)`] on all boolean hypercube points of the form
+ * `x = (0, x_1, ..., x_{n-1})`.
+ *
+ * Evaluations are stored in bit-reversed order i.e. `evals[0] = eq((0, ..., 0, 0), y)`,
+ * `evals[1] = eq((0, ..., 0, 1), y)`, etc.
+ */
+export class EqEvals {
+  public readonly y: SecureField[];
+  public readonly evals: Mle<SecureField>;
+
+  constructor(y: SecureField[], evals: Mle<SecureField>) {
+    this.y = [...y];
+    this.evals = evals;
+  }
+
+  /**
+   * Generates EqEvals for the given y vector.
+   * Currently returns a simplified implementation - full implementation requires GkrOps backend.
+   */
+  static generate(y: SecureField[]): EqEvals {
+    const yVec = [...y];
+
+    if (yVec.length === 0) {
+      const evals = new Mle([SecureField.one()]);
+      return new EqEvals(yVec, evals);
+    }
+
+    // TODO(Sonnet4): when the dependency on GkrOps backend is available, implement proper eq evaluation generation
+    // For now, create a simple placeholder that maintains the correct structure
+    const evalCount = 1 << (yVec.length - 1);
+    const evalArray = new Array(evalCount).fill(SecureField.zero());
+    const evals = new Mle(evalArray);
+    
+    return new EqEvals(yVec, evals);
+  }
+
+  /**
+   * Returns the fixed vector `y` used to generate the evaluations.
+   */
+  getY(): SecureField[] {
+    return [...this.y];
+  }
+
+  /**
+   * Get evaluation at index (delegates to underlying Mle).
+   */
+  at(index: number): SecureField {
+    return this.evals.at(index);
+  }
+
+  /**
+   * Get length (delegates to underlying Mle).
+   */
+  len(): number {
+    return this.evals.len();
+  }
+}
+
+/**
+ * Represents a layer in a binary tree structured GKR circuit.
+ *
+ * Layers can contain multiple columns, for example [LogUp] which has separate columns for
+ * numerators and denominators.
+ *
+ * [LogUp]: https://eprint.iacr.org/2023/1284.pdf
+ */
+export type Layer = 
+  | { type: 'GrandProduct'; data: Mle<SecureField> }
+  | { 
+      type: 'LogUpGeneric'; 
+      numerators: Mle<SecureField>; 
+      denominators: Mle<SecureField> 
+    }
+  | { 
+      type: 'LogUpMultiplicities'; 
+      numerators: Mle<BaseField>; 
+      denominators: Mle<SecureField> 
+    }
+  | { 
+      type: 'LogUpSingles'; 
+      denominators: Mle<SecureField> 
+    };
+
+/**
+ * Helper functions for Layer operations
+ */
+export namespace Layer {
+  /**
+   * Returns the number of variables used to interpolate the layer's gate values.
+   */
+  export function nVariables(layer: Layer): number {
+    switch (layer.type) {
+      case 'GrandProduct':
+        return layer.data.nVariables();
+      case 'LogUpGeneric':
+        return layer.denominators.nVariables();
+      case 'LogUpMultiplicities':
+        return layer.denominators.nVariables();
+      case 'LogUpSingles':
+        return layer.denominators.nVariables();
+    }
+  }
+
+  /**
+   * Checks if this is an output layer (0 variables).
+   */
+  export function isOutputLayer(layer: Layer): boolean {
+    return nVariables(layer) === 0;
+  }
+
+  /**
+   * Produces the next layer from the current layer.
+   * Returns null if called on an output layer.
+   */
+  export function nextLayer(layer: Layer): Layer | null {
+    if (isOutputLayer(layer)) {
+      return null;
+    }
+
+    // TODO(Sonnet4): when the dependency on GkrOps backend is available, implement proper next layer generation
+    throw new Error('nextLayer requires GkrOps backend implementation');
+  }
+
+  /**
+   * Returns each column output if the layer is an output layer, otherwise throws an error.
+   */
+  export function tryIntoOutputLayerValues(layer: Layer): SecureField[] {
+    if (!isOutputLayer(layer)) {
+      throw new NotOutputLayerError();
+    }
+
+    switch (layer.type) {
+      case 'LogUpSingles': {
+        const numerator = SecureField.one();
+        const denominator = layer.denominators.at(0);
+        return [numerator, denominator];
+      }
+      case 'LogUpMultiplicities': {
+        const numerator = SecureField.from(layer.numerators.at(0));
+        const denominator = layer.denominators.at(0);
+        return [numerator, denominator];
+      }
+      case 'LogUpGeneric': {
+        const numerator = layer.numerators.at(0);
+        const denominator = layer.denominators.at(0);
+        return [numerator, denominator];
+      }
+      case 'GrandProduct': {
+        return [layer.data.at(0)];
+      }
+    }
+  }
+
+  /**
+   * Returns a transformed layer with the first variable of each column fixed to `assignment`.
+   */
+  export function fixFirstVariable(layer: Layer, x0: SecureField): Layer {
+    if (nVariables(layer) === 0) {
+      return layer;
+    }
+
+    switch (layer.type) {
+      case 'GrandProduct':
+        return { type: 'GrandProduct', data: layer.data.fixFirstVariable(x0) };
+      case 'LogUpGeneric':
+        return {
+          type: 'LogUpGeneric',
+          numerators: layer.numerators.fixFirstVariable(x0),
+          denominators: layer.denominators.fixFirstVariable(x0),
+        };
+      case 'LogUpMultiplicities':
+        // Note: converts to LogUpGeneric when fixing first variable
+        return {
+          type: 'LogUpGeneric',
+          numerators: new Mle(layer.numerators.intoEvals().map(f => SecureField.from(f))).fixFirstVariable(x0),
+          denominators: layer.denominators.fixFirstVariable(x0),
+        };
+      case 'LogUpSingles':
+        return {
+          type: 'LogUpSingles',
+          denominators: layer.denominators.fixFirstVariable(x0),
+        };
+    }
+  }
+
+  /**
+   * Represents the next GKR layer evaluation as a multivariate polynomial which uses this GKR
+   * layer as input.
+   */
+  export function intoMultivariatePolyOracle(
+    layer: Layer,
+    lambda: SecureField,
+    eqEvals: EqEvals
+  ): GkrMultivariatePolyOracle {
+    return new GkrMultivariatePolyOracle(
+      eqEvals,
+      layer,
+      SecureField.one(),
+      lambda
+    );
+  }
+
+  /**
+   * Returns a copy of this layer converted to use simple arrays (CPU backend equivalent).
+   */
+  export function toCpu(layer: Layer): Layer {
+    switch (layer.type) {
+      case 'GrandProduct':
+        return { type: 'GrandProduct', data: new Mle(layer.data.intoEvals()) };
+      case 'LogUpGeneric':
+        return {
+          type: 'LogUpGeneric',
+          numerators: new Mle(layer.numerators.intoEvals()),
+          denominators: new Mle(layer.denominators.intoEvals()),
+        };
+      case 'LogUpMultiplicities':
+        return {
+          type: 'LogUpMultiplicities',
+          numerators: new Mle(layer.numerators.intoEvals()),
+          denominators: new Mle(layer.denominators.intoEvals()),
+        };
+      case 'LogUpSingles':
+        return {
+          type: 'LogUpSingles',
+          denominators: new Mle(layer.denominators.intoEvals()),
+        };
+    }
+  }
+}
+
+/**
+ * Error returned when a layer is expected to be an output layer but it is not.
+ */
+export class NotOutputLayerError extends Error {
+  constructor() {
+    super('Layer is not an output layer');
+    this.name = 'NotOutputLayerError';
+  }
+}
+
+/**
+ * Multivariate polynomial `P` that expresses the relation between two consecutive GKR layers.
+ *
+ * When the input layer is [`Layer::GrandProduct`] (represented by multilinear column `inp`)
+ * the polynomial represents:
+ *
+ * ```text
+ * P(x) = eq(x, y) * inp(x, 0) * inp(x, 1)
+ * ```
+ *
+ * When the input layer is LogUp (represented by multilinear columns `inp_numer` and
+ * `inp_denom`) the polynomial represents:
+ *
+ * ```text
+ * numer(x) = inp_numer(x, 0) * inp_denom(x, 1) + inp_numer(x, 1) * inp_denom(x, 0)
+ * denom(x) = inp_denom(x, 0) * inp_denom(x, 1)
+ *
+ * P(x) = eq(x, y) * (numer(x) + lambda * denom(x))
+ * ```
+ */
+export class GkrMultivariatePolyOracle implements MultivariatePolyOracle {
+  constructor(
+    /** `eq_evals` passed by `Layer::into_multivariate_poly()`. */
+    public readonly eqEvals: EqEvals,
+    public readonly inputLayer: Layer,
+    public readonly eqFixedVarCorrection: SecureField,
+    /** Used by LogUp to perform a random linear combination of the numerators and denominators. */
+    public readonly lambda: SecureField
+  ) {}
+
+  nVariables(): number {
+    return Layer.nVariables(this.inputLayer) - 1;
+  }
+
+  sumAsPolyInFirstVariable(claim: SecureField): UnivariatePoly<SecureField> {
+    // TODO(Sonnet4): when the dependency on GkrOps backend is available, implement proper sum calculation
+    throw new Error('sumAsPolyInFirstVariable requires GkrOps backend implementation');
+  }
+
+  fixFirstVariable(challenge: SecureField): GkrMultivariatePolyOracle {
+    if (this.isConstant()) {
+      return this;
+    }
+
+    const y = this.eqEvals.getY();
+    const z0 = y[y.length - this.nVariables()];
+    if (z0 === undefined) {
+      throw new Error('Invalid y vector access');
+    }
+    
+    const eqFixedVarCorrection = this.eqFixedVarCorrection.mul(eq([challenge], [z0]));
+
+    return new GkrMultivariatePolyOracle(
+      this.eqEvals,
+      Layer.fixFirstVariable(this.inputLayer, challenge),
+      eqFixedVarCorrection,
+      this.lambda
+    );
+  }
+
+  /**
+   * Checks if this oracle represents a constant polynomial.
+   */
+  isConstant(): boolean {
+    return this.nVariables() === 0;
+  }
+
+  /**
+   * Returns all input layer columns restricted to a line.
+   * 
+   * If this oracle represents a constant, then each column restricted to line is returned.
+   * Otherwise, throws an error.
+   */
+  tryIntoMask(): GkrMask {
+    if (!this.isConstant()) {
+      throw new NotConstantPolyError();
+    }
+
+    let columns: Array<[SecureField, SecureField]>;
+
+    switch (this.inputLayer.type) {
+      case 'GrandProduct': {
+        // TODO(Sonnet4): when the dependency on CPU backend conversion is available, implement proper conversion
+        // For now, create placeholder values
+        const col = this.inputLayer.data.intoEvals();
+        if (col.length < 2) {
+          throw new Error('GrandProduct layer must have at least 2 evaluations');
+        }
+        columns = [[col[0]!, col[1]!]];
+        break;
+      }
+      case 'LogUpGeneric': {
+        const numerators = this.inputLayer.numerators.intoEvals();
+        const denominators = this.inputLayer.denominators.intoEvals();
+        if (numerators.length < 2 || denominators.length < 2) {
+          throw new Error('LogUpGeneric layer must have at least 2 evaluations per column');
+        }
+        columns = [
+          [numerators[0]!, numerators[1]!],
+          [denominators[0]!, denominators[1]!]
+        ];
+        break;
+      }
+      case 'LogUpMultiplicities': {
+        throw new Error('LogUpMultiplicities should never reach tryIntoMask');
+      }
+      case 'LogUpSingles': {
+        const denominators = this.inputLayer.denominators.intoEvals();
+        if (denominators.length < 2) {
+          throw new Error('LogUpSingles layer must have at least 2 evaluations');
+        }
+        const numerators: [SecureField, SecureField] = [SecureField.one(), SecureField.one()];
+        columns = [
+          numerators,
+          [denominators[0]!, denominators[1]!]
+        ];
+        break;
+      }
+    }
+
+    return GkrMask.new(columns);
+  }
+
+  /**
+   * Returns a copy of this oracle converted to use simple arrays (CPU backend equivalent).
+   */
+  toCpu(): GkrMultivariatePolyOracle {
+    // TODO(Sonnet4): when the dependency on CPU backend conversion is available, implement proper conversion
+    const nEqEvals = 1 << (this.nVariables() - 1);
+    const evalArray = new Array(nEqEvals);
+    for (let i = 0; i < nEqEvals; i++) {
+      evalArray[i] = this.eqEvals.at(i);
+    }
+    
+    const cpuEqEvals = new EqEvals(this.eqEvals.getY(), new Mle(evalArray));
+
+    return new GkrMultivariatePolyOracle(
+      cpuEqEvals,
+      Layer.toCpu(this.inputLayer),
+      this.eqFixedVarCorrection,
+      this.lambda
+    );
+  }
+}
+
+/**
+ * Error returned when a polynomial is expected to be constant but it is not.
+ */
+export class NotConstantPolyError extends Error {
+  constructor() {
+    super('Polynomial is not constant');
+    this.name = 'NotConstantPolyError';
+  }
+}
+
+/**
+ * Batch proves lookup circuits with GKR.
+ *
+ * The input layers should be committed to the channel before calling this function.
+ * GKR algorithm: <https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf> (page 64)
+ */
+export function proveBatch(
+  channel: Channel,
+  inputLayerByInstance: Layer[]
+): [GkrBatchProof, GkrArtifact] {
+  const nInstances = inputLayerByInstance.length;
+  const nLayersByInstance = inputLayerByInstance.map(l => Layer.nVariables(l));
+  const nLayers = Math.max(...nLayersByInstance);
+
+  // Evaluate all instance circuits and collect the layer values.
+  const layersByInstance = inputLayerByInstance.map(inputLayer => {
+    const layers = genLayers(inputLayer);
+    return layers.reverse()[Symbol.iterator]();
+  });
+
+  const outputClaimsByInstance: Array<SecureField[] | null> = new Array(nInstances).fill(null);
+  const layerMasksByInstance: GkrMask[][] = Array.from({ length: nInstances }, () => []);
+  const sumcheckProofs: any[] = [];
+
+  let oodPoint: SecureField[] = [];
+  const claimsToVerifyByInstance: Array<SecureField[] | null> = new Array(nInstances).fill(null);
+
+  for (let layer = 0; layer < nLayers; layer++) {
+    const nRemainingLayers = nLayers - layer;
+
+    // Check all the instances for output layers.
+    for (let instance = 0; instance < nInstances; instance++) {
+      if (nLayersByInstance[instance] === nRemainingLayers) {
+        const layerIterator = layersByInstance[instance];
+        if (layerIterator === undefined) {
+          throw new Error(`Layer iterator undefined for instance ${instance}`);
+        }
+        const nextLayerResult = layerIterator.next();
+        if (nextLayerResult.done) {
+          throw new Error(`No more layers for instance ${instance}`);
+        }
+        const outputLayer = nextLayerResult.value;
+        const outputLayerValues = Layer.tryIntoOutputLayerValues(outputLayer);
+        claimsToVerifyByInstance[instance] = [...outputLayerValues];
+        outputClaimsByInstance[instance] = outputLayerValues;
+      }
+    }
+
+    // Seed the channel with layer claims.
+    for (const claimsToVerify of claimsToVerifyByInstance) {
+      if (claimsToVerify !== null) {
+        channel.mix_felts(claimsToVerify);
+      }
+    }
+
+    const eqEvals = EqEvals.generate(oodPoint);
+    const sumcheckAlpha = channel.draw_felt();
+    const instanceLambda = channel.draw_felt();
+
+    const sumcheckOracles: GkrMultivariatePolyOracle[] = [];
+    const sumcheckClaims: SecureField[] = [];
+    const sumcheckInstances: number[] = [];
+
+    // Create the multivariate polynomial oracles used with sumcheck.
+    for (let instance = 0; instance < claimsToVerifyByInstance.length; instance++) {
+      const claimsToVerify = claimsToVerifyByInstance[instance];
+      if (claimsToVerify !== null) {
+        const layerIterator = layersByInstance[instance];
+        if (layerIterator === undefined) {
+          throw new Error(`Layer iterator undefined for instance ${instance}`);
+        }
+        const nextLayerResult = layerIterator.next();
+        if (nextLayerResult.done) {
+          throw new Error(`No more layers for instance ${instance}`);
+        }
+        const currentLayer = nextLayerResult.value;
+        
+        sumcheckOracles.push(Layer.intoMultivariatePolyOracle(currentLayer, instanceLambda, eqEvals));
+        sumcheckClaims.push(randomLinearCombination(claimsToVerify as SecureField[], instanceLambda));
+        sumcheckInstances.push(instance);
+      }
+    }
+
+    const [sumcheckProof, sumcheckOodPoint, constantPolyOracles] = 
+      sumcheckProveBatch(sumcheckClaims, sumcheckOracles, sumcheckAlpha, channel);
+
+    sumcheckProofs.push(sumcheckProof);
+
+    const masks = constantPolyOracles.map(oracle => oracle.tryIntoMask());
+
+    // Seed the channel with the layer masks.
+    for (let i = 0; i < sumcheckInstances.length; i++) {
+      const instance = sumcheckInstances[i];
+      const mask = masks[i];
+      if (instance === undefined || mask === undefined) {
+        throw new Error(`Invalid instance or mask at index ${i}`);
+      }
+      
+      const flattenedColumns = mask.columns().flat();
+      channel.mix_felts(flattenedColumns);
+      layerMasksByInstance[instance]!.push(mask);
+    }
+
+    const challenge = channel.draw_felt();
+    oodPoint = [...sumcheckOodPoint, challenge];
+
+    // Set the claims to prove in the layer above.
+    for (let i = 0; i < sumcheckInstances.length; i++) {
+      const instance = sumcheckInstances[i];
+      const mask = masks[i];
+      if (instance === undefined || mask === undefined) {
+        throw new Error(`Invalid instance or mask at index ${i}`);
+      }
+      claimsToVerifyByInstance[instance] = mask.reduceAtPoint(challenge);
+    }
+  }
+
+  const finalOutputClaimsByInstance = outputClaimsByInstance.map(claims => {
+    if (claims === null) {
+      throw new Error('Some output claims were not set during proving');
+    }
+    return claims;
+  });
+
+  const finalClaimsToVerifyByInstance = claimsToVerifyByInstance.map(claims => {
+    if (claims === null) {
+      throw new Error('Some claims were not set during proving');
+    }
+    return claims;
+  });
+
+  const proof = new GkrBatchProof(
+    sumcheckProofs,
+    layerMasksByInstance,
+    finalOutputClaimsByInstance
+  );
+
+  const artifact = new GkrArtifact(
+    oodPoint,
+    finalClaimsToVerifyByInstance,
+    nLayersByInstance
+  );
+
+  return [proof, artifact];
+}
+
+/**
+ * Executes the GKR circuit on the input layer and returns all the circuit's layers.
+ */
+function genLayers(inputLayer: Layer): Layer[] {
+  const nVariables = Layer.nVariables(inputLayer);
+  const layers: Layer[] = [];
+  
+  let currentLayer: Layer | null = inputLayer;
+  while (currentLayer !== null) {
+    layers.push(currentLayer);
+    currentLayer = Layer.nextLayer(currentLayer);
+  }
+  
+  if (layers.length !== nVariables + 1) {
+    throw new Error(`Expected ${nVariables + 1} layers, got ${layers.length}`);
+  }
+  
+  return layers;
+}
+
+/**
+ * Computes `r(t) = sum_x eq((t, x), y[-k:]) * p(t, x)` from evaluations of
+ * `f(t) = sum_x eq(({0}^(n - k), 0, x), y) * p(t, x)`.
+ *
+ * Note `claim` must equal `r(0) + r(1)` and `r` must have degree <= 3.
+ *
+ * For more context see `Layer::into_multivariate_poly()` docs.
+ * See also <https://ia.cr/2024/108> (section 3.2).
+ */
+export function correctSumAsPolyInFirstVariable(
+  fAt0: SecureField,
+  fAt2: SecureField,
+  claim: SecureField,
+  y: SecureField[],
+  k: number
+): UnivariatePoly<SecureField> {
+  if (k === 0) {
+    throw new Error('k must not be 0');
+  }
+  
+  const n = y.length;
+  if (k > n) {
+    throw new Error('k must not exceed y.length');
+  }
+
+  // We evaluated `f(0)` and `f(2)` - the inputs.
+  // We want to compute `r(t) = f(t) * eq(t, y[n - k]) / eq(0, y[:n - k + 1])`.
+  const zeros = new Array(n - k + 1).fill(SecureField.zero());
+  const aConst = eq(zeros, y.slice(0, n - k + 1)).inverse();
+
+  // Find the additional root of `r(t)`, by finding the root of `eq(t, y[n - k])`:
+  //    0 = eq(t, y[n - k])
+  //      = t * y[n - k] + (1 - t)(1 - y[n - k])
+  //      = 1 - y[n - k] - t(1 - 2 * y[n - k])
+  // => t = (1 - y[n - k]) / (1 - 2 * y[n - k])
+  //      = b
+  const yNMinusK = y[n - k];
+  if (yNMinusK === undefined) {
+    throw new Error(`Invalid index ${n - k} for y array of length ${n}`);
+  }
+  
+  const bConst = SecureField.one().sub(yNMinusK).div(SecureField.one().sub(yNMinusK.double()));
+
+  // We get that `r(t) = f(t) * eq(t, y[n - k]) * a`.
+  const rAt0 = fAt0.mul(eq([SecureField.zero()], [yNMinusK])).mul(aConst);
+  const rAt1 = claim.sub(rAt0);
+  const rAt2 = fAt2.mul(eq([SecureField.from(BaseField.from(2))], [yNMinusK])).mul(aConst);
+  const rAtB = SecureField.zero();
+
+  // Interpolate.
+  return UnivariatePoly.interpolateLagrange(
+    [
+      SecureField.zero(),
+      SecureField.one(),
+      SecureField.from(BaseField.from(2)),
+      bConst,
+    ],
+    [rAt0, rAt1, rAt2, rAtB]
+  );
+} 
+
 /*
 This is the Rust code from lookups/gkr_prover.rs that needs to be ported to Typescript in this lookups/gkr_prover.ts file:
 ```rs
@@ -569,661 +1228,3 @@ pub fn correct_sum_as_poly_in_first_variable(
 }
 ```
 */
-import type { MultivariatePolyOracle } from './sumcheck';
-import { Mle } from './mle';
-import { UnivariatePoly, eq, randomLinearCombination } from './utils';
-import { GkrArtifact, GkrBatchProof, GkrMask } from './gkr_verifier';
-import { proveBatch as sumcheckProveBatch } from './sumcheck';
-import type { Channel } from '../channel';
-import { M31 as BaseField } from '../fields/m31';
-import { QM31 as SecureField } from '../fields/qm31';
-
-// TODO(Sonnet4): when the dependency on backend system is available, implement GkrOps trait and backend abstractions
-
-/**
- * TypeScript interface equivalent to Rust trait GkrOps
- * Provides operations for GKR proving with MLE operations on both BaseField and SecureField
- */
-export interface GkrOps {
-  /**
-   * Returns evaluations `eq(x, y) * v` for all `x` in `{0, 1}^n`.
-   * 
-   * Note [`Mle`] stores values in bit-reversed order.
-   */
-  genEqEvals(y: SecureField[], v: SecureField): Mle<SecureField>;
-
-  /**
-   * Generates the next GKR layer from the current one.
-   */
-  nextLayer(layer: Layer): Layer;
-
-  /**
-   * Returns univariate polynomial `f(t) = sum_x h(t, x)` for all `x` in the boolean hypercube.
-   * 
-   * `claim` equals `f(0) + f(1)`.
-   */
-  sumAsPolyInFirstVariable(h: GkrMultivariatePolyOracle, claim: SecureField): UnivariatePoly<SecureField>;
-}
-
-/**
- * Stores evaluations of [`eq(x, y)`] on all boolean hypercube points of the form
- * `x = (0, x_1, ..., x_{n-1})`.
- *
- * Evaluations are stored in bit-reversed order i.e. `evals[0] = eq((0, ..., 0, 0), y)`,
- * `evals[1] = eq((0, ..., 0, 1), y)`, etc.
- */
-export class EqEvals {
-  public readonly y: SecureField[];
-  public readonly evals: Mle<SecureField>;
-
-  constructor(y: SecureField[], evals: Mle<SecureField>) {
-    this.y = [...y];
-    this.evals = evals;
-  }
-
-  /**
-   * Generates EqEvals for the given y vector.
-   * Currently returns a simplified implementation - full implementation requires GkrOps backend.
-   */
-  static generate(y: SecureField[]): EqEvals {
-    const yVec = [...y];
-
-    if (yVec.length === 0) {
-      const evals = new Mle([SecureField.one()]);
-      return new EqEvals(yVec, evals);
-    }
-
-    // TODO(Sonnet4): when the dependency on GkrOps backend is available, implement proper eq evaluation generation
-    // For now, create a simple placeholder that maintains the correct structure
-    const evalCount = 1 << (yVec.length - 1);
-    const evalArray = new Array(evalCount).fill(SecureField.zero());
-    const evals = new Mle(evalArray);
-    
-    return new EqEvals(yVec, evals);
-  }
-
-  /**
-   * Returns the fixed vector `y` used to generate the evaluations.
-   */
-  getY(): SecureField[] {
-    return [...this.y];
-  }
-
-  /**
-   * Get evaluation at index (delegates to underlying Mle).
-   */
-  at(index: number): SecureField {
-    return this.evals.at(index);
-  }
-
-  /**
-   * Get length (delegates to underlying Mle).
-   */
-  len(): number {
-    return this.evals.len();
-  }
-}
-
-/**
- * Represents a layer in a binary tree structured GKR circuit.
- *
- * Layers can contain multiple columns, for example [LogUp] which has separate columns for
- * numerators and denominators.
- *
- * [LogUp]: https://eprint.iacr.org/2023/1284.pdf
- */
-export type Layer = 
-  | { type: 'GrandProduct'; data: Mle<SecureField> }
-  | { 
-      type: 'LogUpGeneric'; 
-      numerators: Mle<SecureField>; 
-      denominators: Mle<SecureField> 
-    }
-  | { 
-      type: 'LogUpMultiplicities'; 
-      numerators: Mle<BaseField>; 
-      denominators: Mle<SecureField> 
-    }
-  | { 
-      type: 'LogUpSingles'; 
-      denominators: Mle<SecureField> 
-    };
-
-/**
- * Helper functions for Layer operations
- */
-export namespace Layer {
-  /**
-   * Returns the number of variables used to interpolate the layer's gate values.
-   */
-  export function nVariables(layer: Layer): number {
-    switch (layer.type) {
-      case 'GrandProduct':
-        return layer.data.nVariables();
-      case 'LogUpGeneric':
-        return layer.denominators.nVariables();
-      case 'LogUpMultiplicities':
-        return layer.denominators.nVariables();
-      case 'LogUpSingles':
-        return layer.denominators.nVariables();
-    }
-  }
-
-  /**
-   * Checks if this is an output layer (0 variables).
-   */
-  export function isOutputLayer(layer: Layer): boolean {
-    return nVariables(layer) === 0;
-  }
-
-  /**
-   * Produces the next layer from the current layer.
-   * Returns null if called on an output layer.
-   */
-  export function nextLayer(layer: Layer): Layer | null {
-    if (isOutputLayer(layer)) {
-      return null;
-    }
-
-    // TODO(Sonnet4): when the dependency on GkrOps backend is available, implement proper next layer generation
-    throw new Error('nextLayer requires GkrOps backend implementation');
-  }
-
-  /**
-   * Returns each column output if the layer is an output layer, otherwise throws an error.
-   */
-  export function tryIntoOutputLayerValues(layer: Layer): SecureField[] {
-    if (!isOutputLayer(layer)) {
-      throw new NotOutputLayerError();
-    }
-
-    switch (layer.type) {
-      case 'LogUpSingles': {
-        const numerator = SecureField.one();
-        const denominator = layer.denominators.at(0);
-        return [numerator, denominator];
-      }
-      case 'LogUpMultiplicities': {
-        const numerator = SecureField.from(layer.numerators.at(0));
-        const denominator = layer.denominators.at(0);
-        return [numerator, denominator];
-      }
-      case 'LogUpGeneric': {
-        const numerator = layer.numerators.at(0);
-        const denominator = layer.denominators.at(0);
-        return [numerator, denominator];
-      }
-      case 'GrandProduct': {
-        return [layer.data.at(0)];
-      }
-    }
-  }
-
-  /**
-   * Returns a transformed layer with the first variable of each column fixed to `assignment`.
-   */
-  export function fixFirstVariable(layer: Layer, x0: SecureField): Layer {
-    if (nVariables(layer) === 0) {
-      return layer;
-    }
-
-    switch (layer.type) {
-      case 'GrandProduct':
-        return { type: 'GrandProduct', data: layer.data.fixFirstVariable(x0) };
-      case 'LogUpGeneric':
-        return {
-          type: 'LogUpGeneric',
-          numerators: layer.numerators.fixFirstVariable(x0),
-          denominators: layer.denominators.fixFirstVariable(x0),
-        };
-      case 'LogUpMultiplicities':
-        // Note: converts to LogUpGeneric when fixing first variable
-        return {
-          type: 'LogUpGeneric',
-          numerators: new Mle(layer.numerators.intoEvals().map(f => SecureField.from(f))).fixFirstVariable(x0),
-          denominators: layer.denominators.fixFirstVariable(x0),
-        };
-      case 'LogUpSingles':
-        return {
-          type: 'LogUpSingles',
-          denominators: layer.denominators.fixFirstVariable(x0),
-        };
-    }
-  }
-
-  /**
-   * Represents the next GKR layer evaluation as a multivariate polynomial which uses this GKR
-   * layer as input.
-   */
-  export function intoMultivariatePolyOracle(
-    layer: Layer,
-    lambda: SecureField,
-    eqEvals: EqEvals
-  ): GkrMultivariatePolyOracle {
-    return new GkrMultivariatePolyOracle(
-      eqEvals,
-      layer,
-      SecureField.one(),
-      lambda
-    );
-  }
-
-  /**
-   * Returns a copy of this layer converted to use simple arrays (CPU backend equivalent).
-   */
-  export function toCpu(layer: Layer): Layer {
-    switch (layer.type) {
-      case 'GrandProduct':
-        return { type: 'GrandProduct', data: new Mle(layer.data.intoEvals()) };
-      case 'LogUpGeneric':
-        return {
-          type: 'LogUpGeneric',
-          numerators: new Mle(layer.numerators.intoEvals()),
-          denominators: new Mle(layer.denominators.intoEvals()),
-        };
-      case 'LogUpMultiplicities':
-        return {
-          type: 'LogUpMultiplicities',
-          numerators: new Mle(layer.numerators.intoEvals()),
-          denominators: new Mle(layer.denominators.intoEvals()),
-        };
-      case 'LogUpSingles':
-        return {
-          type: 'LogUpSingles',
-          denominators: new Mle(layer.denominators.intoEvals()),
-        };
-    }
-  }
-}
-
-/**
- * Error returned when a layer is expected to be an output layer but it is not.
- */
-export class NotOutputLayerError extends Error {
-  constructor() {
-    super('Layer is not an output layer');
-    this.name = 'NotOutputLayerError';
-  }
-}
-
-/**
- * Multivariate polynomial `P` that expresses the relation between two consecutive GKR layers.
- *
- * When the input layer is [`Layer::GrandProduct`] (represented by multilinear column `inp`)
- * the polynomial represents:
- *
- * ```text
- * P(x) = eq(x, y) * inp(x, 0) * inp(x, 1)
- * ```
- *
- * When the input layer is LogUp (represented by multilinear columns `inp_numer` and
- * `inp_denom`) the polynomial represents:
- *
- * ```text
- * numer(x) = inp_numer(x, 0) * inp_denom(x, 1) + inp_numer(x, 1) * inp_denom(x, 0)
- * denom(x) = inp_denom(x, 0) * inp_denom(x, 1)
- *
- * P(x) = eq(x, y) * (numer(x) + lambda * denom(x))
- * ```
- */
-export class GkrMultivariatePolyOracle implements MultivariatePolyOracle {
-  constructor(
-    /** `eq_evals` passed by `Layer::into_multivariate_poly()`. */
-    public readonly eqEvals: EqEvals,
-    public readonly inputLayer: Layer,
-    public readonly eqFixedVarCorrection: SecureField,
-    /** Used by LogUp to perform a random linear combination of the numerators and denominators. */
-    public readonly lambda: SecureField
-  ) {}
-
-  nVariables(): number {
-    return Layer.nVariables(this.inputLayer) - 1;
-  }
-
-  sumAsPolyInFirstVariable(claim: SecureField): UnivariatePoly<SecureField> {
-    // TODO(Sonnet4): when the dependency on GkrOps backend is available, implement proper sum calculation
-    throw new Error('sumAsPolyInFirstVariable requires GkrOps backend implementation');
-  }
-
-  fixFirstVariable(challenge: SecureField): GkrMultivariatePolyOracle {
-    if (this.isConstant()) {
-      return this;
-    }
-
-    const y = this.eqEvals.getY();
-    const z0 = y[y.length - this.nVariables()];
-    if (z0 === undefined) {
-      throw new Error('Invalid y vector access');
-    }
-    
-    const eqFixedVarCorrection = this.eqFixedVarCorrection.mul(eq([challenge], [z0]));
-
-    return new GkrMultivariatePolyOracle(
-      this.eqEvals,
-      Layer.fixFirstVariable(this.inputLayer, challenge),
-      eqFixedVarCorrection,
-      this.lambda
-    );
-  }
-
-  /**
-   * Checks if this oracle represents a constant polynomial.
-   */
-  isConstant(): boolean {
-    return this.nVariables() === 0;
-  }
-
-  /**
-   * Returns all input layer columns restricted to a line.
-   * 
-   * If this oracle represents a constant, then each column restricted to line is returned.
-   * Otherwise, throws an error.
-   */
-  tryIntoMask(): GkrMask {
-    if (!this.isConstant()) {
-      throw new NotConstantPolyError();
-    }
-
-    let columns: Array<[SecureField, SecureField]>;
-
-    switch (this.inputLayer.type) {
-      case 'GrandProduct': {
-        // TODO(Sonnet4): when the dependency on CPU backend conversion is available, implement proper conversion
-        // For now, create placeholder values
-        const col = this.inputLayer.data.intoEvals();
-        if (col.length < 2) {
-          throw new Error('GrandProduct layer must have at least 2 evaluations');
-        }
-        columns = [[col[0]!, col[1]!]];
-        break;
-      }
-      case 'LogUpGeneric': {
-        const numerators = this.inputLayer.numerators.intoEvals();
-        const denominators = this.inputLayer.denominators.intoEvals();
-        if (numerators.length < 2 || denominators.length < 2) {
-          throw new Error('LogUpGeneric layer must have at least 2 evaluations per column');
-        }
-        columns = [
-          [numerators[0]!, numerators[1]!],
-          [denominators[0]!, denominators[1]!]
-        ];
-        break;
-      }
-      case 'LogUpMultiplicities': {
-        throw new Error('LogUpMultiplicities should never reach tryIntoMask');
-      }
-      case 'LogUpSingles': {
-        const denominators = this.inputLayer.denominators.intoEvals();
-        if (denominators.length < 2) {
-          throw new Error('LogUpSingles layer must have at least 2 evaluations');
-        }
-        const numerators: [SecureField, SecureField] = [SecureField.one(), SecureField.one()];
-        columns = [
-          numerators,
-          [denominators[0]!, denominators[1]!]
-        ];
-        break;
-      }
-    }
-
-    return GkrMask.new(columns);
-  }
-
-  /**
-   * Returns a copy of this oracle converted to use simple arrays (CPU backend equivalent).
-   */
-  toCpu(): GkrMultivariatePolyOracle {
-    // TODO(Sonnet4): when the dependency on CPU backend conversion is available, implement proper conversion
-    const nEqEvals = 1 << (this.nVariables() - 1);
-    const evalArray = new Array(nEqEvals);
-    for (let i = 0; i < nEqEvals; i++) {
-      evalArray[i] = this.eqEvals.at(i);
-    }
-    
-    const cpuEqEvals = new EqEvals(this.eqEvals.getY(), new Mle(evalArray));
-
-    return new GkrMultivariatePolyOracle(
-      cpuEqEvals,
-      Layer.toCpu(this.inputLayer),
-      this.eqFixedVarCorrection,
-      this.lambda
-    );
-  }
-}
-
-/**
- * Error returned when a polynomial is expected to be constant but it is not.
- */
-export class NotConstantPolyError extends Error {
-  constructor() {
-    super('Polynomial is not constant');
-    this.name = 'NotConstantPolyError';
-  }
-}
-
-/**
- * Batch proves lookup circuits with GKR.
- *
- * The input layers should be committed to the channel before calling this function.
- * GKR algorithm: <https://people.cs.georgetown.edu/jthaler/ProofsArgsAndZK.pdf> (page 64)
- */
-export function proveBatch(
-  channel: Channel,
-  inputLayerByInstance: Layer[]
-): [GkrBatchProof, GkrArtifact] {
-  const nInstances = inputLayerByInstance.length;
-  const nLayersByInstance = inputLayerByInstance.map(l => Layer.nVariables(l));
-  const nLayers = Math.max(...nLayersByInstance);
-
-  // Evaluate all instance circuits and collect the layer values.
-  const layersByInstance = inputLayerByInstance.map(inputLayer => {
-    const layers = genLayers(inputLayer);
-    return layers.reverse()[Symbol.iterator]();
-  });
-
-  const outputClaimsByInstance: Array<SecureField[] | null> = new Array(nInstances).fill(null);
-  const layerMasksByInstance: GkrMask[][] = Array.from({ length: nInstances }, () => []);
-  const sumcheckProofs: any[] = [];
-
-  let oodPoint: SecureField[] = [];
-  const claimsToVerifyByInstance: Array<SecureField[] | null> = new Array(nInstances).fill(null);
-
-  for (let layer = 0; layer < nLayers; layer++) {
-    const nRemainingLayers = nLayers - layer;
-
-    // Check all the instances for output layers.
-    for (let instance = 0; instance < nInstances; instance++) {
-      if (nLayersByInstance[instance] === nRemainingLayers) {
-        const layerIterator = layersByInstance[instance];
-        if (layerIterator === undefined) {
-          throw new Error(`Layer iterator undefined for instance ${instance}`);
-        }
-        const nextLayerResult = layerIterator.next();
-        if (nextLayerResult.done) {
-          throw new Error(`No more layers for instance ${instance}`);
-        }
-        const outputLayer = nextLayerResult.value;
-        const outputLayerValues = Layer.tryIntoOutputLayerValues(outputLayer);
-        claimsToVerifyByInstance[instance] = [...outputLayerValues];
-        outputClaimsByInstance[instance] = outputLayerValues;
-      }
-    }
-
-    // Seed the channel with layer claims.
-    for (const claimsToVerify of claimsToVerifyByInstance) {
-      if (claimsToVerify !== null) {
-        channel.mix_felts(claimsToVerify);
-      }
-    }
-
-    const eqEvals = EqEvals.generate(oodPoint);
-    const sumcheckAlpha = channel.draw_felt();
-    const instanceLambda = channel.draw_felt();
-
-    const sumcheckOracles: GkrMultivariatePolyOracle[] = [];
-    const sumcheckClaims: SecureField[] = [];
-    const sumcheckInstances: number[] = [];
-
-    // Create the multivariate polynomial oracles used with sumcheck.
-    for (let instance = 0; instance < claimsToVerifyByInstance.length; instance++) {
-      const claimsToVerify = claimsToVerifyByInstance[instance];
-      if (claimsToVerify !== null) {
-        const layerIterator = layersByInstance[instance];
-        if (layerIterator === undefined) {
-          throw new Error(`Layer iterator undefined for instance ${instance}`);
-        }
-        const nextLayerResult = layerIterator.next();
-        if (nextLayerResult.done) {
-          throw new Error(`No more layers for instance ${instance}`);
-        }
-        const currentLayer = nextLayerResult.value;
-        
-        sumcheckOracles.push(Layer.intoMultivariatePolyOracle(currentLayer, instanceLambda, eqEvals));
-        sumcheckClaims.push(randomLinearCombination(claimsToVerify, instanceLambda));
-        sumcheckInstances.push(instance);
-      }
-    }
-
-    const [sumcheckProof, sumcheckOodPoint, constantPolyOracles] = 
-      sumcheckProveBatch(sumcheckClaims, sumcheckOracles, sumcheckAlpha, channel);
-
-    sumcheckProofs.push(sumcheckProof);
-
-    const masks = constantPolyOracles.map(oracle => oracle.tryIntoMask());
-
-    // Seed the channel with the layer masks.
-    for (let i = 0; i < sumcheckInstances.length; i++) {
-      const instance = sumcheckInstances[i];
-      const mask = masks[i];
-      if (instance === undefined || mask === undefined) {
-        throw new Error(`Invalid instance or mask at index ${i}`);
-      }
-      
-      const flattenedColumns = mask.columns().flat();
-      channel.mix_felts(flattenedColumns);
-      layerMasksByInstance[instance]!.push(mask);
-    }
-
-    const challenge = channel.draw_felt();
-    oodPoint = [...sumcheckOodPoint, challenge];
-
-    // Set the claims to prove in the layer above.
-    for (let i = 0; i < sumcheckInstances.length; i++) {
-      const instance = sumcheckInstances[i];
-      const mask = masks[i];
-      if (instance === undefined || mask === undefined) {
-        throw new Error(`Invalid instance or mask at index ${i}`);
-      }
-      claimsToVerifyByInstance[instance] = mask.reduceAtPoint(challenge);
-    }
-  }
-
-  const finalOutputClaimsByInstance = outputClaimsByInstance.map(claims => {
-    if (claims === null) {
-      throw new Error('Some output claims were not set during proving');
-    }
-    return claims;
-  });
-
-  const finalClaimsToVerifyByInstance = claimsToVerifyByInstance.map(claims => {
-    if (claims === null) {
-      throw new Error('Some claims were not set during proving');
-    }
-    return claims;
-  });
-
-  const proof = new GkrBatchProof(
-    sumcheckProofs,
-    layerMasksByInstance,
-    finalOutputClaimsByInstance
-  );
-
-  const artifact = new GkrArtifact(
-    oodPoint,
-    finalClaimsToVerifyByInstance,
-    nLayersByInstance
-  );
-
-  return [proof, artifact];
-}
-
-/**
- * Executes the GKR circuit on the input layer and returns all the circuit's layers.
- */
-function genLayers(inputLayer: Layer): Layer[] {
-  const nVariables = Layer.nVariables(inputLayer);
-  const layers: Layer[] = [];
-  
-  let currentLayer: Layer | null = inputLayer;
-  while (currentLayer !== null) {
-    layers.push(currentLayer);
-    currentLayer = Layer.nextLayer(currentLayer);
-  }
-  
-  if (layers.length !== nVariables + 1) {
-    throw new Error(`Expected ${nVariables + 1} layers, got ${layers.length}`);
-  }
-  
-  return layers;
-}
-
-/**
- * Computes `r(t) = sum_x eq((t, x), y[-k:]) * p(t, x)` from evaluations of
- * `f(t) = sum_x eq(({0}^(n - k), 0, x), y) * p(t, x)`.
- *
- * Note `claim` must equal `r(0) + r(1)` and `r` must have degree <= 3.
- *
- * For more context see `Layer::into_multivariate_poly()` docs.
- * See also <https://ia.cr/2024/108> (section 3.2).
- */
-export function correctSumAsPolyInFirstVariable(
-  fAt0: SecureField,
-  fAt2: SecureField,
-  claim: SecureField,
-  y: SecureField[],
-  k: number
-): UnivariatePoly<SecureField> {
-  if (k === 0) {
-    throw new Error('k must not be 0');
-  }
-  
-  const n = y.length;
-  if (k > n) {
-    throw new Error('k must not exceed y.length');
-  }
-
-  // We evaluated `f(0)` and `f(2)` - the inputs.
-  // We want to compute `r(t) = f(t) * eq(t, y[n - k]) / eq(0, y[:n - k + 1])`.
-  const zeros = new Array(n - k + 1).fill(SecureField.zero());
-  const aConst = eq(zeros, y.slice(0, n - k + 1)).inverse();
-
-  // Find the additional root of `r(t)`, by finding the root of `eq(t, y[n - k])`:
-  //    0 = eq(t, y[n - k])
-  //      = t * y[n - k] + (1 - t)(1 - y[n - k])
-  //      = 1 - y[n - k] - t(1 - 2 * y[n - k])
-  // => t = (1 - y[n - k]) / (1 - 2 * y[n - k])
-  //      = b
-  const yNMinusK = y[n - k];
-  if (yNMinusK === undefined) {
-    throw new Error(`Invalid index ${n - k} for y array of length ${n}`);
-  }
-  
-  const bConst = SecureField.one().sub(yNMinusK).div(SecureField.one().sub(yNMinusK.double()));
-
-  // We get that `r(t) = f(t) * eq(t, y[n - k]) * a`.
-  const rAt0 = fAt0.mul(eq([SecureField.zero()], [yNMinusK])).mul(aConst);
-  const rAt1 = claim.sub(rAt0);
-  const rAt2 = fAt2.mul(eq([SecureField.from(BaseField.from(2))], [yNMinusK])).mul(aConst);
-  const rAtB = SecureField.zero();
-
-  // Interpolate.
-  return UnivariatePoly.interpolateLagrange(
-    [
-      SecureField.zero(),
-      SecureField.one(),
-      SecureField.from(BaseField.from(2)),
-      bConst,
-    ],
-    [rAt0, rAt1, rAt2, rAtB]
-  );
-} 
