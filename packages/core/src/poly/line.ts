@@ -1,15 +1,20 @@
 import { Coset, CirclePoint } from "../circle";
-import type { M31 } from "../fields/m31";
+import { M31 } from "../fields/m31";
+import { QM31 } from "../fields/qm31";
+import { CpuBackend } from "../backend/cpu";
+import { ibutterfly } from "../fft";
+import { bitReverseIndex } from "../utils";
+import { fold } from "./utils";
 
 /** A domain comprising the x-coordinates of points in a coset. */
 export class LineDomain {
-  coset: Coset;
+  private readonly _coset: Coset;
 
   constructor(coset: Coset) {
     // The Rust implementation validates that the coset points have unique
     // x-coordinates. Once the real Coset type is available this check should be
     // reinstated.
-    this.coset = coset;
+    this._coset = coset;
   }
 
   static new(coset: Coset): LineDomain {
@@ -17,30 +22,157 @@ export class LineDomain {
   }
 
   at(i: number): M31 {
-    return this.coset.at(i).x;
+    return this._coset.at(i).x;
   }
 
   size(): number {
-    return this.coset.size();
+    return this._coset.size();
   }
 
   logSize(): number {
-    return this.coset.log_size;
+    return this._coset.logSize();
+  }
+
+  /** Alias for Rust-style `log_size` method name. */
+  log_size(): number {
+    return this.logSize();
   }
 
   *iter(): IterableIterator<M31> {
-    const it: Iterable<CirclePoint<M31>> = this.coset.iter();
+    const it: Iterable<CirclePoint<M31>> = this._coset.iter();
     for (const p of it) {
       yield p.x;
     }
   }
 
   double(): LineDomain {
-    return new LineDomain(this.coset.double());
+    return new LineDomain(this._coset.double());
   }
 
-  cosetValue(): Coset {
-    return this.coset;
+  /** Returns the domain's underlying coset. */
+  coset(): Coset {
+    return this._coset;
+  }
+}
+
+/** A univariate polynomial defined on a LineDomain. */
+export class LinePoly {
+  coeffs: QM31[];
+  log_size: number;
+
+  constructor(coeffs: QM31[]) {
+    if (coeffs.length === 0 || (coeffs.length & (coeffs.length - 1)) !== 0) {
+      throw new Error("coeffs length must be power of two");
+    }
+    this.coeffs = coeffs.slice();
+    this.log_size = Math.log2(coeffs.length);
+  }
+
+  /** Logarithmic size of the polynomial. */
+  logSize(): number {
+    return this.log_size;
+  }
+
+  /** Alias for Rust-style `log_size` method name. */
+  log_size(): number {
+    return this.logSize();
+  }
+
+  static new(coeffs: QM31[]): LinePoly {
+    return new LinePoly(coeffs);
+  }
+
+  len(): number {
+    return this.coeffs.length;
+  }
+
+  eval_at_point(x: QM31): QM31 {
+    let cur = x;
+    const doublings: QM31[] = [];
+    for (let i = 0; i < this.log_size; i++) {
+      doublings.push(cur);
+      cur = CirclePoint.double_x(cur, QM31);
+    }
+    return fold(this.coeffs, doublings);
+  }
+
+  into_ordered_coefficients(): QM31[] {
+    const arr = this.coeffs.slice();
+    bitReverseArray(arr);
+    return arr;
+  }
+
+  static from_ordered_coefficients(coeffs: QM31[]): LinePoly {
+    const arr = coeffs.slice();
+    bitReverseArray(arr);
+    return new LinePoly(arr);
+  }
+}
+
+export class LineEvaluation<B = CpuBackend> {
+  domain: LineDomain;
+  values: QM31[];
+
+  constructor(domain: LineDomain, values: QM31[]) {
+    if (domain.size() !== values.length) throw new Error("size mismatch");
+    this.domain = domain;
+    this.values = values.slice();
+  }
+
+  static new(domain: LineDomain, values: QM31[]): LineEvaluation<B> {
+    return new LineEvaluation(domain, values);
+  }
+
+  static new_zero(domain: LineDomain, zero: QM31): LineEvaluation<B> {
+    return new LineEvaluation(domain, Array(domain.size()).fill(zero));
+  }
+
+  len(): number {
+    return this.values.length;
+  }
+
+  to_cpu(): LineEvaluation {
+    return new LineEvaluation(this.domain, this.values);
+  }
+
+  interpolate(): LinePoly {
+    const vals = this.values.slice();
+    bitReverseArray(vals);
+    lineIFFT(vals, this.domain);
+    const lenInv = M31.from_u32_unchecked(vals.length as number).inverse();
+    for (let i = 0; i < vals.length; i++) {
+      vals[i] = vals[i].mulM31(lenInv);
+    }
+    return new LinePoly(vals);
+  }
+}
+
+/** In-place line-domain inverse FFT. */
+function lineIFFT(values: QM31[], domain: LineDomain) {
+  let d = domain;
+  while (d.size() > 1) {
+    for (let chunkStart = 0; chunkStart < values.length; chunkStart += d.size()) {
+      for (let i = 0; i < d.size() / 2; i++) {
+        const idx0 = chunkStart + i;
+        const idx1 = idx0 + d.size() / 2;
+        const x = d.at(i).inverse();
+        const [v0, v1] = ibutterfly(values[idx0], values[idx1], x);
+        values[idx0] = v0;
+        values[idx1] = v1;
+      }
+    }
+    d = d.double();
+  }
+}
+
+function bitReverseArray<T>(arr: T[]) {
+  const n = arr.length;
+  const logN = Math.log2(n);
+  for (let i = 0; i < n; i++) {
+    const j = bitReverseIndex(i, logN);
+    if (j > i) {
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
   }
 }
 

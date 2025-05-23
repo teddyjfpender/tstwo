@@ -229,29 +229,34 @@ mod tests {
 import { M31, P, N_BYTES_FELT } from '../fields/m31';
 import { QM31 as SecureField, SECURE_EXTENSION_DEGREE } from '../fields/qm31';
 import { Blake2sHash, Blake2sHasher } from '../vcs/blake2_hash';
-import { Channel, ChannelTime } from './index';
+import type { Channel } from './index';
+import { ChannelTime } from './index';
 
 export const BLAKE_BYTES_PER_HASH = 32;
 export const FELTS_PER_HASH = 8;
 
 export class Blake2sChannel implements Channel {
   readonly BYTES_PER_HASH = BLAKE_BYTES_PER_HASH;
-  private digest: Blake2sHash = new Blake2sHash();
+  private _digest: Blake2sHash = new Blake2sHash();
   public channel_time: ChannelTime = new ChannelTime();
   private baseQueue: M31[] = [];
 
-  private updateDigest(newDigest: Blake2sHash): void {
-    this.digest = newDigest;
+  /** Current digest of the channel. Mirrors Rust's `digest()` accessor. */
+  digest(): Blake2sHash { return this._digest; }
+
+  /** Updates the digest and increments the challenge counter. */
+  updateDigest(newDigest: Blake2sHash): void {
+    this._digest = newDigest;
     this.channel_time.inc_challenges();
   }
 
-  digestBytes(): Uint8Array { return this.digest.asBytes(); }
+  digestBytes(): Uint8Array { return this._digest.asBytes(); }
 
   trailing_zeros(): number {
     let val = 0n;
-    const bytes = this.digest.bytes;
+    const bytes = this._digest.bytes;
     for (let i = 15; i >= 0; i--) {
-      val = (val << 8n) | BigInt(bytes[i]);
+      val = (val << 8n) | BigInt(bytes[i] ?? 0);
     }
     let tz = 0;
     while (((val >> BigInt(tz)) & 1n) === 0n && tz < 128) tz++;
@@ -260,14 +265,14 @@ export class Blake2sChannel implements Channel {
 
   mix_felts(felts: readonly SecureField[]): void {
     const hasher = new Blake2sHasher();
-    hasher.update(this.digest.bytes);
+    hasher.update(this._digest.bytes);
     hasher.update(SecureField.intoSlice(felts as SecureField[]));
     this.updateDigest(hasher.finalize());
   }
 
   mix_u32s(data: readonly number[]): void {
     const hasher = new Blake2sHasher();
-    hasher.update(this.digest.bytes);
+    hasher.update(this._digest.bytes);
     const buf = new Uint8Array(4);
     const view = new DataView(buf.buffer);
     for (const word of data) {
@@ -308,9 +313,19 @@ export class Blake2sChannel implements Channel {
 
   draw_felts(n_felts: number): SecureField[] {
     const res: SecureField[] = [];
+    let baseQueue: M31[] = [];
+    
     for (let i = 0; i < n_felts; i++) {
-      res.push(this.draw_felt());
+      // Ensure we have at least 4 base felts available
+      while (baseQueue.length < SECURE_EXTENSION_DEGREE) {
+        baseQueue.push(...this.draw_base_felts());
+      }
+      
+      // Take 4 base felts to create a SecureField
+      const arr = baseQueue.splice(0, SECURE_EXTENSION_DEGREE) as [M31, M31, M31, M31];
+      res.push(SecureField.fromM31Array(arr));
     }
+    
     return res;
   }
 
@@ -318,9 +333,9 @@ export class Blake2sChannel implements Channel {
     const counter = new Uint8Array(BLAKE_BYTES_PER_HASH);
     const view = new DataView(counter.buffer);
     view.setUint32(0, this.channel_time.n_sent, true);
-    const input = new Uint8Array(this.digest.bytes.length + counter.length);
-    input.set(this.digest.bytes, 0);
-    input.set(counter, this.digest.bytes.length);
+    const input = new Uint8Array(this._digest.bytes.length + counter.length);
+    input.set(this._digest.bytes, 0);
+    input.set(counter, this._digest.bytes.length);
     this.channel_time.inc_sent();
     return Blake2sHasher.hash(input).asBytes();
   }

@@ -184,3 +184,98 @@ impl<H: MerkleHasher> MerkleDecommitment<H> {
 }
 ```
 */
+import type { MerkleHasher, MerkleOps } from './ops';
+import type { M31 as BaseField } from '../fields/m31';
+import type { MerkleDecommitment } from './verifier';
+
+export class MerkleProver<Hash> {
+  layers: Hash[][];
+
+  private constructor(layers: Hash[][]) {
+    this.layers = layers;
+  }
+
+  static commit<Hash>(
+    ops: MerkleOps<Hash>,
+    columns: Array<readonly BaseField[]>,
+  ): MerkleProver<Hash> {
+    if (columns.length === 0) {
+      return new MerkleProver([ops.commitOnLayer(0, undefined, [])]);
+    }
+
+    const cols = [...columns].sort((a, b) => b.length - a.length);
+    const layers: Hash[][] = [];
+    const maxLog = Math.log2(cols[0].length);
+    for (let log = maxLog; log >= 0; log--) {
+      const layerCols = cols.filter(c => Math.log2(c.length) === log);
+      layers.push(ops.commitOnLayer(log, layers[layers.length - 1], layerCols));
+    }
+    layers.reverse();
+    return new MerkleProver(layers);
+  }
+
+  decommit(
+    queriesPerLogSize: ReadonlyMap<number, number[]>,
+    columns: Array<readonly BaseField[]>,
+  ): [BaseField[], MerkleDecommitment<Hash>] {
+    const queried: BaseField[] = [];
+    const decommitment: MerkleDecommitment<Hash> = { hashWitness: [], columnWitness: [] };
+
+    const cols = [...columns].sort((a, b) => b.length - a.length);
+    let colIndex = 0;
+    let lastLayerQueries: number[] = [];
+    for (let layer = this.layers.length - 1; layer >= 0; layer--) {
+      const logSize = layer;
+      const layerCols: Array<readonly BaseField[]> = [];
+      while (colIndex < cols.length && Math.log2(cols[colIndex].length) === logSize) {
+        layerCols.push(cols[colIndex++]);
+      }
+      const prevHashes = this.layers[layer + 1];
+
+      const prevQueries = [...lastLayerQueries];
+      const layerQueries = [...(queriesPerLogSize.get(logSize) ?? [])];
+      let pi = 0, li = 0;
+      const layerTotal: number[] = [];
+
+      while (pi < prevQueries.length || li < layerQueries.length) {
+        const candPrev = pi < prevQueries.length ? Math.floor(prevQueries[pi] / 2) : Infinity;
+        const candLayer = li < layerQueries.length ? layerQueries[li] : Infinity;
+        if (candPrev <= candLayer) {
+          // candidate from prev
+        }
+        const nodeIndex = Math.min(candPrev, candLayer);
+
+        if (prevHashes) {
+          if (pi < prevQueries.length && prevQueries[pi] === 2 * nodeIndex) {
+            pi++;
+          } else {
+            decommitment.hashWitness.push(prevHashes[2 * nodeIndex]);
+          }
+          if (pi < prevQueries.length && prevQueries[pi] === 2 * nodeIndex + 1) {
+            pi++;
+          } else {
+            decommitment.hashWitness.push(prevHashes[2 * nodeIndex + 1]);
+          }
+        }
+
+        const nodeValues = layerCols.map(c => c[nodeIndex]);
+        if (li < layerQueries.length && layerQueries[li] === nodeIndex) {
+          li++;
+          queried.push(...nodeValues);
+        } else {
+          decommitment.columnWitness.push(...nodeValues);
+        }
+
+        layerTotal.push(nodeIndex);
+      }
+
+      lastLayerQueries = layerTotal;
+    }
+
+    return [queried, decommitment];
+  }
+
+  root(): Hash {
+    return this.layers[0][0];
+  }
+}

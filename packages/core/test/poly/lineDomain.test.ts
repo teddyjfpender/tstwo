@@ -17,11 +17,11 @@ describe("LineDomain", () => {
     expect(Array.from(domain.iter()).map(v => v.value)).toEqual(expected);
   });
 
-  it("at returns x and cosetValue exposes coset", () => {
+  it("at returns x and coset exposes coset", () => {
     const coset = Coset.subgroup(2);
     const domain = LineDomain.new(coset);
     expect(domain.at(1).value).toBe(coset.at(1).x.value);
-    expect(domain.cosetValue()).toBe(coset);
+    expect(domain.coset()).toBe(coset);
   });
   it("double halves the domain size", () => {
     const coset = Coset.subgroup(4);

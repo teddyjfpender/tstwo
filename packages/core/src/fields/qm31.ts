@@ -10,6 +10,12 @@ export const SECURE_EXTENSION_DEGREE = 4;
 export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
   readonly EXTENSION_DEGREE = 4;
 
+  // Static constants mirroring the Rust API. These help integrate with code
+  // that expects `SecureField.ZERO` and `SecureField.ONE` without calling the
+  // corresponding methods.
+  static readonly ZERO: QM31 = new QM31(CM31.zero(), CM31.zero());
+  static readonly ONE: QM31 = new QM31(CM31.one(), CM31.zero());
+
   constructor(public readonly c0: CM31, public readonly c1: CM31) {}
 
   clone(): QM31 {
@@ -17,6 +23,14 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
   }
 
   static fromUnchecked(a: number, b: number, c: number, d: number): QM31 {
+    return new QM31(CM31.fromUnchecked(a, b), CM31.fromUnchecked(c, d));
+  }
+
+  /**
+   * Constructs a QM31 element from raw u32 components without range checks.
+   * Mirrors the Rust `from_u32_unchecked` helper.
+   */
+  static from_u32_unchecked(a: number, b: number, c: number, d: number): QM31 {
     return new QM31(CM31.fromUnchecked(a, b), CM31.fromUnchecked(c, d));
   }
 
@@ -128,6 +142,13 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
 
   isZero(): boolean {
     return this.c0.isZero() && this.c1.isZero();
+  }
+
+  /**
+   * Alias for isZero() using snake_case style expected by some translated code.
+   */
+  is_zero(): boolean {
+    return this.isZero();
   }
 
   static one(): QM31 {

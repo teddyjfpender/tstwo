@@ -10,5 +10,8 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@scure/starknet": "^1.1.0"
   }
-} 
+}

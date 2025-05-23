@@ -10,6 +10,11 @@ export const P: number = 2147483647; // 2^31 - 1
  */
 export class M31 implements Field<M31> {
   public readonly value: number;
+  // Provide static constants mirroring the Rust API. These are useful for
+  // places in the codebase (e.g. fri.ts) that expect `SecureField.ZERO` and
+  // `SecureField.ONE` style accessors instead of the `zero()`/`one()` methods.
+  static readonly ZERO: M31 = new M31(0);
+  static readonly ONE: M31 = new M31(1);
 
   constructor(value: number) {
     this.value = value;
@@ -45,6 +50,14 @@ export class M31 implements Field<M31> {
 
   static fromUnchecked(arg: number): M31 {
     return new M31(arg);
+  }
+
+  /**
+   * Constructs an M31 element from a raw unsigned 32‑bit value without
+   * range checking. Mirrors the Rust `from_u32_unchecked` constructor.
+   */
+  static from_u32_unchecked(val: number): M31 {
+    return new M31(val);
   }
 
   /**
@@ -193,6 +206,13 @@ export class M31 implements Field<M31> {
    */
   isZero(): boolean {
     return this.value === 0;
+  }
+
+  /**
+   * Alias for isZero() using snake_case naming to mirror the Rust API.
+   */
+  is_zero(): boolean {
+    return this.isZero();
   }
 
   /**
