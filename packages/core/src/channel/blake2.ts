@@ -226,6 +226,7 @@ mod tests {
 }
 ```
 */
+
 import { M31, P, N_BYTES_FELT } from '../fields/m31';
 import { QM31 as SecureField, SECURE_EXTENSION_DEGREE } from '../fields/qm31';
 import { Blake2sHash, Blake2sHasher } from '../vcs/blake2_hash';
@@ -242,7 +243,9 @@ export class Blake2sChannel implements Channel {
   private baseQueue: M31[] = [];
 
   /** Current digest of the channel. Mirrors Rust's `digest()` accessor. */
-  digest(): Blake2sHash { return this._digest; }
+  digest(): Blake2sHash { 
+    return this._digest; 
+  }
 
   /** Updates the digest and increments the challenge counter. */
   updateDigest(newDigest: Blake2sHash): void {
@@ -250,7 +253,20 @@ export class Blake2sChannel implements Channel {
     this.channel_time.inc_challenges();
   }
 
-  digestBytes(): Uint8Array { return this._digest.asBytes(); }
+  /** Creates a deep clone of the channel. */
+  clone(): Blake2sChannel {
+    const cloned = new Blake2sChannel();
+    cloned._digest = new Blake2sHash(new Uint8Array(this._digest.bytes));
+    cloned.channel_time = new ChannelTime();
+    cloned.channel_time.n_challenges = this.channel_time.n_challenges;
+    cloned.channel_time.n_sent = this.channel_time.n_sent;
+    cloned.baseQueue = [...this.baseQueue];
+    return cloned;
+  }
+
+  digestBytes(): Uint8Array { 
+    return this._digest.asBytes(); 
+  }
 
   trailing_zeros(): number {
     let val = 0n;
@@ -339,4 +355,4 @@ export class Blake2sChannel implements Channel {
     this.channel_time.inc_sent();
     return Blake2sHasher.hash(input).asBytes();
   }
-}
+} 

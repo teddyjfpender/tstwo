@@ -36,7 +36,7 @@ export class SecureCirclePoly<B extends ColumnOps<any>> {
 
 export class SecureEvaluation<B extends ColumnOps<any>, EvalOrder> {
   constructor(public domain: any, public values: any, private _evalOrder?: EvalOrder) {
-    if ((domain as any).size() !== values.len) {
+    if ((domain as any).size() !== values.len()) {
       throw new Error("SecureEvaluation: size mismatch");
     }
   }
