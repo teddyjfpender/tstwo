@@ -6,12 +6,12 @@ import { QM31, SECURE_EXTENSION_DEGREE } from "../../src/fields/qm31";
 describe("SecureColumnByCoords", () => {
   const m0 = M31.zero();
   const m1 = M31.one();
-  const m2 = new M31(2);
-  const m3 = new M31(3);
-  const m4 = new M31(4);
-  const m5 = new M31(5);
-  const m6 = new M31(6);
-  const m7 = new M31(7);
+  const m2 = M31.from(2);
+  const m3 = M31.from(3);
+  const m4 = M31.from(4);
+  const m5 = M31.from(5);
+  const m6 = M31.from(6);
+  const m7 = M31.from(7);
 
   const qm1 = QM31.fromM31Array([m0, m1, m2, m3]);
   const qm2 = QM31.fromM31Array([m4, m5, m6, m7]);
@@ -22,7 +22,7 @@ describe("SecureColumnByCoords", () => {
     for (let i = 0; i < SECURE_EXTENSION_DEGREE; i++) {
       const col: M31[] = [];
       for (let j = 0; j < len; j++) {
-        col.push(new M31((i + 1) * (j + 1) + offset));
+        col.push(M31.from((i + 1) * (j + 1) + offset));
       }
       cols.push(col);
     }
@@ -36,9 +36,9 @@ describe("SecureColumnByCoords", () => {
       expect(sc).toBeInstanceOf(SecureColumnByCoords);
       expect(sc.len()).toBe(3);
       // Verify the internal columns are copies
-      expect(sc.columns[0][0]).toEqual(cols[0][0]);
-      cols[0][0] = new M31(100); // Modify original
-      expect(sc.columns[0][0]).not.toEqual(new M31(100)); // Instance should be unaffected
+      expect(sc.columns[0]![0]).toEqual(cols[0]![0]);
+      cols[0]![0] = M31.from(100); // Modify original
+      expect(sc.columns[0]![0]).not.toEqual(M31.from(100)); // Instance should be unaffected
     });
 
     it("should throw an error if the number of columns is not SECURE_EXTENSION_DEGREE", () => {
@@ -61,9 +61,9 @@ describe("SecureColumnByCoords", () => {
       const sc = new SecureColumnByCoords(originalCols);
 
       // Modify the outer array of the original
-      const replacementCol = Array(2).fill(new M31(99));
+      const replacementCol = Array(2).fill(M31.from(99));
       originalCols[0] = replacementCol;
-      expect(sc.columns[0][0]).not.toEqual(new M31(99)); // Instance's structure should be unaffected
+      expect(sc.columns[0]![0]).not.toEqual(M31.from(99)); // Instance's structure should be unaffected
 
       // Modify an inner array of the original (that was already copied by createValidColumns)
       // To test the constructor's own slice, we need to ensure the originalCols passed in
@@ -73,8 +73,8 @@ describe("SecureColumnByCoords", () => {
       // Direct modification of scInner.columns would bypass any protective measures.
       // The constructor's job is to copy `originalColsForInnerTest` and its sub-arrays.
       // If scInner.columns[0] was a reference to originalColsForInnerTest[0], this would change originalColsForInnerTest.
-      scInner.columns[0][0] = new M31(123);
-      expect(originalColsForInnerTest[0][0]).not.toEqual(new M31(123));
+      scInner.columns[0]![0] = M31.from(123);
+      expect(originalColsForInnerTest[0]![0]).not.toEqual(M31.from(123));
     });
   });
 
@@ -201,8 +201,8 @@ describe("SecureColumnByCoords", () => {
       }
       
       // Modify a value in the copy's columns directly (testing the copy's independence)
-      const originalM31Value = cpuCopy.columns[0][0];
-      cpuCopy.columns[0][0] = new M31(originalM31Value.value + 100); 
+      const originalM31Value = cpuCopy.columns[0]![0]!;
+      cpuCopy.columns[0]![0] = M31.from(originalM31Value.value + 100); 
       expect(original.columns[0][0].equals(originalM31Value)).toBe(true); // Original should be unchanged.
     });
   });

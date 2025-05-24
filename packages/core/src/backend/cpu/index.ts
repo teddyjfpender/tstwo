@@ -131,11 +131,22 @@ import { Coset } from "../../circle";
 import { M31 } from "../../fields/m31";
 import { batchInverseInPlace } from "../../fields/fields";
 import { TwiddleTree } from "../../poly/twiddles";
+import { CirclePoly, CircleEvaluation } from "../../poly/circle";
 
 /**
  * TypeScript implementation of the CpuBackend from `backend/cpu/mod.rs`.
+ * This represents a CPU-based backend for cryptographic computations.
  */
-export class CpuBackend implements Backend {}
+export class CpuBackend implements Backend {
+  /** Backend identifier for debugging */
+  readonly name = "CpuBackend";
+}
+
+/**
+ * BackendForChannel implementations to be added when channel types are available
+ * TODO(Sonnet4): when Blake2sMerkleChannel is available, implement BackendForChannel<Blake2sMerkleChannel>
+ * TODO(Sonnet4): when Poseidon252MerkleChannel is available, implement BackendForChannel<Poseidon252MerkleChannel>
+ */
 
 /** In-place bit reverse. Mirrors the Rust function `bit_reverse`. */
 export function bitReverse<T>(arr: T[]): void {
@@ -154,42 +165,84 @@ export function bitReverse<T>(arr: T[]): void {
   }
 }
 
+/**
+ * CPU implementation of ColumnOps trait.
+ * Provides column operations for CPU-based computations.
+ */
 export class CpuColumnOps<T> implements ColumnOps<T> {
   bitReverseColumn(column: T[]): void {
     bitReverse(column);
   }
 }
 
+/**
+ * CPU implementation of Column trait using standard arrays.
+ * This corresponds to the Rust `impl<T: Debug + Clone + Default> Column<T> for Vec<T>`.
+ */
 export class CpuColumn<T> implements Column<T> {
-  constructor(private data: T[]) {}
+  private data: T[];
 
-  static zeros<T>(len: number, defaultValue: T): CpuColumn<T> {
-    return new CpuColumn(Array.from({ length: len }, () => defaultValue));
+  constructor(data: T[]) {
+    this.data = data;
   }
 
-  static uninitialized<T>(len: number): CpuColumn<T> {
-    return new CpuColumn(new Array(len).fill(undefined as unknown as T));
+  /** Creates a column filled with default values. Mirrors `Vec::zeros`. */
+  static zeros<T>(len: number, defaultFactory: () => T): CpuColumn<T> {
+    return new CpuColumn(Array.from({ length: len }, defaultFactory));
+  }
+
+  /** Creates an uninitialized column. Mirrors `Vec::uninitialized`. */
+  static uninitialized<T>(len: number, defaultFactory: () => T): CpuColumn<T> {
+    // In TypeScript, we can't have truly uninitialized memory, so we fill with defaults
+    return new CpuColumn(Array.from({ length: len }, defaultFactory));
+  }
+
+  /** Creates a column from an existing array. */
+  static fromArray<T>(data: T[]): CpuColumn<T> {
+    return new CpuColumn([...data]);
+  }
+
+  len(): number {
+    return this.data.length;
+  }
+
+  at(index: number): T {
+    if (index < 0 || index >= this.data.length) {
+      throw new Error(`Index ${index} out of bounds for length ${this.data.length}`);
+    }
+    return this.data[index];
+  }
+
+  set(index: number, value: T): void {
+    if (index < 0 || index >= this.data.length) {
+      throw new Error(`Index ${index} out of bounds for length ${this.data.length}`);
+    }
+    this.data[index] = value;
   }
 
   toCPU(): T[] {
     return [...this.data];
   }
-  len(): number {
-    return this.data.length;
+
+  /** Get internal data for operations (use with caution). */
+  getData(): T[] {
+    return this.data;
   }
-  at(index: number): T {
-    return this.data[index];
-  }
-  set(index: number, value: T): void {
-    this.data[index] = value;
+
+  /** Iterate over the column values. */
+  *[Symbol.iterator](): Iterator<T> {
+    for (const item of this.data) {
+      yield item;
+    }
   }
 }
 
-import { CirclePoly, CircleEvaluation } from "../../poly/circle";
-
-export type CpuCirclePoly = CirclePoly<CpuBackend>;
-export type CpuCircleEvaluation<F, EvalOrder = unknown> = CircleEvaluation<CpuBackend, F, EvalOrder>;
-export type CpuMle<F> = unknown; // TODO: define once lookups/mle.ts is ported
+// Type aliases that correspond to Rust type definitions
+// TODO(Sonnet4): Fix type constraints when Circle types are properly ported
+// export type CpuCirclePoly = CirclePoly<CpuBackend>;
+// export type CpuCircleEvaluation<F, EvalOrder = unknown> = CircleEvaluation<CpuBackend, F, EvalOrder>;
+// TODO(Sonnet4): when lookups/mle.ts is ported, replace with: export type CpuMle<F> = Mle<CpuBackend, F>;
+export type CpuMle<F> = unknown;
 
 /**
  * Compute the FFT twiddle factors for the given coset using a straightforward
@@ -198,37 +251,78 @@ export type CpuMle<F> = unknown; // TODO: define once lookups/mle.ts is ported
 export function slowPrecomputeTwiddles(coset: Coset): M31[] {
   let c = coset;
   const twiddles: M31[] = [];
+  
   for (let i = 0; i < coset.log_size; i++) {
+    const i0 = twiddles.length;
     const points = Array.from(c.iter()).slice(0, c.size() / 2).map((p) => p.x);
-    bitReverse(points);
     twiddles.push(...points);
+    
+    // Bit reverse the slice we just added
+    const slice = twiddles.slice(i0);
+    bitReverse(slice);
+    for (let j = 0; j < slice.length; j++) {
+      twiddles[i0 + j] = slice[j]!; // Using ! to assert non-undefined
+    }
+    
     c = c.double();
   }
+  
+  // Pad with an arbitrary value to make the length a power of 2
   twiddles.push(M31.one());
   return twiddles;
 }
 
 /**
  * Precomputes twiddle and inverse twiddle tables for the provided coset.
+ * Mirrors the Rust `precompute_twiddles` function with optimized batch inversion.
  */
 export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
-  const CHUNK_SIZE = 1 << 12;
+  const CHUNK_LOG_SIZE = 12;
+  const CHUNK_SIZE = 1 << CHUNK_LOG_SIZE;
+  
   const rootCoset = coset;
   const twiddles = slowPrecomputeTwiddles(coset);
 
-  // Generate inverse twiddles
+  // Generate inverse twiddles using optimized batch inversion
   if (CHUNK_SIZE > rootCoset.size()) {
-    const itw = twiddles.map((t) => t.inverse());
-    return new TwiddleTree(rootCoset, twiddles, itw);
+    // Fallback to the non-chunked version if the domain is not big enough
+    const itwiddles = twiddles.map((t) => t.inverse());
+    return new TwiddleTree(rootCoset, twiddles, itwiddles);
   }
 
-  const itw: M31[] = new Array(twiddles.length).fill(M31.zero());
+  // Use chunked batch inversion for better performance on large datasets
+  const itwiddles: M31[] = new Array(twiddles.length);
+  
   for (let i = 0; i < twiddles.length; i += CHUNK_SIZE) {
-    const src = twiddles.slice(i, i + CHUNK_SIZE);
-    const dst = new Array<M31>(src.length).fill(M31.zero());
+    const end = Math.min(i + CHUNK_SIZE, twiddles.length);
+    const src = twiddles.slice(i, end);
+    const dst: M31[] = new Array(src.length);
+    
+    // Initialize dst array with zeros
+    for (let k = 0; k < dst.length; k++) {
+      dst[k] = M31.zero();
+    }
+    
     batchInverseInPlace(src, dst);
-    for (let j = 0; j < dst.length; j++) itw[i + j] = dst[j];
+    
+    for (let j = 0; j < dst.length; j++) {
+      itwiddles[i + j] = dst[j]!; // Using ! to assert non-undefined
+    }
   }
 
-  return new TwiddleTree(rootCoset, twiddles, itw);
+  return new TwiddleTree(rootCoset, twiddles, itwiddles);
 }
+
+/**
+ * Generic column operations for CpuBackend.
+ * This provides the implementation for the ColumnOps trait.
+ */
+export const cpuColumnOps = new CpuColumnOps();
+
+/**
+ * Default CPU backend instance.
+ */
+export const cpuBackend = new CpuBackend();
+
+// Export everything needed for the CPU backend
+export { bitReverseIndex } from "../../utils";

@@ -166,7 +166,21 @@ impl<H: MerkleHasher> MerkleVerifier<H> {
         }
 
         let [(_, computed_root)] = last_layer_hashes.unwrap().try_into().unwrap();
-        if computed_root != self.root {
+        // Check if the root matches, handling both HashLike objects and Uint8Array
+        let rootsMatch = false;
+        if (typeof (computed_root as any).equals === 'function') {
+            // Hash object with equals method (HashLike interface)
+            rootsMatch = (computed_root as any).equals(self.root);
+        } else if (computed_root instanceof Uint8Array && self.root instanceof Uint8Array) {
+            // Raw Uint8Array comparison
+            rootsMatch = computed_root.length === this.root.length && 
+                computed_root.every((val, idx) => val === (this.root as Uint8Array)[idx]);
+        } else {
+            // Default equality check
+            rootsMatch = computed_root === this.root;
+        }
+        
+        if (!rootsMatch) {
             return Err(MerkleVerificationError::RootMismatch);
         }
 
@@ -318,14 +332,21 @@ export class MerkleVerifier<Hash> {
     }
 
     const computedRoot = lastLayerHashes![0][1];
-    // naive comparison using JSON since Hash can be Uint8Array
-    const equal =
-      (computedRoot as any) instanceof Uint8Array && (this.root as any) instanceof Uint8Array
-        ? Buffer.from(computedRoot as unknown as Uint8Array).equals(
-            Buffer.from(this.root as unknown as Uint8Array),
-          )
-        : (computedRoot as any) === this.root;
-    if (!equal) {
+    // Check if the root matches, handling both HashLike objects and Uint8Array
+    let rootsMatch = false;
+    if (typeof (computedRoot as any).equals === 'function') {
+      // Hash object with equals method (HashLike interface)
+      rootsMatch = (computedRoot as any).equals(this.root);
+    } else if (computedRoot instanceof Uint8Array && this.root instanceof Uint8Array) {
+      // Raw Uint8Array comparison
+      rootsMatch = computedRoot.length === this.root.length && 
+        computedRoot.every((val, idx) => val === (this.root as Uint8Array)[idx]);
+    } else {
+      // Default equality check
+      rootsMatch = computedRoot === this.root;
+    }
+    
+    if (!rootsMatch) {
       throw new Error(MerkleVerificationError.RootMismatch);
     }
   }

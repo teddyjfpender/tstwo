@@ -21,41 +21,81 @@ impl<C: Channel> GrindOps<C> for CpuBackend {
 ```
 */
 
-// TODO(Jules): Verify and finalize the TypeScript implementation of `grind` against
-// the Rust `impl<C: Channel> GrindOps<C> for CpuBackend`.
-//
-// Task: Verify and finalize the TypeScript implementation of `grind` against the Rust
-// `impl<C: Channel> GrindOps<C> for CpuBackend`.
-//
-// Details:
-// - The existing TypeScript `grind` function implements proof-of-work by iterating
-//   nonces and checking `trailing_zeros` on a cloned channel.
-// - Ensure this function precisely matches the behavior of the Rust implementation.
-// - This function should eventually become a method of a `CpuBackend` class that
-//   implements a `GrindOps<C: Channel>` interface (where `C` is a TypeScript
-//   `Channel` interface, to be defined based on `core/src/channel/index.ts`).
-// - The current TypeScript `grind` function uses a shallow clone (`{ ...channel } as any`)
-//   for the channel. This needs to be compatible with how channels are actually
-//   cloned or reset in the TypeScript channel implementations.
-//
-// Dependencies:
-// - A `Channel` interface (from `core/src/channel/index.ts`) that defines
-//   `mix_u64`, `trailing_zeros`, and a `clone` or state-reset mechanism.
-// - The future `GrindOps` interface (to be defined based on
-//   `core/src/proof_of_work.ts` if it exists, or as a general interface).
-//
-// Goal: Provide a correct and verified CPU backend implementation for proof-of-work
-// grinding.
-//
-// Tests: Add unit tests to verify the grinding logic. This might involve creating a
-// mock channel or using a simple channel implementation for testing purposes.
+import type { Channel } from "../../channel";
+import type { GrindOps } from "../../proof_of_work";
+import { CpuBackend } from "./index";
 
-export function grind(channel: { mix_u64(n: number): void; trailing_zeros(): number }, powBits: number): number {
-  let nonce = 0;
-  while (true) {
-    const c = { ...channel } as any; // shallow clone
-    c.mix_u64(nonce);
-    if (c.trailing_zeros() >= powBits) return nonce;
-    nonce++;
+/**
+ * Implementation of GrindOps for CpuBackend.
+ * Mirrors the Rust `impl<C: Channel> GrindOps<C> for CpuBackend`.
+ */
+export class CpuGrindOps implements GrindOps<Channel> {
+  /**
+   * Searches for a nonce such that mixing it to the channel makes the digest 
+   * have `powBits` trailing zero bits.
+   * 
+   * @param channel - The channel to use for grinding
+   * @param powBits - Number of trailing zero bits required
+   * @returns The nonce value that achieves the required trailing zeros
+   */
+  grind(channel: Channel, powBits: number): number {
+    let nonce = 0;
+    while (true) {
+      // Clone the channel state by creating a new instance and copying relevant state
+      // For Blake2sChannel this means copying the digest and channel_time
+      const channelClone = this.cloneChannel(channel);
+      channelClone.mix_u64(nonce);
+      
+      if (channelClone.trailing_zeros() >= powBits) {
+        return nonce;
+      }
+      nonce += 1;
+    }
+  }
+
+  /**
+   * Creates a deep clone of the channel.
+   * This is a helper method that handles the channel cloning logic.
+   */
+  private cloneChannel(channel: Channel): Channel {
+    // Handle Blake2sChannel specifically
+    if ('clone' in channel && typeof channel.clone === 'function') {
+      return (channel as any).clone();
+    }
+    
+    // For Blake2sChannel, we can create a proper clone manually
+    if ('digest' in channel && 'channel_time' in channel && channel.constructor) {
+      const ChannelClass = channel.constructor as new () => Channel;
+      const clone = new ChannelClass();
+      
+      // Copy Blake2sChannel state
+      if ('updateDigest' in clone && typeof channel.digest === 'function') {
+        (clone as any).updateDigest((channel as any).digest());
+        // Reset channel_time to match original
+        (clone as any).channel_time.n_challenges = (channel as any).channel_time.n_challenges;
+        (clone as any).channel_time.n_sent = (channel as any).channel_time.n_sent;
+      }
+      
+      return clone;
+    }
+    
+    // Fallback: attempt shallow copy
+    return { ...channel } as Channel;
   }
 }
+
+/**
+ * Standalone grind function that mirrors the Rust implementation.
+ * This is the functional interface for grinding operations.
+ * 
+ * @param channel - The channel to use for grinding
+ * @param powBits - Number of trailing zero bits required
+ * @returns The nonce value that achieves the required trailing zeros
+ */
+export function grind(channel: Channel, powBits: number): number {
+  const grindOps = new CpuGrindOps();
+  return grindOps.grind(channel, powBits);
+}
+
+// Export the backend implementation
+export { CpuBackend };
