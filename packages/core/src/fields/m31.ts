@@ -10,13 +10,18 @@ export const P: number = 2147483647; // 2^31 - 1
  */
 export class M31 implements Field<M31> {
   public readonly value: number;
+  
   // Provide static constants mirroring the Rust API. These are useful for
   // places in the codebase (e.g. fri.ts) that expect `SecureField.ZERO` and
   // `SecureField.ONE` style accessors instead of the `zero()`/`one()` methods.
   static readonly ZERO: M31 = new M31(0);
   static readonly ONE: M31 = new M31(1);
 
-  constructor(value: number) {
+  /**
+   * Private constructor to force all construction through static factory methods.
+   * This ensures proper validation and reduction of inputs.
+   */
+  private constructor(value: number) {
     this.value = value;
   }
   
@@ -29,85 +34,118 @@ export class M31 implements Field<M31> {
 
   /**
    * Returns `val % P` when `val` is in the range `[0, 2P)`.
+   * Exact port of the Rust partial_reduce implementation.
    */
   static partialReduce(val: number): M31 {
+    if (!Number.isInteger(val) || val < 0) {
+      throw new Error("partialReduce: val must be a non-negative integer");
+    }
     return new M31(val >= P ? val - P : val);
   }
 
   /**
-   * Returns `val % P` when `val` is in the range `[0, P^2)`.
+   * Internal helper: Returns `val % P` when `val` is in the range `[0, 2P)` for BigInt inputs.
    */
-  static reduce(val: number): M31 {
-    // For simplicity and correctness in JavaScript, we'll use a simple modulo operation
-    // JavaScript can handle large integers before applying modulo
-    let result = val % P;
-    // Ensure the result is non-negative
-    if (result < 0) {
-      result += P;
-    }
-    return new M31(result);
+  private static _partialReduceBig(valBig: bigint): M31 {
+    const pBig = BigInt(P);
+    const result = valBig >= pBig ? valBig - pBig : valBig;
+    return new M31(Number(result));
   }
 
-  static fromUnchecked(arg: number): M31 {
-    return new M31(arg);
+  /**
+   * Returns `val % P` when `val` is in the range `[0, P^2)`.
+   * Exact port of the Rust bitwise implementation:
+   * ((((val >> MODULUS_BITS) + val + 1) >> MODULUS_BITS) + val) & P
+   */
+  static reduce(val: number | bigint): M31 {
+    // Validate and normalize input
+    const valBig = M31._validateAndNormalizeToBigInt(val);
+    return M31._reduceBig(valBig);
+  }
+
+  /**
+   * Internal helper: validates input and converts to BigInt for arithmetic.
+   */
+  private static _validateAndNormalizeToBigInt(val: number | bigint): bigint {
+    if (typeof val === 'number') {
+      if (!Number.isInteger(val)) {
+        throw new Error("Value must be an integer");
+      }
+      if (val < 0) {
+        throw new Error("Value must be non-negative for reduce operation");
+      }
+      return BigInt(val);
+    } else {
+      if (val < 0n) {
+        throw new Error("Value must be non-negative for reduce operation");
+      }
+      return val;
+    }
+  }
+
+  /**
+   * Internal helper: applies the Rust reduce bit-trick to a BigInt in range [0, P^2).
+   */
+  private static _reduceBig(valBig: bigint): M31 {
+    const modulusBitsBig = BigInt(MODULUS_BITS);
+    const pBig = BigInt(P);
+    
+    // Apply the exact Rust formula: ((((val >> MODULUS_BITS) + val + 1) >> MODULUS_BITS) + val) & P
+    const shifted1 = valBig >> modulusBitsBig;
+    const step1 = shifted1 + valBig + 1n;
+    const shifted2 = step1 >> modulusBitsBig;
+    const step2 = shifted2 + valBig;
+    const result = step2 & pBig;
+    
+    return new M31(Number(result));
   }
 
   /**
    * Constructs an M31 element from a raw unsigned 32‑bit value without
    * range checking. Mirrors the Rust `from_u32_unchecked` constructor.
+   * Use this only when you know the value is already properly reduced.
    */
   static from_u32_unchecked(val: number): M31 {
-    return new M31(val);
+    if (!Number.isInteger(val) || val < 0 || val >= P) {
+      throw new Error("from_u32_unchecked: val must be an integer in [0, P)");
+    }
+    return new M31(val >>> 0); // Ensure it's treated as unsigned 32-bit
+  }
+
+  /**
+   * Alias for from_u32_unchecked to maintain API compatibility.
+   * @deprecated Use from_u32_unchecked instead for clarity.
+   */
+  static fromUnchecked(arg: number): M31 {
+    return M31.from_u32_unchecked(arg);
   }
 
   /**
    * Returns the additive inverse of this element
    */
   neg(): M31 {
-    return M31.partialReduce(P - this.value);
+    if (this.value === 0) {
+      return M31.ZERO;
+    }
+    return new M31(P - this.value);
   }
 
   /**
    * Returns the multiplicative inverse of this element
-   * Uses the Extended Euclidean Algorithm for efficient inverse calculation
-   * 
-   * Note: For batch inverse operations, the approach in pow2147483645() might be more efficient
-   * as it uses only 37 multiplications vs. O(log(p)) in the EEA.
+   * Uses pow2147483645 for exactly 37 multiplications, matching the Rust implementation
    */
   inverse(): M31 {
     if (this.isZero()) {
       throw new Error("0 has no inverse");
     }
-    
-    // Using Extended Euclidean Algorithm for faster inverse calculation
-    // This is more efficient than exponentiation for a single inverse
-    let a = this.value;
-    let b = P;
-    let x = 1;
-    let y = 0;
-    
-    while (a > 1) {
-      const q = Math.floor(b / a);
-      [a, b] = [b % a, a];
-      [x, y] = [y - q * x, x];
-    }
-    
-    // Make sure the result is positive
-    if (x < 0) {
-      x += P;
-    }
-    
-    return new M31(x);
-    
-    // Alternative implementation using Fermat's Little Theorem:
-    // return pow2147483645(this);
+    return pow2147483645(this);
   }
 
   /**
    * Adds two field elements
    */
   add(rhs: M31): M31 {
-    return M31.partialReduce(this.value + rhs.value);
+    return M31._partialReduceBig(BigInt(this.value) + BigInt(rhs.value));
   }
   
   /**
@@ -121,7 +159,7 @@ export class M31 implements Field<M31> {
    * Subtracts rhs from this element
    */
   sub(rhs: M31): M31 {
-    return M31.partialReduce(this.value + P - rhs.value);
+    return M31._partialReduceBig(BigInt(this.value) + BigInt(P) - BigInt(rhs.value));
   }
 
   /**
@@ -129,11 +167,9 @@ export class M31 implements Field<M31> {
    */
   mul(rhs: M31): M31 {
     // Use BigInt to avoid precision loss when the intermediate product
-    // exceeds 2^53. The final result fits into a 32-bit integer, so we
-    // convert back to a number after applying the modulus.
+    // exceeds 2^53. The final result fits into a 32-bit integer.
     const product = BigInt(this.value) * BigInt(rhs.value);
-    const reduced = Number(product % BigInt(P));
-    return M31.reduce(reduced);
+    return M31._reduceBig(product);
   }
 
   /**
@@ -145,29 +181,23 @@ export class M31 implements Field<M31> {
 
   /**
    * Exponentiates this field element to the given power
+   * Matches the Rust FieldExpOps::pow implementation which uses u128
    */
   pow(exponent: number): M31 {
-    // For very large exponents, we need to handle them carefully
-    if (exponent >= P) {
-      // Using Fermat's Little Theorem: a^(p-1) ≡ 1 (mod p)
-      // So we can compute a^(exponent mod (p-1))
-      exponent = exponent % (P - 1);
-      // Special case: if exponent becomes 0 after modulo (p-1), it should be (p-1)
-      if (exponent === 0) {
-        exponent = P - 1;
-      }
+    if (!Number.isInteger(exponent) || exponent < 0) {
+      throw new Error("Exponent must be a non-negative integer");
     }
+    
+    let result = M31.ONE;
+    let base = this.clone();
+    let exp = BigInt(exponent);
 
-    let result = M31.one();
-    let base = new M31(this.value);
-    let exp = exponent;
-
-    while (exp > 0) {
-      if (exp & 1) {
+    while (exp > 0n) {
+      if (exp & 1n) {
         result = result.mul(base);
       }
       base = base.square();
-      exp >>>= 1;
+      exp >>= 1n;
     }
 
     return result;
@@ -188,17 +218,17 @@ export class M31 implements Field<M31> {
   }
 
   /**
-   * Returns 1 as a field element
+   * Returns 1 as a field element (reuses static constant)
    */
   static one(): M31 {
-    return new M31(1);
+    return M31.ONE;
   }
 
   /**
-   * Returns 0 as a field element
+   * Returns 0 as a field element (reuses static constant)
    */
   static zero(): M31 {
-    return new M31(0);
+    return M31.ZERO;
   }
 
   /**
@@ -216,15 +246,24 @@ export class M31 implements Field<M31> {
   }
 
   /**
-   * Converts from a number to a field element
+   * Converts from a signed integer to a field element.
+   * Handles negative numbers exactly like the Rust From<i32> implementation.
    */
   static from(value: number): M31 {
-    if (value < 0) {
-      // Handle negative numbers similar to the Rust implementation
-      const absValue = Math.abs(value);
-      return M31.reduce(2 * P - absValue);
+    if (!Number.isInteger(value)) {
+      throw new Error("M31.from: value must be an integer");
     }
-    return M31.reduce(value);
+    
+    if (value < 0) {
+      // Handle negative numbers exactly like Rust implementation
+      // Map negative values into [0, 2P) range, then reduce
+      const P2 = BigInt(2) * BigInt(P);
+      const absValue = BigInt(Math.abs(value));
+      const normalized = P2 - absValue;
+      return M31._reduceBig(normalized);
+    }
+    
+    return M31._reduceBig(BigInt(value));
   }
 
   /**
@@ -252,6 +291,9 @@ export class M31 implements Field<M31> {
   }
 }
 
+// Type alias to match Rust naming convention
+export type BaseField = M31;
+
 /**
  * Computes `v^((2^31-1)-2)`.
  * Computes the multiplicative inverse of M31 elements with 37 multiplications vs naive 60 multiplications.
@@ -276,7 +318,7 @@ export function pow2147483645(v: M31): M31 {
  * Computes `v^(2^n)` by squaring n times.
  */
 function sqn(v: M31, n: number): M31 {
-  let result = new M31(v.value);
+  let result = v.clone();
   for (let i = 0; i < n; i++) {
     result = result.square();
   }

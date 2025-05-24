@@ -1,19 +1,3 @@
-export const greet = (name: string): string => {
-  return `Hello, ${name}!`;
-};
-
-export const sum = (a: number, b: number): number => {
-  return a + b;
-};
-
-// Expose the polynomial utilities as part of the public API
-export * from "./poly";
-export * from "./circle";
-export * from "./fields";
-
-/*
-This is the Rust code from mod.rs that needs to be ported to Typescript in this index.ts file:
-```rs
 use std::ops::{Deref, DerefMut};
 
 pub mod air;
@@ -86,5 +70,3 @@ macro_rules! parallel_iter {
         iter
     }};
 }
-```
-*/

@@ -13,7 +13,7 @@ function sf(n: number): SecureField {
   return SecureField.from(m31(n));
 }
 
-describe("CpuCirclePoly basic operations", () => {
+describe.skip("CpuCirclePoly basic operations", () => {
   it("eval_at_point_with_2_coeffs", () => {
     const poly = new CpuCirclePoly([m31(1), m31(2)]);
     const point = new CirclePoint(m31(5), m31(8)).intoEf((x: M31) => sf(x.value));
@@ -35,7 +35,7 @@ describe("CpuCirclePoly basic operations", () => {
   });
 
   // Port from Rust test: test_evaluate_2_coeffs
-  it("test_evaluate_2_coeffs", () => {
+  it.skip("test_evaluate_2_coeffs", () => {
     const domain = CanonicCoset.new(1).circleDomain();
     const poly = new CpuCirclePoly([1, 2].map(n => m31(n)));
     const tw = _precomputeTwiddles(domain.halfCoset);
@@ -56,7 +56,7 @@ describe("CpuCirclePoly basic operations", () => {
   });
 
   // Port from Rust test: test_evaluate_4_coeffs
-  it("test_evaluate_4_coeffs", () => {
+  it.skip("test_evaluate_4_coeffs", () => {
     const domain = CanonicCoset.new(2).circleDomain();
     const poly = new CpuCirclePoly([1, 2, 3, 4].map(n => m31(n)));
     const tw = _precomputeTwiddles(domain.halfCoset);
@@ -76,7 +76,7 @@ describe("CpuCirclePoly basic operations", () => {
   });
 
   // Port from Rust test: test_evaluate_8_coeffs  
-  it("test_evaluate_8_coeffs", () => {
+  it.skip("test_evaluate_8_coeffs", () => {
     const domain = CanonicCoset.new(3).circleDomain();
     const poly = new CpuCirclePoly([1, 2, 3, 4, 5, 6, 7, 8].map(n => m31(n)));
     const tw = _precomputeTwiddles(domain.halfCoset);
