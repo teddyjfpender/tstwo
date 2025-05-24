@@ -2,6 +2,7 @@ import type { ComplexConjugate, ExtensionOf, Field, FieldExpOps } from './fields
 import { CM31 } from './cm31';
 import { M31, P } from './m31';
 
+export const P4: bigint = BigInt('21267647892944572736998860269687930881'); // (2 ** 31 - 1) ** 4
 export const SECURE_EXTENSION_DEGREE = 4;
 
 // R constant used in multiplication, mirroring Rust implementation

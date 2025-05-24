@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { M31, P } from "../../src/fields/m31";
 import { CM31 } from "../../src/fields/cm31";
-import { QM31, FieldError } from "../../src/fields/qm31";
+import { QM31, FieldError, P4 } from "../../src/fields/qm31";
 
 function qm31(m0: number, m1: number, m2: number, m3: number): QM31 {
   return QM31.from_u32_unchecked(m0, m1, m2, m3);
@@ -308,6 +308,15 @@ describe("QM31", () => {
       expect(error).toBeInstanceOf(FieldError);
       expect(error.name).toBe("FieldError");
       expect(error.message).toBe("test message");
+    });
+  });
+
+  describe("Constants", () => {
+    it("should define P4 constant matching Rust implementation", () => {
+      // Verify P4 = (2^31 - 1)^4 exactly as in Rust
+      const expected = BigInt(P) ** 4n;
+      expect(P4).toBe(expected);
+      expect(P4).toBe(BigInt('21267647892944572736998860269687930881'));
     });
   });
 });

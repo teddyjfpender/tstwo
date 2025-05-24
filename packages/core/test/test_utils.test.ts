@@ -20,10 +20,10 @@ describe('test_utils', () => {
     it('should convert SecureField evaluation to BaseField evaluation', () => {
       // Create test data: QM31 values that convert to M31 values
       const secureValues = [
-        QM31.fromM31Array([M31.from(1), M31.from(0), M31.from(0), M31.from(0)]),
-        QM31.fromM31Array([M31.from(2), M31.from(0), M31.from(0), M31.from(0)]),
-        QM31.fromM31Array([M31.from(3), M31.from(0), M31.from(0), M31.from(0)]),
-        QM31.fromM31Array([M31.from(4), M31.from(0), M31.from(0), M31.from(0)]),
+        QM31.from_m31_array([M31.from(1), M31.from(0), M31.from(0), M31.from(0)]),
+        QM31.from_m31_array([M31.from(2), M31.from(0), M31.from(0), M31.from(0)]),
+        QM31.from_m31_array([M31.from(3), M31.from(0), M31.from(0), M31.from(0)]),
+        QM31.from_m31_array([M31.from(4), M31.from(0), M31.from(0), M31.from(0)]),
       ];
 
       // Create a mock domain and evaluation
@@ -46,8 +46,8 @@ describe('test_utils', () => {
     it('should handle complex SecureField values correctly', () => {
       // Create more complex QM31 values (with non-zero imaginary components)
       const secureValues = [
-        QM31.fromM31Array([M31.from(10), M31.from(20), M31.from(30), M31.from(40)]),
-        QM31.fromM31Array([M31.from(50), M31.from(60), M31.from(70), M31.from(80)]),
+        QM31.from_m31_array([M31.from(10), M31.from(20), M31.from(30), M31.from(40)]),
+        QM31.from_m31_array([M31.from(50), M31.from(60), M31.from(70), M31.from(80)]),
       ];
 
       const mockDomain = { size: () => 2 };
@@ -91,7 +91,7 @@ describe('test_utils', () => {
     it('should handle maximum M31 values', () => {
       const maxM31 = M31.from(2147483646); // P - 1
       const secureValues = [
-        QM31.fromM31Array([maxM31, M31.from(0), M31.from(0), M31.from(0)]),
+        QM31.from_m31_array([maxM31, M31.from(0), M31.from(0), M31.from(0)]),
       ];
 
       const mockDomain = { size: () => 1 };
@@ -102,7 +102,7 @@ describe('test_utils', () => {
     });
 
     it('should maintain constructor type consistency', () => {
-      const secureValues = [QM31.fromM31Array([M31.from(42), M31.from(0), M31.from(0), M31.from(0)])];
+      const secureValues = [QM31.from_m31_array([M31.from(42), M31.from(0), M31.from(0), M31.from(0)])];
       const mockDomain = { size: () => 1 };
       
       const secureEval = new MockEvaluation(mockDomain, secureValues);
