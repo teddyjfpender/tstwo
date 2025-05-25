@@ -19,3 +19,21 @@ pub mod verifier;
 mod test_utils;
 ```
 */
+
+//! Vector commitment scheme (VCS) module.
+
+export * from './blake2_hash';
+export * from './blake2_merkle';
+export * from './blake3_hash';
+export * from './hash';
+export * from './ops';
+export * from './poseidon252_merkle';
+export * from './prover';
+export * from './verifier';
+export * from './utils';
+
+// Re-export blake2s_ref if available (conditional like Rust)
+export * from './blake2s_ref';
+
+// Test utilities are not exported in production (like Rust #[cfg(test)])
+// export * from './test_utils';

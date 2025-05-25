@@ -21,7 +21,7 @@ import { Blake2sChannel } from '../../src/channel/blake2';
  * Test channel factory for consistent random generation.
  */
 function testChannel(): Blake2sChannel {
-  return new Blake2sChannel();
+  return Blake2sChannel.create();
 }
 
 /**

@@ -106,6 +106,31 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
   }
 
   /**
+   * Creates a QM31 element from an array of four M31 elements.
+   * Alias for from_m31_array to match camelCase naming convention.
+   * 
+   * @param array Array of exactly 4 M31 elements
+   * @returns New QM31 element
+   */
+  static fromM31Array(array: [M31, M31, M31, M31]): QM31 {
+    return QM31.from_m31_array(array);
+  }
+
+  /**
+   * Constructs a QM31 element from raw u32 components without validation.
+   * Alias for from_u32_unchecked to match camelCase naming convention.
+   * 
+   * @param a First component as integer in [0, P)
+   * @param b Second component as integer in [0, P)
+   * @param c Third component as integer in [0, P)
+   * @param d Fourth component as integer in [0, P)
+   * @returns New QM31 element
+   */
+  static fromUnchecked(a: number, b: number, c: number, d: number): QM31 {
+    return QM31.from_u32_unchecked(a, b, c, d);
+  }
+
+  /**
    * Converts this QM31 element to an array of four M31 elements.
    * Mirrors the Rust `to_m31_array` method.
    * 
@@ -113,6 +138,16 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
    */
   to_m31_array(): [M31, M31, M31, M31] {
     return [this.c0.real, this.c0.imag, this.c1.real, this.c1.imag];
+  }
+
+  /**
+   * Converts this QM31 element to an array of four M31 elements.
+   * Alias for to_m31_array to match camelCase naming convention.
+   * 
+   * @returns Array of four M31 elements [c0.real, c0.imag, c1.real, c1.imag]
+   */
+  toM31Array(): [M31, M31, M31, M31] {
+    return this.to_m31_array();
   }
 
   /**
@@ -281,15 +316,25 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
   }
 
   /**
-   * Multiplies by a CM31 element.
-   * Mirrors the Rust `mul_cm31` method exactly.
-   * (a + bu) * c = (ac) + (bc)u
+   * Multiplies this QM31 element by a CM31 element.
+   * Mirrors the Rust `mul_cm31` method.
    * 
    * @param rhs CM31 element to multiply by
    * @returns Product of this and rhs
    */
   mul_cm31(rhs: CM31): QM31 {
     return new QM31(this.c0.mul(rhs), this.c1.mul(rhs));
+  }
+
+  /**
+   * Multiplies this QM31 element by a CM31 element.
+   * Alias for mul_cm31 to match camelCase naming convention.
+   * 
+   * @param rhs CM31 element to multiply by
+   * @returns Product of this and rhs
+   */
+  mulCM31(rhs: CM31): QM31 {
+    return this.mul_cm31(rhs);
   }
 
   /**

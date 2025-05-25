@@ -15,7 +15,7 @@ import type { Channel } from '../../src/channel';
  * Test channel factory for consistent random generation.
  */
 function testChannel(): Blake2sChannel {
-  return new Blake2sChannel();
+  return Blake2sChannel.create();
 }
 
 describe('Sumcheck Protocol', () => {
