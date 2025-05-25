@@ -1,130 +1,6 @@
 /*
 This is the Rust code from backend/cpu/mod.rs that needs to be ported to Typescript in this backend/cpu/index.ts file:
-```rs
-pub mod accumulation;
-mod blake2s;
-pub mod circle;
-mod fri;
-mod grind;
-pub mod lookups;
-#[cfg(not(target_arch = "wasm32"))]
-mod poseidon252;
-pub mod quotients;
-
-use std::fmt::Debug;
-
-use serde::{Deserialize, Serialize};
-
-use super::{Backend, BackendForChannel, Column, ColumnOps};
-use crate::core::lookups::mle::Mle;
-use crate::core::poly::circle::{CircleEvaluation, CirclePoly};
-use crate::core::utils::bit_reverse_index;
-use crate::core::vcs::blake2_merkle::Blake2sMerkleChannel;
-#[cfg(not(target_arch = "wasm32"))]
-use crate::core::vcs::poseidon252_merkle::Poseidon252MerkleChannel;
-
-#[derive(Copy, Clone, Debug, Deserialize, Serialize)]
-pub struct CpuBackend;
-
-impl Backend for CpuBackend {}
-impl BackendForChannel<Blake2sMerkleChannel> for CpuBackend {}
-#[cfg(not(target_arch = "wasm32"))]
-impl BackendForChannel<Poseidon252MerkleChannel> for CpuBackend {}
-
-/// Performs a naive bit-reversal permutation inplace.
-///
-/// # Panics
-///
-/// Panics if the length of the slice is not a power of two.
-pub fn bit_reverse<T>(v: &mut [T]) {
-    let n = v.len();
-    assert!(n.is_power_of_two());
-    let log_n = n.ilog2();
-    for i in 0..n {
-        let j = bit_reverse_index(i, log_n);
-        if j > i {
-            v.swap(i, j);
-        }
-    }
-}
-
-impl<T: Debug + Clone + Default> ColumnOps<T> for CpuBackend {
-    type Column = Vec<T>;
-
-    fn bit_reverse_column(column: &mut Self::Column) {
-        bit_reverse(column)
-    }
-}
-
-impl<T: Debug + Clone + Default> Column<T> for Vec<T> {
-    fn zeros(len: usize) -> Self {
-        vec![T::default(); len]
-    }
-    #[allow(clippy::uninit_vec)]
-    unsafe fn uninitialized(length: usize) -> Self {
-        let mut data = Vec::with_capacity(length);
-        data.set_len(length);
-        data
-    }
-    fn to_cpu(&self) -> Vec<T> {
-        self.clone()
-    }
-    fn len(&self) -> usize {
-        self.len()
-    }
-    fn at(&self, index: usize) -> T {
-        self[index].clone()
-    }
-    fn set(&mut self, index: usize, value: T) {
-        self[index] = value;
-    }
-}
-
-pub type CpuCirclePoly = CirclePoly<CpuBackend>;
-pub type CpuCircleEvaluation<F, EvalOrder> = CircleEvaluation<CpuBackend, F, EvalOrder>;
-pub type CpuMle<F> = Mle<CpuBackend, F>;
-
-#[cfg(test)]
-mod tests {
-    use itertools::Itertools;
-    use rand::prelude::*;
-    use rand::rngs::SmallRng;
-
-    use crate::core::backend::cpu::bit_reverse;
-    use crate::core::backend::Column;
-    use crate::core::fields::qm31::QM31;
-    use crate::core::fields::{batch_inverse_in_place, FieldExpOps};
-
-    #[test]
-    fn bit_reverse_works() {
-        let mut data = [0, 1, 2, 3, 4, 5, 6, 7];
-        bit_reverse(&mut data);
-        assert_eq!(data, [0, 4, 2, 6, 1, 5, 3, 7]);
-    }
-
-    #[test]
-    #[should_panic]
-    fn bit_reverse_non_power_of_two_size_fails() {
-        let mut data = [0, 1, 2, 3, 4, 5];
-        bit_reverse(&mut data);
-    }
-
-    // TODO(Ohad): remove.
-    #[test]
-    fn batch_inverse_in_place_test() {
-        let mut rng = SmallRng::seed_from_u64(0);
-        let column = rng.gen::<[QM31; 16]>().to_vec();
-        let expected = column.iter().map(|e| e.inverse()).collect_vec();
-        let mut dst = Vec::zeros(column.len());
-
-        batch_inverse_in_place(&column, &mut dst);
-
-        assert_eq!(expected, dst);
-    }
-}
-```
 */
-
 import { bitReverseIndex } from "../../utils";
 import type { Backend, Column, ColumnOps } from "../index";
 import { Coset } from "../../circle";
@@ -140,6 +16,14 @@ import { CirclePoly, CircleEvaluation } from "../../poly/circle";
 export class CpuBackend implements Backend {
   /** Backend identifier for debugging */
   readonly name = "CpuBackend";
+  
+  /**
+   * Bit reverse a column in place.
+   * This is required for FRI operations and ColumnOps interface.
+   */
+  bitReverseColumn<T>(column: T[]): void {
+    bitReverse(column);
+  }
 }
 
 /**
@@ -159,8 +43,11 @@ export function bitReverse<T>(arr: T[]): void {
     const j = bitReverseIndex(i, logN);
     if (j > i) {
       const tmp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = tmp;
+      const tmpJ = arr[j];
+      if (tmp !== undefined && tmpJ !== undefined) {
+        arr[i] = tmpJ;
+        arr[j] = tmp;
+      }
     }
   }
 }
@@ -261,7 +148,10 @@ export function slowPrecomputeTwiddles(coset: Coset): M31[] {
     const slice = twiddles.slice(i0);
     bitReverse(slice);
     for (let j = 0; j < slice.length; j++) {
-      twiddles[i0 + j] = slice[j]!; // Using ! to assert non-undefined
+      const sliceValue = slice[j];
+      if (sliceValue !== undefined) {
+        twiddles[i0 + j] = sliceValue;
+      }
     }
     
     c = c.double();
@@ -306,7 +196,10 @@ export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]>
     batchInverseInPlace(src, dst);
     
     for (let j = 0; j < dst.length; j++) {
-      itwiddles[i + j] = dst[j]!; // Using ! to assert non-undefined
+      const dstValue = dst[j];
+      if (dstValue !== undefined) {
+        itwiddles[i + j] = dstValue;
+      }
     }
   }
 

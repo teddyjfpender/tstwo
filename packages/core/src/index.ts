@@ -11,6 +11,9 @@ export * from "./poly";
 export * from "./circle";
 export * from "./fields";
 
+// Export CPU backend lookups
+export * from "./backend/cpu/lookups";
+
 /*
 This is the Rust code from mod.rs that needs to be ported to Typescript in this index.ts file:
 ```rs

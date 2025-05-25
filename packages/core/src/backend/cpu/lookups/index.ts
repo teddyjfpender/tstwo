@@ -5,3 +5,15 @@ pub mod gkr;
 mod mle;
 ```
 */
+
+// CPU backend lookups implementations
+export {
+  CpuMleOpsBaseField,
+  CpuMleOpsSecureField,
+  CpuMleMultivariatePolyOracle,
+  CpuMleOps
+} from './mle';
+
+export {
+  CpuGkrOps
+} from './gkr';

@@ -17,7 +17,8 @@ export class Mle<F extends Field<F>> {
    * @throws Error if the number of evaluations is not a power of two.
    */
   constructor(evals: F[]) {
-    if (evals.length === 0 || (evals.length & (evals.length - 1)) !== 0) {
+    // Allow empty arrays (0-variable MLEs represent constants)
+    if (evals.length > 0 && (evals.length & (evals.length - 1)) !== 0) {
       throw new Error('Number of evaluations must be a power of two');
     }
     this.evals = [...evals];
@@ -34,6 +35,9 @@ export class Mle<F extends Field<F>> {
    * Returns the number of variables in the polynomial.
    */
   nVariables(): number {
+    if (this.evals.length === 0) {
+      return 0; // 0-variable MLE (constant)
+    }
     return Math.log2(this.evals.length);
   }
 

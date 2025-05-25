@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { commitOnLayer, Blake2sHash } from '../../../src/backend/cpu/blake2';
+import { commitOnLayer, type Blake2sHash } from '../../../src/backend/cpu/blake2';
 let blake2s: any;
 try {
   blake2s = require('@noble/hashes/blake2').blake2s;
@@ -13,7 +13,7 @@ function test_numbersToLEUint8Array(nums: number[]): Uint8Array {
     const bytes = new Uint8Array(nums.length * 4);
     const view = new DataView(bytes.buffer);
     for (let i = 0; i < nums.length; i++) {
-        view.setUint32(i * 4, nums[i], true); // true for little-endian
+        view.setUint32(i * 4, nums[i]!, true); // true for little-endian
     }
     return bytes;
 }
@@ -40,7 +40,7 @@ function createDummyHash(fillValue: number): Blake2sHash {
     return hash;
 }
 
-describe.skip('commitOnLayer with Blake2s from @noble/hashes', () => {
+describe('commitOnLayer with Blake2s from @noble/hashes', () => {
     // Note: These tests verify the behavior of `commitOnLayer` which now uses
     // `@noble/hashes/blake2s` for its hashing operations. The expected values
     // in these tests are derived by directly applying `blake2s` (from @noble/hashes)
@@ -66,7 +66,7 @@ describe.skip('commitOnLayer with Blake2s from @noble/hashes', () => {
 
             const leafNumbers: number[] = [];
             for (const column of columnsData) {
-                leafNumbers.push(column[0] >>> 0);
+                leafNumbers.push(column[0]! >>> 0);
             }
             const message_bytes = test_numbersToLEUint8Array(leafNumbers);
             const expected_hash = blake2s(message_bytes, { dkLen: 32 });
@@ -90,7 +90,7 @@ describe.skip('commitOnLayer with Blake2s from @noble/hashes', () => {
             // Expected for node 0
             const leafNumbers0: number[] = [];
             for (const column of columnsData) {
-                leafNumbers0.push(column[0] >>> 0);
+                leafNumbers0.push(column[0]! >>> 0);
             }
             const message_bytes0 = test_numbersToLEUint8Array(leafNumbers0);
             const expected_hash0 = blake2s(message_bytes0, { dkLen: 32 });
@@ -99,7 +99,7 @@ describe.skip('commitOnLayer with Blake2s from @noble/hashes', () => {
             // Expected for node 1
             const leafNumbers1: number[] = [];
             for (const column of columnsData) {
-                leafNumbers1.push(column[1] >>> 0);
+                leafNumbers1.push(column[1]! >>> 0);
             }
             const message_bytes1 = test_numbersToLEUint8Array(leafNumbers1);
             const expected_hash1 = blake2s(message_bytes1, { dkLen: 32 });
@@ -114,7 +114,7 @@ describe.skip('commitOnLayer with Blake2s from @noble/hashes', () => {
 
             const leafNumbers: number[] = [];
             for (const column of columnsForNode0) {
-                leafNumbers.push(column[0] >>> 0);
+                leafNumbers.push(column[0]! >>> 0);
             }
             const message_bytes = test_numbersToLEUint8Array(leafNumbers);
             const expected_hash = blake2s(message_bytes, { dkLen: 32 });
@@ -169,12 +169,12 @@ describe.skip('commitOnLayer with Blake2s from @noble/hashes', () => {
             expect(result.length).toBe(2);
 
             // Expected for result[0] (from children[0] and children[1])
-            const message_bytes0 = test_concatUint8Arrays([children[0], children[1]]);
+            const message_bytes0 = test_concatUint8Arrays([children[0]!, children[1]!]);
             const expected_hash0 = blake2s(message_bytes0, { dkLen: 32 });
             expect(result[0]).toEqual(expected_hash0);
 
             // Expected for result[1] (from children[2] and children[3])
-            const message_bytes1 = test_concatUint8Arrays([children[2], children[3]]);
+            const message_bytes1 = test_concatUint8Arrays([children[2]!, children[3]!]);
             const expected_hash1 = blake2s(message_bytes1, { dkLen: 32 });
             expect(result[1]).toEqual(expected_hash1);
         });
