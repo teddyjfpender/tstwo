@@ -136,8 +136,13 @@ describe('test_utils', () => {
       const channel = test_channel();
       
       // Channel should start with default digest and channel time
-      expect(channel.channel_time.n_challenges).toBe(0);
-      expect(channel.channel_time.n_sent).toBe(0);
+      expect(channel.getChannelTime().n_challenges).toBe(0);
+      expect(channel.getChannelTime().n_sent).toBe(0);
+      
+      // Should have a valid digest
+      expect(channel.digest()).toBeDefined();
+      expect(channel.digestBytes()).toBeInstanceOf(Uint8Array);
+      expect(channel.digestBytes().length).toBe(32); // Blake2s produces 32-byte hashes
     });
 
     it('should create independent channels', () => {
@@ -148,8 +153,8 @@ describe('test_utils', () => {
       channel1.draw_felt();
       
       // The other should remain unaffected
-      expect(channel1.channel_time.n_sent).toBeGreaterThan(0);
-      expect(channel2.channel_time.n_sent).toBe(0);
+      expect(channel1.getChannelTime().n_sent).toBeGreaterThan(0);
+      expect(channel2.getChannelTime().n_sent).toBe(0);
     });
 
     it('should create channels that can be used for cryptographic operations', () => {
@@ -185,8 +190,8 @@ describe('test_utils', () => {
       // The channel should start in a deterministic state
       // (Blake2sChannel constructor should initialize to consistent state)
       expect(channel).toBeInstanceOf(Blake2sChannel);
-      expect(channel.channel_time.n_challenges).toBe(0);
-      expect(channel.channel_time.n_sent).toBe(0);
+      expect(channel.getChannelTime().n_challenges).toBe(0);
+      expect(channel.getChannelTime().n_sent).toBe(0);
     });
   });
 
@@ -224,8 +229,8 @@ describe('test_utils', () => {
       expect(channel).toBeInstanceOf(Blake2sChannel);
       
       // Should have initial state like default constructor
-      expect(channel.channel_time.n_challenges).toBe(0);
-      expect(channel.channel_time.n_sent).toBe(0);
+      expect(channel.getChannelTime().n_challenges).toBe(0);
+      expect(channel.getChannelTime().n_sent).toBe(0);
     });
   });
 

@@ -32,16 +32,16 @@ function hashColumns(prev: Uint8Array[] | undefined, columns: number[][]): Uint8
       const bytes = new Uint8Array(leafNumbers.length * 4);
       const view = new DataView(bytes.buffer);
       for (let j = 0; j < leafNumbers.length; j++) {
-        view.setUint32(j * 4, leafNumbers[j], true);
+        view.setUint32(j * 4, leafNumbers[j]!, true);
       }
       message = bytes;
     }
-    result[i] = blake2s ? blake2s(message, { dkLen: 32 }) : new Uint8Array(32);
+    result[i] = blake2s ? blake2s(message) : new Uint8Array(32);
   }
   return result;
 }
 
-describe.skip("commitOnLayer", () => {
+describe("commitOnLayer", () => {
   it("hashes columns into next layer", () => {
     const cols = [
       [M31.from(1).value, M31.from(2).value],
@@ -49,7 +49,7 @@ describe.skip("commitOnLayer", () => {
     ];
     const res = commitOnLayer(1, undefined, cols);
     const expected = hashColumns(undefined, cols);
-    expect(Array.from(res[0] as Uint8Array)).toEqual(Array.from(expected[0]));
-    expect(Array.from(res[1] as Uint8Array)).toEqual(Array.from(expected[1]));
+    expect(Array.from(res[0]!)).toEqual(Array.from(expected[0]!));
+    expect(Array.from(res[1]!)).toEqual(Array.from(expected[1]!));
   });
 });

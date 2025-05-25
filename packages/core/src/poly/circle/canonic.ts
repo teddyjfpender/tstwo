@@ -16,12 +16,9 @@
 ///    X O X
 /// ```
 
-// Import the circle domain once implemented. This mirrors the Rust `mod.rs` re-export
-// structure where `CanonicCoset` provides convenience constructors for a
-// corresponding `CircleDomain`.
-import type { CircleDomain } from "./domain";
 import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
 import type { M31 as BaseField } from "../../fields/m31";
+import type { CircleDomain } from "./domain";
 
 /**
  * A coset of the form `G_{2n} + <G_n>`, where `G_n` is the generator of the subgroup of order `n`.
@@ -84,9 +81,10 @@ export class CanonicCoset {
 
   /**
    * Gets the [CircleDomain] representing the same point set (in another order).
+   * Note: This method creates a CircleDomain dynamically to avoid circular imports.
    */
   circleDomain(): CircleDomain {
-    // Use dynamic import to avoid circular dependency
+    // Import CircleDomain dynamically to avoid circular dependency
     const { CircleDomain } = require("./domain");
     return CircleDomain.new(this.halfCoset());
   }

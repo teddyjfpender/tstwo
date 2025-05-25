@@ -88,19 +88,13 @@ describe('Blake2sMerkle', () => {
   });
 
   it('test_merkle_channel', () => {
-    // Assuming Blake2sChannel has a parameterless constructor or a static default() method
-    // Based on typical patterns, a new instance should be like a default state.
-    const channel = new Blake2sChannel(); // Or Blake2sChannel.default() if that's the API
+    // Use the factory method instead of private constructor
+    const channel = Blake2sChannel.create();
     const { verifier } = prepareMerkle<Blake2sHash>(hasher);
     const blake2sMerkleChannel = new Blake2sMerkleChannel();
     blake2sMerkleChannel.mix_root(channel, verifier.root);
 
-    // Accessing channel.channelTime.nChallenges:
-    // This depends on the visibility of channelTime and nChallenges.
-    // If channelTime is private, this test needs adjustment (e.g., a getter or different assertion).
-    // Let's assume it's accessible for now as per the prompt's example.
-    // If not, this might be `(channel as any).channel_time.n_challenges` or require a helper.
-    // From channel/blake2.ts, `this.channel_time` is public, and from channel/index.ts, ChannelTime.n_challenges is the property.
-    expect(channel.channel_time.n_challenges).toBe(1);
+    // Use the public getChannelTime() method instead of private property access
+    expect(channel.getChannelTime().n_challenges).toBe(1);
   });
 });

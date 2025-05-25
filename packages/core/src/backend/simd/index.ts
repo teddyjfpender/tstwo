@@ -1,6 +1,8 @@
-import type { Backend, Column, ColumnOps, PolyOps, QuotientOps, FriOps, AccumulationOps, GkrOps, BackendForChannel, MerkleChannel } from "../index";
+import type { Backend, Column } from "../index";
 import type { BaseField } from "../../fields/m31";
 import type { SecureField } from "../../fields/qm31";
+import { M31 } from "../../fields/m31";
+import { QM31 } from "../../fields/qm31";
 
 // Re-export all SIMD modules
 export * from "./m31";
@@ -10,21 +12,19 @@ export * from "./column";
 export * from "./bit_reverse";
 export * from "./utils";
 export * from "./very_packed_m31";
-export * from "./conversion";
-export * from "./domain";
-export * from "./accumulation";
-export * from "./circle";
-export * from "./quotients";
-export * from "./fri";
-export * from "./grind";
-export * from "./prefix_sum";
-export * from "./blake2s";
-export * from "./poseidon252";
 export * from "./fft";
-export * from "./lookups";
 
-// Import column types
+// Import column types for the backend
 import { BaseColumn, SecureColumn } from "./column";
+
+// Core SIMD constants (also exported from m31.ts)
+export const N_LANES = 16;
+export const LOG_N_LANES = 4;
+
+// Optimal chunk sizes determined empirically (from Rust implementation)
+export const PACKED_M31_BATCH_INVERSE_CHUNK_SIZE = 1 << 9;
+export const PACKED_CM31_BATCH_INVERSE_CHUNK_SIZE = 1 << 10;
+export const PACKED_QM31_BATCH_INVERSE_CHUNK_SIZE = 1 << 11;
 
 /**
  * TypeScript implementation of the SimdBackend from `backend/simd/mod.rs`.
@@ -58,27 +58,43 @@ export class SimdBackend implements Backend {
    */
   bitReverseColumn<T>(column: Column<T>): void {
     if (column instanceof BaseColumn) {
-      this.bitReverseBaseColumn(column as BaseColumn);
+      column.bitReverse();
     } else if (column instanceof SecureColumn) {
-      this.bitReverseSecureColumn(column as SecureColumn);
+      column.bitReverse();
     } else {
-      throw new Error("Unsupported column type for SIMD bit reverse");
+      // Fallback for other column types
+      const data = column.toCpu();
+      const n = data.length;
+      if (n === 0 || (n & (n - 1)) !== 0) {
+        throw new Error("Array length must be a power of 2");
+      }
+      
+      const logN = Math.log2(n);
+      for (let i = 0; i < n; i++) {
+        const j = this.bitReverseIndex(i, logN);
+        if (i < j) {
+          const temp = data[i]!;
+          data[i] = data[j]!;
+          data[j] = temp;
+        }
+      }
+      
+      // Update the column
+      for (let i = 0; i < n; i++) {
+        column.set(i, data[i]!);
+      }
     }
   }
-
-  private bitReverseBaseColumn(column: BaseColumn): void {
-    column.bitReverse();
-  }
-
-  private bitReverseSecureColumn(column: SecureColumn): void {
-    column.bitReverse();
+  
+  private bitReverseIndex(index: number, logN: number): number {
+    let result = 0;
+    for (let i = 0; i < logN; i++) {
+      result = (result << 1) | (index & 1);
+      index >>= 1;
+    }
+    return result;
   }
 }
-
-// Optimal chunk sizes determined empirically (from Rust implementation)
-export const PACKED_M31_BATCH_INVERSE_CHUNK_SIZE = 1 << 9;
-export const PACKED_CM31_BATCH_INVERSE_CHUNK_SIZE = 1 << 10;
-export const PACKED_QM31_BATCH_INVERSE_CHUNK_SIZE = 1 << 11;
 
 /**
  * Default SIMD backend instance.

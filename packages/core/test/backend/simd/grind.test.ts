@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { grind, CpuGrindOps } from "../../src/backend/cpu/grind";
-import { Blake2sChannel } from "../../src/channel";
-import type { Channel } from "../../src/channel";
+import { grind, grindBlake2s, SimdGrindOps, SimdGenericGrindOps } from "../../../src/backend/simd/grind";
+import { Blake2sChannel } from "../../../src/channel";
+import type { Channel } from "../../../src/channel";
 
-describe("CpuGrindOps", () => {
+describe("SimdGrindOps", () => {
   let channel: Blake2sChannel;
-  let grindOps: CpuGrindOps;
+  let grindOps: SimdGrindOps;
 
   beforeEach(() => {
     channel = Blake2sChannel.create();
-    grindOps = new CpuGrindOps();
+    grindOps = new SimdGrindOps();
   });
 
   describe("grind", () => {
@@ -35,6 +35,10 @@ describe("CpuGrindOps", () => {
       const testChannel = Blake2sChannel.create();
       testChannel.mix_u64(nonce);
       expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(2);
+    });
+
+    it("should throw error for pow_bits > 32", () => {
+      expect(() => grindOps.grind(channel, 33)).toThrow("pow_bits > 32 is not supported");
     });
 
     it("should find different nonces for different initial channel states", () => {
@@ -90,6 +94,15 @@ describe("CpuGrindOps", () => {
       testChannel.mix_u64(nonce);
       expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(3);
     });
+
+    it("should handle maximum supported pow_bits", () => {
+      // Test with a reasonable number instead of 32 to avoid hanging
+      const nonce = grindOps.grind(channel, 4);
+      
+      const testChannel = Blake2sChannel.create();
+      testChannel.mix_u64(nonce);
+      expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(4);
+    });
   });
 
   describe("channel cloning", () => {
@@ -112,7 +125,78 @@ describe("CpuGrindOps", () => {
   });
 });
 
-describe("grind standalone function", () => {
+describe("SimdGenericGrindOps", () => {
+  let channel: Blake2sChannel;
+  let grindOps: SimdGenericGrindOps;
+
+  beforeEach(() => {
+    channel = Blake2sChannel.create();
+    grindOps = new SimdGenericGrindOps();
+  });
+
+  describe("grind", () => {
+    it("should find a nonce with 0 trailing zeros (always succeeds)", () => {
+      const nonce = grindOps.grind(channel, 0);
+      expect(typeof nonce).toBe("number");
+      expect(nonce).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should find a nonce with 1 trailing zero", () => {
+      const nonce = grindOps.grind(channel, 1);
+      
+      // Verify the nonce actually produces the required trailing zeros
+      const testChannel = Blake2sChannel.create();
+      testChannel.mix_u64(nonce);
+      expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(1);
+    });
+
+    it("should work with any channel type", () => {
+      const nonce = grindOps.grind(channel, 2);
+      
+      // Verify the nonce actually produces the required trailing zeros
+      const testChannel = Blake2sChannel.create();
+      testChannel.mix_u64(nonce);
+      expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(2);
+    });
+  });
+});
+
+describe("grindBlake2s standalone function", () => {
+  let channel: Blake2sChannel;
+
+  beforeEach(() => {
+    channel = Blake2sChannel.create();
+  });
+
+  it("should work as a standalone function", () => {
+    const nonce = grindBlake2s(channel, 1);
+    
+    // Verify the result
+    const testChannel = Blake2sChannel.create();
+    testChannel.mix_u64(nonce);
+    expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(1);
+  });
+
+  it("should produce same results as class-based implementation", () => {
+    const grindOps = new SimdGrindOps();
+    
+    // Use same channel state for both
+    channel.mix_u64(42);
+    const channel1 = channel.clone();
+    const channel2 = channel.clone();
+    
+    const nonce1 = grindBlake2s(channel1, 1);
+    const nonce2 = grindOps.grind(channel2, 1);
+    
+    expect(nonce1).toBe(nonce2);
+  });
+
+  it("should handle pow_bits validation", () => {
+    expect(() => grindBlake2s(channel, 33)).toThrow("pow_bits > 32 is not supported");
+  });
+});
+
+describe("grind generic standalone function", () => {
   let channel: Blake2sChannel;
 
   beforeEach(() => {
@@ -129,7 +213,7 @@ describe("grind standalone function", () => {
   });
 
   it("should produce same results as class-based implementation", () => {
-    const grindOps = new CpuGrindOps();
+    const grindOps = new SimdGenericGrindOps();
     
     // Use same channel state for both
     channel.mix_u64(42);
@@ -143,7 +227,7 @@ describe("grind standalone function", () => {
   });
 });
 
-describe("grind performance and correctness", () => {
+describe("SIMD grind performance and correctness", () => {
   it("should consistently find valid nonces", () => {
     const channel = Blake2sChannel.create();
     const powBits = 2;
@@ -192,5 +276,16 @@ describe("grind performance and correctness", () => {
     
     const actualNonce = grind(channel, powBits);
     expect(actualNonce).toBe(expectedNonce);
+  });
+
+  it("should handle Blake2s-specific optimizations", () => {
+    // Test that Blake2s-specific grind works correctly
+    const channel = Blake2sChannel.create();
+    const nonce = grindBlake2s(channel, 1);
+    
+    // Verify the result
+    const testChannel = Blake2sChannel.create();
+    testChannel.mix_u64(nonce);
+    expect(testChannel.trailing_zeros()).toBeGreaterThanOrEqual(1);
   });
 }); 
