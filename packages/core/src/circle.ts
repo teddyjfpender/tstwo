@@ -423,4 +423,9 @@ export class CircleDomain {
   shift(shift: CirclePointIndex): CircleDomain {
     return new CircleDomain(this.half_coset.shift(shift));
   }
+
+  /** TypeScript-style getter for API compatibility */
+  get halfCoset(): Coset {
+    return this.half_coset;
+  }
 }

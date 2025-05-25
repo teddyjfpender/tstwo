@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { CanonicCoset } from "../../../src/poly/circle/canonic";
 import { CircleDomain } from "../../../src/poly/circle/domain";
+import { CircleEvaluation } from "../../../src/poly/circle/evaluation";
+import { CpuCircleEvaluation } from "../../../src/backend/cpu/circle";
 import { M31 } from "../../../src/fields/m31";
+import { Coset } from "../../../src/circle";
 import { bitReverseIndex } from "../../../src/utils";
 
 // Mock CPU backend for testing - this would normally come from the backend implementation
@@ -102,8 +105,9 @@ describe("Circle Module Integration Tests", () => {
     it("should provide access to coset properties", () => {
       const coset = CanonicCoset.new(4);
       
-      // Test cosetFull method
-      expect(coset.cosetFull()).toBe(coset.coset);
+      // Test coset property access (the coset property is public)
+      expect(coset.coset).toBeDefined();
+      expect(coset.coset).toBeInstanceOf(Coset);
       
       // Test size and logSize methods
       expect(coset.size()).toBe(16); // 2^4

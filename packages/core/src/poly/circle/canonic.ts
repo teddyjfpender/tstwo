@@ -1,21 +1,3 @@
-/// A coset of the form `G_{2n} + <G_n>`, where `G_n` is the generator of the subgroup of order `n`.
-///
-/// The ordering on this coset is `G_2n + i * G_n`.
-/// These cosets can be used as a [`CircleDomain`], and be interpolated on.
-/// Note that this changes the ordering on the coset to be like [`CircleDomain`],
-/// which is `G_{2n} + i * G_{n/2}` and then `-G_{2n} -i * G_{n/2}`.
-/// For example, the `X`s below are a canonic coset with `n=8`.
-///
-/// ```text
-///    X O X
-///  O       O
-/// X         X
-/// O         O
-/// X         X
-///  O       O
-///    X O X
-/// ```
-
 import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
 import type { M31 as BaseField } from "../../fields/m31";
 import type { CircleDomain } from "./domain";
@@ -66,33 +48,26 @@ export class CanonicCoset {
   }
 
   /**
-   * Gets the full coset represented G_{2n} + <G_n>.
-   */
-  cosetFull(): Coset {
-    return this.coset;
-  }
-
-  /**
    * Gets half of the coset (its conjugate complements to the whole coset), G_{2n} + <G_{n/2}>
    */
-  halfCoset(): Coset {
-    return Coset.half_odds(this.logSize() - 1);
+  half_coset(): Coset {
+    return Coset.half_odds(this.log_size() - 1);
   }
 
   /**
    * Gets the [CircleDomain] representing the same point set (in another order).
    * Note: This method creates a CircleDomain dynamically to avoid circular imports.
    */
-  circleDomain(): CircleDomain {
+  circle_domain(): CircleDomain {
     // Import CircleDomain dynamically to avoid circular dependency
     const { CircleDomain } = require("./domain");
-    return CircleDomain.new(this.halfCoset());
+    return CircleDomain.new(this.half_coset());
   }
 
   /**
    * Returns the log size of the coset.
    */
-  logSize(): number {
+  log_size(): number {
     return this.coset.log_size;
   }
 
@@ -103,11 +78,11 @@ export class CanonicCoset {
     return this.coset.size();
   }
 
-  initialIndex(): CirclePointIndex {
+  initial_index(): CirclePointIndex {
     return this.coset.initial_index;
   }
 
-  stepSize(): CirclePointIndex {
+  step_size(): CirclePointIndex {
     return this.coset.step_size;
   }
 
@@ -115,7 +90,7 @@ export class CanonicCoset {
     return this.coset.step;
   }
 
-  indexAt(index: number): CirclePointIndex {
+  index_at(index: number): CirclePointIndex {
     // Type safety: ensure index is a non-negative integer
     if (!Number.isInteger(index) || index < 0) {
       throw new Error("index must be a non-negative integer");
@@ -129,6 +104,31 @@ export class CanonicCoset {
       throw new Error("i must be a non-negative integer");
     }
     return this.coset.at(i);
+  }
+
+  // TypeScript-style method aliases for better ergonomics
+  logSize(): number {
+    return this.log_size();
+  }
+
+  halfCoset(): Coset {
+    return this.half_coset();
+  }
+
+  circleDomain(): CircleDomain {
+    return this.circle_domain();
+  }
+
+  initialIndex(): CirclePointIndex {
+    return this.initial_index();
+  }
+
+  stepSize(): CirclePointIndex {
+    return this.step_size();
+  }
+
+  indexAt(index: number): CirclePointIndex {
+    return this.index_at(index);
   }
 }
 

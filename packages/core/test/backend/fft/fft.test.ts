@@ -5,10 +5,19 @@
  * These tests verify the exact same scenarios as the Rust implementation.
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import { M31 } from "../../../src/fields/m31";
+import { QM31 } from "../../../src/fields/qm31";
+import { CpuBackend } from "../../../src/backend/cpu";
+import { CpuCircleEvaluation } from "../../../src/backend/cpu/circle";
+import { CpuCirclePoly } from "../../../src/backend/cpu/circle";
+import { CpuSecureCirclePoly } from "../../../src/backend/cpu/circle";
+import { CpuSecureEvaluation } from "../../../src/backend/cpu/circle";
+import { CpuColumnArray } from "../../../src/backend/cpu/column";
+import { Coset, CirclePointIndex } from "../../../src/circle";
+import { CanonicCoset } from "../../../src/poly/circle/canonic";
+import { CircleDomain } from "../../../src/poly/circle/domain";
 import { PackedM31 } from "../../../src/backend/simd/m31";
-import { Coset, CirclePointIndex, CanonicCoset, CircleDomain } from "../../../src/circle";
 import { 
   fft, 
   fftLowerWithVecwise, 
@@ -131,8 +140,8 @@ describe("SIMD FFT Butterfly Operations", () => {
 
   it("test_vecwise_butterflies", () => {
     // Exact port of Rust test_vecwise_butterflies
-    const domain = new CanonicCoset(5).circleDomain();
-    const twiddle_dbls = getTwiddleDbls(domain.half_coset);
+    const domain = CanonicCoset.new(5).circle_domain();
+    const twiddle_dbls = getTwiddleDbls(domain.halfCoset);
     expect(twiddle_dbls.length).toBe(4);
     
     // Create test values with random-like pattern (matching Rust test)
@@ -165,8 +174,8 @@ describe("SIMD FFT Butterfly Operations", () => {
 
   it("test_vecwise_ibutterflies", () => {
     // Exact port of Rust test_vecwise_ibutterflies
-    const domain = new CanonicCoset(5).circleDomain();
-    const twiddle_dbls = getITwiddleDbls(domain.half_coset);
+    const domain = CanonicCoset.new(5).circle_domain();
+    const twiddle_dbls = getITwiddleDbls(domain.halfCoset);
     expect(twiddle_dbls.length).toBe(4);
     
     const val0_array = Array.from({ length: 16 }, (_, i) => M31.from((i * 7 + 3) % 1000));
@@ -267,9 +276,9 @@ describe("SIMD FFT Lower Level Operations", () => {
   it("test_fft_lower_with_vecwise", () => {
     // Exact port of Rust test_fft_lower
     for (let log_size = 5; log_size < 12; log_size++) {
-      const domain = new CanonicCoset(log_size).circleDomain();
+      const domain = CanonicCoset.new(log_size).circle_domain();
       const values = Array.from({ length: domain.size() }, (_, i) => M31.from((i * 7 + 3) % 1000).value);
-      const twiddle_dbls = getTwiddleDbls(domain.half_coset);
+      const twiddle_dbls = getTwiddleDbls(domain.halfCoset);
       
       const src = [...values];
       const dst = new Array(values.length).fill(0);
@@ -283,9 +292,9 @@ describe("SIMD FFT Lower Level Operations", () => {
   it("test_ifft_lower_with_vecwise", () => {
     // Exact port of Rust test_ifft_lower_with_vecwise
     for (let log_size = 5; log_size < 12; log_size++) {
-      const domain = new CanonicCoset(log_size).circleDomain();
+      const domain = CanonicCoset.new(log_size).circle_domain();
       const values = Array.from({ length: domain.size() }, (_, i) => M31.from((i * 7 + 3) % 1000).value);
-      const twiddle_dbls = getITwiddleDbls(domain.half_coset);
+      const twiddle_dbls = getITwiddleDbls(domain.halfCoset);
       
       ifftLowerWithVecwise(values, twiddle_dbls, log_size, log_size);
       
@@ -299,9 +308,9 @@ describe("SIMD FFT Lower Level Operations", () => {
     const src = Array.from({ length: size }, (_, i) => M31.from(i + 1).value);
     const dst = new Array(size).fill(0);
     
-    const canonicCoset = new CanonicCoset(log_size);
-    const domain = canonicCoset.circleDomain();
-    const twiddle_dbl = getTwiddleDbls(domain.half_coset);
+    const canonicCoset = CanonicCoset.new(log_size);
+    const domain = canonicCoset.circle_domain();
+    const twiddle_dbl = getTwiddleDbls(domain.halfCoset);
     
     const fft_layers = 2; // Test with 2 layers
     fftLowerWithoutVecwise(src, dst, twiddle_dbl, log_size, fft_layers);
@@ -315,9 +324,9 @@ describe("SIMD FFT Full Operations", () => {
     // Exact port of Rust test_fft_full
     // Temporarily limit to smaller sizes for debugging
     for (let log_size = MIN_FFT_LOG_SIZE; log_size < MIN_FFT_LOG_SIZE + 2; log_size++) {
-      const domain = new CanonicCoset(log_size).circleDomain();
+      const domain = CanonicCoset.new(log_size).circle_domain();
       const values = Array.from({ length: domain.size() }, (_, i) => M31.from((i * 7 + 3) % 1000).value);
-      const twiddle_dbls = getTwiddleDbls(domain.half_coset);
+      const twiddle_dbls = getTwiddleDbls(domain.halfCoset);
       
       const src = [...values];
       const dst = new Array(values.length).fill(0);
@@ -335,9 +344,9 @@ describe("SIMD FFT Full Operations", () => {
     // Exact port of Rust test_ifft_full
     // Temporarily limit to smaller sizes for debugging
     for (let log_size = MIN_FFT_LOG_SIZE; log_size < MIN_FFT_LOG_SIZE + 2; log_size++) {
-      const domain = new CanonicCoset(log_size).circleDomain();
+      const domain = CanonicCoset.new(log_size).circle_domain();
       const values = Array.from({ length: domain.size() }, (_, i) => M31.from((i * 7 + 3) % 1000).value);
-      const twiddle_dbls = getITwiddleDbls(domain.half_coset);
+      const twiddle_dbls = getITwiddleDbls(domain.halfCoset);
       
       ifft(values, twiddle_dbls, log_size);
       
@@ -359,10 +368,10 @@ describe("SIMD FFT Full Operations", () => {
     const src = original.map(v => v.value);
     const dst = new Array(size).fill(0);
     
-    const canonicCoset = new CanonicCoset(log_size);
-    const domain = canonicCoset.circleDomain();
-    const twiddle_dbl = getTwiddleDbls(domain.half_coset);
-    const itwiddle_dbl = getITwiddleDbls(domain.half_coset);
+    const canonicCoset = CanonicCoset.new(log_size);
+    const domain = canonicCoset.circle_domain();
+    const twiddle_dbl = getTwiddleDbls(domain.halfCoset);
+    const itwiddle_dbl = getITwiddleDbls(domain.halfCoset);
     
     // Apply transpose before FFT (matching the full FFT test)
     transposeVecs(src, log_size - 4);
@@ -426,12 +435,12 @@ describe("SIMD FFT Utility Operations", () => {
   it("test_twiddle_generation", () => {
     // Test twiddle generation for different coset sizes
     for (let log_size = MIN_FFT_LOG_SIZE; log_size <= 8; log_size++) {
-      const canonicCoset = new CanonicCoset(log_size);
+      const canonicCoset = CanonicCoset.new(log_size);
       const domain = canonicCoset.circleDomain();
-      const twiddles = getTwiddleDbls(domain.half_coset);
-      const itwiddles = getITwiddleDbls(domain.half_coset);
+      const twiddles = getTwiddleDbls(domain.halfCoset);
+      const itwiddles = getITwiddleDbls(domain.halfCoset);
       
-      // The half_coset has log_size - 1, so we expect log_size - 1 twiddle arrays
+      // The halfCoset has log_size - 1, so we expect log_size - 1 twiddle arrays
       expect(twiddles.length).toBe(log_size - 1);
       expect(itwiddles.length).toBe(log_size - 1);
       
@@ -462,9 +471,9 @@ describe("SIMD FFT Error Handling", () => {
     // Test with all zeros
     const zeros = new Array(size).fill(0);
     const dst = new Array(size).fill(0);
-    const canonicCoset = new CanonicCoset(log_size);
+    const canonicCoset = CanonicCoset.new(log_size);
     const domain = canonicCoset.circleDomain();
-    const twiddles = getTwiddleDbls(domain.half_coset);
+    const twiddles = getTwiddleDbls(domain.halfCoset);
     
     expect(() => fft(zeros, dst, twiddles, log_size)).not.toThrow();
     
