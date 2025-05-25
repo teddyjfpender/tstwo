@@ -3,11 +3,12 @@ import { M31 } from "../fields/m31";
 import { QM31 } from "../fields/qm31";
 import { SecureColumnByCoords } from "../fields/secure_columns";
 import type { ColumnOps } from "../backend";
-import { CpuBackend, CpuColumnOps, bitReverse } from "../backend/cpu";
+import { CpuBackend, CpuColumn, bitReverse } from "../backend/cpu";
 import { ibutterfly } from "../fft";
 import { bitReverseIndex } from "../utils";
 import { fold } from "./utils";
 import type { CircleDomain } from "./circle";
+import type { Backend } from "../backend";
 
 /**
  * Domain comprising of the x-coordinates of points in a Coset.
@@ -235,87 +236,74 @@ export class LinePoly {
 }
 
 /**
- * Evaluations of a univariate polynomial on a LineDomain.
+ * A univariate polynomial evaluation on a LineDomain.
  */
-export class LineEvaluation<B extends ColumnOps<M31> = CpuColumnOps<M31>> {
-  /**
-   * Evaluations of a univariate polynomial on `domain`.
-   */
+export class LineEvaluation<B extends Backend = CpuBackend> {
+  /** The values of the polynomial evaluation. */
   readonly values: SecureColumnByCoords;
-  
+  /** The domain on which the polynomial is evaluated. */
   protected readonly _domain: LineDomain;
 
   /**
-   * Protected constructor to allow inheritance while enforcing API hygiene.
+   * Private constructor to enforce API hygiene.
    * Use LineEvaluation.new() instead.
    */
   protected constructor(domain: LineDomain, values: SecureColumnByCoords) {
-    if (values.len() !== domain.size()) {
-      throw new Error("LineEvaluation: domain/values size mismatch");
-    }
     this._domain = domain;
     this.values = values;
   }
 
   /**
-   * Creates new LineEvaluation from a set of polynomial evaluations over a LineDomain.
+   * Creates a new line evaluation.
    * 
-   * @throws Error if the number of evaluations does not match the size of the domain.
+   * @throws Error if the domain size doesn't match the values length.
    */
-  static new<B extends ColumnOps<M31> = CpuColumnOps<M31>>(
+  static new<B extends Backend = CpuBackend>(
     domain: LineDomain, 
     values: SecureColumnByCoords
   ): LineEvaluation<B> {
-    return new LineEvaluation(domain, values) as LineEvaluation<B>;
+    if (domain.size() !== values.len()) {
+      throw new Error("domain size must match values length");
+    }
+    return new LineEvaluation(domain, values);
   }
 
-  /**
-   * Creates a new LineEvaluation filled with zeros.
-   */
-  static newZero<B extends ColumnOps<M31> = CpuColumnOps<M31>>(domain: LineDomain): LineEvaluation<B> {
-    return new LineEvaluation(domain, SecureColumnByCoords.zeros(domain.size())) as LineEvaluation<B>;
+  /** Creates a new line evaluation with all zero values. */
+  static newZero<B extends Backend = CpuBackend>(domain: LineDomain): LineEvaluation<B> {
+    const values = SecureColumnByCoords.zeros(domain.size());
+    return LineEvaluation.new(domain, values);
   }
 
-  /**
-   * Alias for Rust-style method name.
-   */
-  static new_zero<B extends ColumnOps<M31> = CpuColumnOps<M31>>(domain: LineDomain): LineEvaluation<B> {
+  /** Alias for Rust-style method name. */
+  static new_zero<B extends Backend = CpuBackend>(domain: LineDomain): LineEvaluation<B> {
     return LineEvaluation.newZero(domain);
   }
 
-  /**
-   * Returns the number of evaluations.
-   */
+  /** Returns the number of evaluations. */
   len(): number {
-    return 1 << this._domain.logSize();
+    return this._domain.size();
   }
 
-  /**
-   * Returns the domain.
-   */
+  /** Returns the domain. */
   domain(): LineDomain {
     return this._domain;
   }
 
-  /**
-   * Clones the values into a new line evaluation in the CPU.
-   */
-  toCpu(): LineEvaluation<CpuColumnOps<M31>> {
-    return new LineEvaluation(this._domain, this.values.to_cpu()) as LineEvaluation<CpuColumnOps<M31>>;
+  /** Converts to CPU backend. */
+  toCpu(): LineEvaluation<CpuBackend> {
+    return new LineEvaluation(this._domain, this.values.to_cpu()) as LineEvaluation<CpuBackend>;
   }
 
-  /**
-   * Alias for Rust-style method name.
-   */
-  to_cpu(): LineEvaluation<CpuColumnOps<M31>> {
+  /** Alias for Rust-style method name. */
+  to_cpu(): LineEvaluation<CpuBackend> {
     return this.toCpu();
   }
 }
 
 /**
- * CPU-specific implementation of LineEvaluation.
+ * CPU-specific line evaluation with interpolation capabilities.
  */
-export class CpuLineEvaluation extends LineEvaluation<CpuColumnOps<M31>> {
+export class CpuLineEvaluation extends LineEvaluation<CpuBackend> {
   /**
    * Interpolates the polynomial as evaluations on `domain`.
    */

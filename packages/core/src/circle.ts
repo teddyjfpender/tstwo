@@ -294,15 +294,133 @@ export class CosetIterator<T> implements IterableIterator<T> {
   constructor(public cur: T, public step: T, public remaining: number) {}
 
   next(): IteratorResult<T> {
-    if (this.remaining === 0) return { done: true, value: undefined as any };
-    this.remaining -= 1;
-    const res = this.cur;
-    // @ts-ignore - relies on add method presence
-    this.cur = this.cur.add(this.step);
-    return { done: false, value: res };
+    if (this.remaining === 0) {
+      return { done: true, value: undefined };
+    }
+    const value = this.cur;
+    this.cur = (this.cur as any).add(this.step);
+    this.remaining--;
+    return { done: false, value };
   }
 
   [Symbol.iterator](): IterableIterator<T> {
     return this;
+  }
+}
+
+/**
+ * A coset of the form `G_{2n} + <G_n>`, where `G_n` is the generator of the subgroup of order `n`.
+ * 
+ * TypeScript port of the Rust CanonicCoset.
+ * These cosets avoid zero x-coordinates by using odds cosets.
+ */
+export class CanonicCoset {
+  public coset: Coset;
+
+  constructor(log_size: number) {
+    if (log_size <= 0) {
+      throw new Error("log_size must be positive");
+    }
+    this.coset = Coset.odds(log_size);
+  }
+
+  /** Gets the full coset represented G_{2n} + <G_n>. */
+  getCoset(): Coset {
+    return this.coset;
+  }
+
+  /** Gets half of the coset (its conjugate complements to the whole coset), G_{2n} + <G_{n/2}> */
+  halfCoset(): Coset {
+    return Coset.half_odds(this.logSize() - 1);
+  }
+
+  /** Gets the CircleDomain representing the same point set (in another order). */
+  circleDomain(): CircleDomain {
+    return new CircleDomain(this.halfCoset());
+  }
+
+  /** Returns the log size of the coset. */
+  logSize(): number {
+    return this.coset.log_size;
+  }
+
+  /** Returns the size of the coset. */
+  size(): number {
+    return this.coset.size();
+  }
+
+  /** Gets the initial index. */
+  initialIndex(): CirclePointIndex {
+    return this.coset.initial_index;
+  }
+
+  /** Gets the step size. */
+  stepSize(): CirclePointIndex {
+    return this.coset.step_size;
+  }
+
+  /** Gets the step. */
+  step(): CirclePoint<M31> {
+    return this.coset.step;
+  }
+
+  /** Gets the index at the given position. */
+  indexAt(index: number): CirclePointIndex {
+    return this.coset.index_at(index);
+  }
+
+  /** Gets the point at the given position. */
+  at(i: number): CirclePoint<M31> {
+    return this.coset.at(i);
+  }
+}
+
+/**
+ * A valid domain for circle polynomial interpolation and evaluation.
+ * 
+ * Valid domains are a disjoint union of two conjugate cosets: `+-C + <G_n>`.
+ * The ordering defined on this domain is `C + iG_n`, and then `-C - iG_n`.
+ * 
+ * TypeScript port of the Rust CircleDomain.
+ */
+export class CircleDomain {
+  public half_coset: Coset;
+
+  constructor(half_coset: Coset) {
+    this.half_coset = half_coset;
+  }
+
+  /** Returns the size of the domain. */
+  size(): number {
+    return 1 << this.logSize();
+  }
+
+  /** Returns the log size of the domain. */
+  logSize(): number {
+    return this.half_coset.log_size + 1;
+  }
+
+  /** Returns the `i` th domain element. */
+  at(i: number): CirclePoint<M31> {
+    return this.indexAt(i).to_point();
+  }
+
+  /** Returns the CirclePointIndex of the `i`th domain element. */
+  indexAt(i: number): CirclePointIndex {
+    if (i < this.half_coset.size()) {
+      return this.half_coset.index_at(i);
+    } else {
+      return this.half_coset.index_at(i - this.half_coset.size()).neg();
+    }
+  }
+
+  /** Returns true if the domain is canonic. */
+  isCanonic(): boolean {
+    return this.half_coset.initial_index.value * 4 === this.half_coset.step_size.value;
+  }
+
+  /** Shifts the domain by the given offset. */
+  shift(shift: CirclePointIndex): CircleDomain {
+    return new CircleDomain(this.half_coset.shift(shift));
   }
 }

@@ -2,12 +2,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   CpuBackend,
   CpuColumn,
-  CpuColumnOps,
   bitReverse,
   slowPrecomputeTwiddles,
   precomputeTwiddles,
   cpuBackend,
-  cpuColumnOps,
 } from "../../src/backend/cpu";
 import { M31 } from "../../src/fields/m31";
 import { QM31 } from "../../src/fields/qm31";
@@ -24,6 +22,31 @@ describe("CpuBackend", () => {
     it("should provide default instance", () => {
       expect(cpuBackend).toBeInstanceOf(CpuBackend);
       expect(cpuBackend.name).toBe("CpuBackend");
+    });
+
+    it("should create BaseField columns", () => {
+      const data = [M31.from(1), M31.from(2), M31.from(3)];
+      const column = cpuBackend.createBaseFieldColumn(data);
+      expect(column.len()).toBe(3);
+      expect(column.at(0)).toEqual(M31.from(1));
+    });
+
+    it("should create SecureField columns", () => {
+      const data = [QM31.from(M31.from(1)), QM31.from(M31.from(2))];
+      const column = cpuBackend.createSecureFieldColumn(data);
+      expect(column.len()).toBe(2);
+      expect(column.at(0)).toEqual(QM31.from(M31.from(1)));
+    });
+
+    it("should bit reverse columns", () => {
+      const data = [M31.from(0), M31.from(1), M31.from(2), M31.from(3)];
+      const column = cpuBackend.createBaseFieldColumn(data);
+      cpuBackend.bitReverseColumn(column);
+      
+      expect(column.at(0)).toEqual(M31.from(0));
+      expect(column.at(1)).toEqual(M31.from(2));
+      expect(column.at(2)).toEqual(M31.from(1));
+      expect(column.at(3)).toEqual(M31.from(3));
     });
   });
 
@@ -79,33 +102,6 @@ describe("CpuBackend", () => {
     });
   });
 
-  describe("CpuColumnOps", () => {
-    let columnOps: CpuColumnOps<number>;
-
-    beforeEach(() => {
-      columnOps = new CpuColumnOps<number>();
-    });
-
-    it("should create column ops instance", () => {
-      expect(columnOps).toBeInstanceOf(CpuColumnOps);
-    });
-
-    it("should provide default instance", () => {
-      expect(cpuColumnOps).toBeInstanceOf(CpuColumnOps);
-    });
-
-    it("should bit reverse column in place", () => {
-      const column = [0, 1, 2, 3, 4, 5, 6, 7];
-      columnOps.bitReverseColumn(column);
-      expect(column).toEqual([0, 4, 2, 6, 1, 5, 3, 7]);
-    });
-
-    it("should handle empty column", () => {
-      const column: number[] = [];
-      expect(() => columnOps.bitReverseColumn(column)).toThrow();
-    });
-  });
-
   describe("CpuColumn", () => {
     describe("construction", () => {
       it("should create column from array", () => {
@@ -120,7 +116,7 @@ describe("CpuBackend", () => {
         const data = [5, 6, 7, 8];
         const column = CpuColumn.fromArray(data);
         expect(column.len()).toBe(4);
-        expect(column.toCPU()).toEqual([5, 6, 7, 8]);
+        expect(column.toCpu()).toEqual([5, 6, 7, 8]);
         // Should be a copy, not reference
         data[0] = 99;
         expect(column.at(0)).toBe(5);
@@ -185,8 +181,14 @@ describe("CpuBackend", () => {
         expect(empty.len()).toBe(0);
       });
 
+      it("should check if empty", () => {
+        expect(column.isEmpty()).toBe(false);
+        const empty = CpuColumn.fromArray<number>([]);
+        expect(empty.isEmpty()).toBe(true);
+      });
+
       it("should convert to CPU array", () => {
-        const cpu = column.toCPU();
+        const cpu = column.toCpu();
         expect(cpu).toEqual([10, 20, 30, 40, 50]);
         // Should be a copy
         cpu[0] = 999;
@@ -397,7 +399,7 @@ describe("CpuBackend", () => {
     it("should handle columns with zero elements", () => {
       const column = CpuColumn.zeros(0, () => 42);
       expect(column.len()).toBe(0);
-      expect(column.toCPU()).toEqual([]);
+      expect(column.toCpu()).toEqual([]);
       
       const values = [];
       for (const value of column) {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { bitReverse, CpuBackend, CpuColumn, CpuColumnOps } from "../../../src/backend/cpu/index";
+import { bitReverse, CpuBackend, CpuColumn } from "../../../src/backend/cpu/index";
 import { M31 } from "../../../src/fields/m31";
 import { QM31 } from "../../../src/fields/qm31";
 import { batchInverseInPlace } from "../../../src/fields/fields";
@@ -47,15 +47,6 @@ describe("bitReverse", () => {
   });
 });
 
-describe("CpuColumnOps", () => {
-  it("should bit reverse a column", () => {
-    const ops = new CpuColumnOps<number>();
-    const column = [0, 1, 2, 3, 4, 5, 6, 7];
-    ops.bitReverseColumn(column);
-    expect(column).toEqual([0, 4, 2, 6, 1, 5, 3, 7]);
-  });
-});
-
 describe("CpuColumn", () => {
   it("should create column with zeros", () => {
     const column = CpuColumn.zeros(4, () => M31.zero());
@@ -99,7 +90,7 @@ describe("CpuColumn", () => {
   it("should convert to CPU array", () => {
     const data = [M31.from(1), M31.from(2), M31.from(3)];
     const column = CpuColumn.fromArray(data);
-    const cpuArray = column.toCPU();
+    const cpuArray = column.toCpu();
     
     expect(cpuArray.length).toBe(3);
     expect(cpuArray[0]!.equals(M31.from(1))).toBe(true);

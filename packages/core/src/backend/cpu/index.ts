@@ -2,7 +2,9 @@
 This is the Rust code from backend/cpu/mod.rs that needs to be ported to Typescript in this backend/cpu/index.ts file:
 */
 import { bitReverseIndex } from "../../utils";
-import type { Backend, Column, ColumnOps } from "../index";
+import type { Backend, Column, PolyOps, QuotientOps, FriOps, AccumulationOps, GkrOps } from "../index";
+import type { BaseField } from "../../fields/m31";
+import type { SecureField } from "../../fields/qm31";
 import { Coset } from "../../circle";
 import { M31 } from "../../fields/m31";
 import { batchInverseInPlace } from "../../fields/fields";
@@ -21,8 +23,32 @@ export class CpuBackend implements Backend {
    * Bit reverse a column in place.
    * This is required for FRI operations and ColumnOps interface.
    */
-  bitReverseColumn<T>(column: T[]): void {
-    bitReverse(column);
+  bitReverseColumn<T>(column: Column<T>): void {
+    // Get the internal data and bit reverse it
+    const data = column.toCpu();
+    bitReverse(data);
+    
+    // Update the column with the bit-reversed data
+    for (let i = 0; i < data.length; i++) {
+      const value = data[i];
+      if (value !== undefined) {
+        column.set(i, value);
+      }
+    }
+  }
+
+  /**
+   * Create a BaseField column from data array
+   */
+  createBaseFieldColumn(data: BaseField[]): Column<BaseField> {
+    return new CpuColumn(data);
+  }
+
+  /**
+   * Create a SecureField column from data array
+   */
+  createSecureFieldColumn(data: SecureField[]): Column<SecureField> {
+    return new CpuColumn(data);
   }
 }
 
@@ -53,16 +79,6 @@ export function bitReverse<T>(arr: T[]): void {
 }
 
 /**
- * CPU implementation of ColumnOps trait.
- * Provides column operations for CPU-based computations.
- */
-export class CpuColumnOps<T> implements ColumnOps<T> {
-  bitReverseColumn(column: T[]): void {
-    bitReverse(column);
-  }
-}
-
-/**
  * CPU implementation of Column trait using standard arrays.
  * This corresponds to the Rust `impl<T: Debug + Clone + Default> Column<T> for Vec<T>`.
  */
@@ -70,7 +86,7 @@ export class CpuColumn<T> implements Column<T> {
   private data: T[];
 
   constructor(data: T[]) {
-    this.data = data;
+    this.data = [...data]; // Clone the data for safety
   }
 
   /** Creates a column filled with default values. Mirrors `Vec::zeros`. */
@@ -86,18 +102,34 @@ export class CpuColumn<T> implements Column<T> {
 
   /** Creates a column from an existing array. */
   static fromArray<T>(data: T[]): CpuColumn<T> {
-    return new CpuColumn([...data]);
+    return new CpuColumn(data);
+  }
+
+  zeros(len: number): Column<T> {
+    // This requires a default factory, which we can't provide generically
+    // This method should be called through the backend's factory methods
+    throw new Error("Use backend factory methods to create columns");
+  }
+
+  uninitialized(len: number): Column<T> {
+    // This requires a default factory, which we can't provide generically
+    // This method should be called through the backend's factory methods
+    throw new Error("Use backend factory methods to create columns");
   }
 
   len(): number {
     return this.data.length;
   }
 
+  isEmpty(): boolean {
+    return this.data.length === 0;
+  }
+
   at(index: number): T {
     if (index < 0 || index >= this.data.length) {
       throw new Error(`Index ${index} out of bounds for length ${this.data.length}`);
     }
-    return this.data[index];
+    return this.data[index]!; // Use non-null assertion since we've checked bounds
   }
 
   set(index: number, value: T): void {
@@ -107,7 +139,7 @@ export class CpuColumn<T> implements Column<T> {
     this.data[index] = value;
   }
 
-  toCPU(): T[] {
+  toCpu(): T[] {
     return [...this.data];
   }
 
@@ -123,6 +155,9 @@ export class CpuColumn<T> implements Column<T> {
     }
   }
 }
+
+// Type alias for CpuColumnOps to match what other files expect
+export type CpuColumnOps<T> = CpuColumn<T>;
 
 // Type aliases that correspond to Rust type definitions
 // TODO(Sonnet4): Fix type constraints when Circle types are properly ported
@@ -205,12 +240,6 @@ export function precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]>
 
   return new TwiddleTree(rootCoset, twiddles, itwiddles);
 }
-
-/**
- * Generic column operations for CpuBackend.
- * This provides the implementation for the ColumnOps trait.
- */
-export const cpuColumnOps = new CpuColumnOps();
 
 /**
  * Default CPU backend instance.
