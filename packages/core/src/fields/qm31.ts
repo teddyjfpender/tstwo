@@ -274,10 +274,18 @@ export class QM31 implements Field<QM31>, ExtensionOf<CM31, QM31> {
    * )
    * ```
    * 
-   * @param rhs Right-hand side QM31 element
+   * @param rhs Right-hand side element (QM31 or M31)
    * @returns Product of this and rhs
    */
-  mul(rhs: QM31): QM31 {
+  mul(rhs: QM31): QM31;
+  mul(rhs: M31): QM31;
+  mul(rhs: QM31 | M31): QM31 {
+    // Handle M31 multiplication
+    if (rhs instanceof M31) {
+      return this.mulM31(rhs);
+    }
+    
+    // Handle QM31 multiplication
     // Special case optimizations for common values
     if (this.isZero() || rhs.isZero()) {
       return QM31.ZERO;

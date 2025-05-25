@@ -41,6 +41,17 @@ export class SecureEvaluation<B extends ColumnOps<any>, EvalOrder> {
     }
   }
 
+  /**
+   * Creates a new SecureEvaluation.
+   * Static factory method to match Rust implementation.
+   */
+  static new<B extends ColumnOps<any>, EvalOrder>(
+    domain: any, 
+    values: any
+  ): SecureEvaluation<B, EvalOrder> {
+    return new SecureEvaluation<B, EvalOrder>(domain, values);
+  }
+
   intoCoordinateEvals(): any[] {
     const { domain, values } = this;
     return values.columns.map((c: any) => new CircleEvaluation<B, any, EvalOrder>(domain, c));
