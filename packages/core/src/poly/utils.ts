@@ -1,4 +1,6 @@
 import type { ExtensionOf, Field } from "../fields";
+import { lineDomainFromCircleDomain, LineDomain } from "./line";
+import type { CircleDomain } from "./circle";
 /*
 // Folds values recursively in `O(n)` by a hierarchical application of folding factors.
 ///
@@ -48,6 +50,9 @@ export function fold<F extends Field<F>, E extends ExtensionOf<F, E>>(
 
   const half = n / 2;
   const [foldingFactor, ...rest] = foldingFactors;
+  if (foldingFactor === undefined) {
+    throw new Error("fold: missing folding factor");
+  }
   const lhsVal = fold(values.slice(0, half), rest);
   const rhsVal = fold(values.slice(half), rest);
   return lhsVal.add(rhsVal.mul(foldingFactor));
@@ -68,21 +73,21 @@ export function repeatValue<T>(values: readonly T[], duplicity: number): T[] {
 
 /**
  * Computes the line twiddles for a `CircleDomain` or a `LineDomain` from the
- * precomputed twiddle tree. This function requires the yet-to-be-ported
- * `LineDomain` type.
+ * precomputed twiddle tree.
  */
 export function domainLineTwiddlesFromTree<T>(
-  domain: unknown, // TODO: replace with `LineDomain` once available
+  domain: CircleDomain | LineDomain,
   twiddleBuffer: readonly T[],
 ): T[][] {
-  const d: any = (domain as any).into ? (domain as any).into() : domain;
+  // Convert CircleDomain to LineDomain if needed
+  const lineDomain = domain instanceof LineDomain ? domain : lineDomainFromCircleDomain(domain);
 
-  if (d.coset().size() > twiddleBuffer.length) {
+  if (lineDomain.coset().size() > twiddleBuffer.length) {
     throw new Error("Not enough twiddles!");
   }
 
   const result: T[][] = [];
-  for (let i = 0; i < d.coset().logSize(); i++) {
+  for (let i = 0; i < lineDomain.coset().logSize(); i++) {
     const len = 1 << i;
     result.unshift(
       twiddleBuffer.slice(

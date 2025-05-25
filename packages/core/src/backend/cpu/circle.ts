@@ -36,7 +36,6 @@ export class CpuCircleEvaluation<EvalOrder = BitReversedOrder> extends CircleEva
   }
 }
 
-// @ts-expect-error
 export class CpuCirclePoly extends CirclePoly<CpuBackend> {
   constructor(coeffs: M31[]) {
     super(coeffs);
@@ -44,6 +43,10 @@ export class CpuCirclePoly extends CirclePoly<CpuBackend> {
 
   static new(coeffs: M31[]): CpuCirclePoly {
     return new CpuCirclePoly(coeffs);
+  }
+
+  static precomputeTwiddles(coset: Coset): TwiddleTree<CpuBackend, M31[]> {
+    return _precomputeTwiddles(coset);
   }
 
   static eval_at_point(poly: CpuCirclePoly, point: CirclePoint<SecureField>): SecureField {

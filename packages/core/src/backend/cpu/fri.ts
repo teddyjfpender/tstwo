@@ -1,14 +1,16 @@
 import { CpuBackend } from "./index";
-import {
-  fold_line as genericFoldLine,
-  fold_circle_into_line as genericFoldCircleIntoLine,
-} from "../../fri";
 import { LineEvaluation } from "../../poly/line";
 import { SecureEvaluation, type BitReversedOrder } from "../../poly/circle";
 import { QM31 as SecureField } from "../../fields/qm31";
 import { M31 } from "../../fields/m31";
 import { SecureColumnByCoords } from "../../fields/secure_columns";
 import type { TwiddleTree } from "../../poly/twiddles";
+import { bitReverseIndex } from "../../utils";
+import { ibutterfly } from "../../fft";
+
+// Constants from Rust implementation
+const FOLD_STEP = 1;
+const CIRCLE_TO_LINE_FOLD_STEP = 1;
 
 /**
  * Folds a degree `d` polynomial into a degree `d/2` polynomial.
@@ -23,7 +25,29 @@ export function foldLine(
   alpha: SecureField,
   _twiddles?: TwiddleTree<CpuBackend, any>,
 ): LineEvaluation<CpuBackend> {
-  return genericFoldLine(eval_, alpha);
+  const n = eval_.len();
+  if (n < 2) {
+    throw new Error("fold_line: Evaluation too small, must have at least 2 elements.");
+  }
+
+  const domain = eval_.domain();
+  const folded_values: SecureField[] = [];
+
+  for (let i = 0; i < n / 2; i++) {
+    const f_x = eval_.values.at(i * 2);
+    const f_neg_x = eval_.values.at(i * 2 + 1);
+
+    // Get twiddle factor
+    const x = domain.at(bitReverseIndex(i << FOLD_STEP, domain.log_size()));
+    
+    // Apply inverse butterfly
+    const [f0, f1] = ibutterfly(f_x, f_neg_x, x.inverse());
+    
+    // Compute folded value: f0 + alpha * f1
+    folded_values.push(f0.add(alpha.mul(f1)));
+  }
+
+  return LineEvaluation.new(domain.double(), SecureColumnByCoords.from(folded_values));
 }
 
 /**
@@ -40,7 +64,62 @@ export function foldCircleIntoLine(
   alpha: SecureField,
   _twiddles?: TwiddleTree<CpuBackend, any>,
 ): void {
-  genericFoldCircleIntoLine(dst, src, alpha);
+  if ((src.domain.size() >> CIRCLE_TO_LINE_FOLD_STEP) !== dst.len()) {
+    throw new Error("fold_circle_into_line: Length mismatch between src and dst after considering fold step.");
+  }
+
+  const domain = src.domain;
+  const alpha_sq = alpha.mul(alpha);
+
+  for (let i = 0; i < dst.len(); i++) {
+    const src_idx = i * (1 << CIRCLE_TO_LINE_FOLD_STEP);
+    const f_p = src.values.at(src_idx);
+    const f_neg_p = src.values.at(src_idx + 1);
+
+    // Get domain point
+    const p = domain.at(bitReverseIndex(i << CIRCLE_TO_LINE_FOLD_STEP, domain.log_size()));
+
+    // Apply inverse butterfly with y-coordinate inverse
+    const [f0_px, f1_px] = ibutterfly(f_p, f_neg_p, p.y.inverse());
+    
+    // Compute f' = alpha * f1(px) + f0(px)
+    const f_prime = alpha.mul(f1_px).add(f0_px);
+
+    // Accumulate: dst[i] = dst[i] * alpha^2 + f'
+    const current_val = dst.values.at(i);
+    dst.values.set(i, current_val.mul(alpha_sq).add(f_prime));
+  }
+}
+
+/**
+ * Computes the decomposition coefficient for FRI.
+ */
+function decompositionCoefficient(
+  eval_: SecureEvaluation<CpuBackend, BitReversedOrder>,
+): SecureField {
+  const domainSize = eval_.domain.size();
+  const half = domainSize / 2;
+  
+  // Handle edge case where domain size is 1
+  if (domainSize === 1) {
+    // With single element, lambda = -element / 1 = -element
+    return SecureField.zero().sub(eval_.values.at(0));
+  }
+  
+  // Sum first half (positive factors in bit-reverse order)
+  let aSum = SecureField.from_u32_unchecked(0, 0, 0, 0);
+  for (let i = 0; i < half; i++) {
+    aSum = aSum.add(eval_.values.at(i));
+  }
+  
+  // Sum second half (negative factors in bit-reverse order)
+  let bSum = SecureField.from_u32_unchecked(0, 0, 0, 0);
+  for (let i = half; i < domainSize; i++) {
+    bSum = bSum.add(eval_.values.at(i));
+  }
+  
+  // lambda = (a_sum - b_sum) / domain_size
+  return aSum.sub(bSum).divM31(M31.from_u32_unchecked(domainSize));
 }
 
 /**
@@ -55,7 +134,7 @@ export function decompose(
   eval_: SecureEvaluation<CpuBackend, BitReversedOrder>,
 ): [SecureEvaluation<CpuBackend, BitReversedOrder>, SecureField] {
   const lambda = decompositionCoefficient(eval_);
-  const domainSize = eval_.values.len();
+  const domainSize = eval_.domain.size();
   const halfDomainSize = domainSize / 2;
   
   // Pre-allocate for performance
@@ -82,50 +161,6 @@ export function decompose(
   
   const g = new SecureEvaluation<CpuBackend, BitReversedOrder>(eval_.domain, gValues);
   return [g, lambda];
-}
-
-/**
- * Computes the decomposition coefficient for FRI.
- * 
- * Used to decompose a general polynomial to a polynomial inside the fft-space, and
- * the remainder terms. A coset-diff on a CirclePoly that is in the FFT space will return zero.
- * 
- * **World-Leading Improvements:**
- * - Type safety with proper domain validation
- * - Performance optimizations
- * - Clear mathematical documentation
- */
-function decompositionCoefficient(
-  eval_: SecureEvaluation<CpuBackend, BitReversedOrder>,
-): SecureField {
-  const domainSize = 1 << eval_.domain.log_size();
-  const half = domainSize / 2;
-  
-  // Type safety: validate domain size matches evaluation length
-  if (domainSize !== eval_.values.len()) {
-    throw new Error(`Domain size mismatch: expected ${domainSize}, got ${eval_.values.len()}`);
-  }
-  
-  // Handle edge case where domain size is 1
-  if (domainSize === 1) {
-    // With single element, lambda = -element / 1 = -element
-    return SecureField.zero().sub(eval_.values.at(0));
-  }
-  
-  // Sum first half (positive factors in bit-reverse order)
-  let aSum = SecureField.from_u32_unchecked(0, 0, 0, 0);
-  for (let i = 0; i < half; i++) {
-    aSum = aSum.add(eval_.values.at(i));
-  }
-  
-  // Sum second half (negative factors in bit-reverse order)
-  let bSum = SecureField.from_u32_unchecked(0, 0, 0, 0);
-  for (let i = half; i < domainSize; i++) {
-    bSum = bSum.add(eval_.values.at(i));
-  }
-  
-  // lambda = (a_sum - b_sum) / domain_size
-  return aSum.sub(bSum).divM31(M31.from_u32_unchecked(domainSize));
 }
 
 /**

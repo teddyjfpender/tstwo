@@ -49,7 +49,7 @@ describe("CpuCirclePoly eval_at_point", () => {
   });
 });
 
-describe.skip("CpuCirclePoly evaluate", () => {
+describe("CpuCirclePoly evaluate", () => {
   it("test_evaluate_2_coeffs", () => {
     const domain = CanonicCoset.new(1).circleDomain();
     const poly = CpuCirclePoly.new([1, 2].map(M31.from));
@@ -60,7 +60,7 @@ describe.skip("CpuCirclePoly evaluate", () => {
 
     Array.from(domain.iter()).forEach((point: any, i: number) => {
       const eval_from_domain = SecureField.from(bit_reversed_evaluation.values[i]!);
-      const eval_at_point = CpuCirclePoly.eval_at_point(poly, point.into_ef());
+      const eval_at_point = CpuCirclePoly.eval_at_point(poly, point.intoEf((v: M31) => SecureField.from(v)));
       expect(eval_from_domain.equals(eval_at_point)).toBe(true);
     });
   });
@@ -75,7 +75,7 @@ describe.skip("CpuCirclePoly evaluate", () => {
 
     Array.from(domain.iter()).forEach((point: any, i: number) => {
       const eval_from_domain = SecureField.from(bit_reversed_evaluation.values[i]!);
-      const eval_at_point = CpuCirclePoly.eval_at_point(poly, point.into_ef());
+      const eval_at_point = CpuCirclePoly.eval_at_point(poly, point.intoEf((v: M31) => SecureField.from(v)));
       expect(eval_from_domain.equals(eval_at_point)).toBe(true);
     });
   });
@@ -90,7 +90,7 @@ describe.skip("CpuCirclePoly evaluate", () => {
 
     Array.from(domain.iter()).forEach((point: any, i: number) => {
       const eval_from_domain = SecureField.from(bit_reversed_evaluation.values[i]!);
-      const eval_at_point = CpuCirclePoly.eval_at_point(poly, point.into_ef());
+      const eval_at_point = CpuCirclePoly.eval_at_point(poly, point.intoEf((v: M31) => SecureField.from(v)));
       expect(eval_from_domain.equals(eval_at_point)).toBe(true);
     });
   });
@@ -170,11 +170,11 @@ describe("CpuCirclePoly extend", () => {
 });
 
 describe("CpuCirclePoly constructor and basic operations", () => {
-  it.skip("should create polynomial with correct coefficients", () => {
-    const coeffs = [M31.from(1), M31.from(2), M31.from(3)];
+  it("should create polynomial with correct coefficients", () => {
+    const coeffs = [M31.from(1), M31.from(2), M31.from(3), M31.from(4)];
     const poly = CpuCirclePoly.new(coeffs);
 
-    expect(poly.coeffs.length).toBe(3);
+    expect(poly.coeffs.length).toBe(4);
     poly.coeffs.forEach((coeff, i) => {
       expect(coeff.equals(coeffs[i]!)).toBe(true);
     });
