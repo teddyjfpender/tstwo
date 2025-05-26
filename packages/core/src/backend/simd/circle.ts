@@ -8,7 +8,7 @@ import { PackedQM31 } from "./qm31";
 import { BaseColumn } from "./column";
 import { SimdBackend } from "./index";
 import { ifft, CACHED_FFT_LOG_SIZE, MIN_FFT_LOG_SIZE } from "./fft";
-import { CpuBackend } from "../cpu";
+import { CpuBackend, precomputeTwiddles as cpuPrecomputeTwiddles } from "../cpu";
 import { CirclePoint, Coset, M31_CIRCLE_LOG_ORDER } from "../../circle";
 import { M31 } from "../../fields/m31";
 import { QM31 } from "../../fields/qm31";
@@ -176,7 +176,7 @@ export class SimdCirclePolyOps {
    */
   static computeSmallCosetTwiddles(coset: Coset): TwiddleTree<any, PackedM31[]> {
     // For small cosets, use CPU implementation and convert
-    const cpuTwiddles = (CpuBackend as any).precomputeTwiddles(coset);
+    const cpuTwiddles = cpuPrecomputeTwiddles(coset);
     
     // Convert CPU twiddles to SIMD format
     const twiddles = cpuTwiddles.twiddles.map((t: any) => PackedM31.broadcast(t));
@@ -487,15 +487,7 @@ export function evaluate(
  * Precomputes twiddles for efficient polynomial operations.
  */
 export function precomputeTwiddles(coset: Coset): TwiddleTree<any, PackedM31[]> {
-  if (coset.logSize() < MIN_FFT_LOG_SIZE) {
-    return SimdCirclePolyOps.computeSmallCosetTwiddles(coset);
-  }
-
-  const twiddles: PackedM31[] = [];
-  const itwiddles: PackedM31[] = [];
-
-  SimdCirclePolyOps.computeCosetTwiddles(coset, twiddles);
-  SimdCirclePolyOps.computeCosetTwiddles(coset.conjugate(), itwiddles);
-
-  return new TwiddleTree(coset, twiddles, itwiddles);
+  // For now, delegate to the small coset implementation
+  // TODO: Implement optimized SIMD twiddle computation for large cosets
+  return SimdCirclePolyOps.computeSmallCosetTwiddles(coset);
 } 
