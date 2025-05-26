@@ -1,6 +1,6 @@
 import { Coset, CirclePoint, CirclePointIndex } from "../../circle";
 import type { M31 as BaseField } from "../../fields/m31";
-import type { CircleDomain } from "./domain";
+import { CircleDomain } from "./domain";
 
 /**
  * A coset of the form `G_{2n} + <G_n>`, where `G_n` is the generator of the subgroup of order `n`.
@@ -56,11 +56,8 @@ export class CanonicCoset {
 
   /**
    * Gets the [CircleDomain] representing the same point set (in another order).
-   * Note: This method creates a CircleDomain dynamically to avoid circular imports.
    */
   circle_domain(): CircleDomain {
-    // Import CircleDomain dynamically to avoid circular dependency
-    const { CircleDomain } = require("./domain");
     return CircleDomain.new(this.half_coset());
   }
 
