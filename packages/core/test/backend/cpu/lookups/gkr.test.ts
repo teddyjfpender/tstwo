@@ -114,8 +114,9 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('GrandProduct');
-      if (nextLayer.type === 'GrandProduct') {
+      expect(nextLayer).not.toBeNull();
+      expect(nextLayer!.type).toBe('GrandProduct');
+      if (nextLayer!.type === 'GrandProduct') {
         expect(nextLayer.data.len()).toBe(2);
         expect(nextLayer.data.nVariables()).toBe(1);
 
@@ -155,8 +156,9 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('LogUpGeneric');
-      if (nextLayer.type === 'LogUpGeneric') {
+      expect(nextLayer).not.toBeNull();
+      expect(nextLayer!.type).toBe('LogUpGeneric');
+      if (nextLayer!.type === 'LogUpGeneric') {
         expect(nextLayer.numerators.len()).toBe(2);
         expect(nextLayer.denominators.len()).toBe(2);
 
@@ -200,8 +202,9 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('LogUpGeneric');
-      if (nextLayer.type === 'LogUpGeneric') {
+      expect(nextLayer).not.toBeNull();
+      expect(nextLayer!.type).toBe('LogUpGeneric');
+      if (nextLayer!.type === 'LogUpGeneric') {
         expect(nextLayer.numerators.len()).toBe(2);
         expect(nextLayer.denominators.len()).toBe(2);
 
@@ -240,8 +243,9 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('LogUpGeneric');
-      if (nextLayer.type === 'LogUpGeneric') {
+      expect(nextLayer).not.toBeNull();
+      expect(nextLayer!.type).toBe('LogUpGeneric');
+      if (nextLayer!.type === 'LogUpGeneric') {
         expect(nextLayer.numerators.len()).toBe(2);
         expect(nextLayer.denominators.len()).toBe(2);
 
@@ -270,8 +274,9 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('GrandProduct');
-      if (nextLayer.type === 'GrandProduct') {
+      expect(nextLayer).not.toBeNull();
+      expect(nextLayer!.type).toBe('GrandProduct');
+      if (nextLayer!.type === 'GrandProduct') {
         expect(nextLayer.data.len()).toBe(8);
         expect(nextLayer.data.nVariables()).toBe(3);
 
@@ -300,8 +305,9 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('GrandProduct');
-      if (nextLayer.type === 'GrandProduct') {
+      expect(nextLayer).not.toBeNull();
+      expect(nextLayer!.type).toBe('GrandProduct');
+      if (nextLayer!.type === 'GrandProduct') {
         expect(nextLayer.data.len()).toBe(4); // floor(8/2) = 4
         
         expect(nextLayer.data.at(0).equals(values[0]!.mul(values[1]!))).toBe(true);
@@ -522,11 +528,8 @@ describe('CPU Backend GKR Operations', () => {
       const gkrOps = new CpuGkrOps();
       const nextLayer = gkrOps.nextLayer(layer);
 
-      expect(nextLayer.type).toBe('GrandProduct');
-      if (nextLayer.type === 'GrandProduct') {
-        expect(nextLayer.data.len()).toBe(0); // Single element becomes empty after pairing
-        expect(nextLayer.data.nVariables()).toBe(0);
-      }
+      // Single element MLE is an output layer (0 variables), so nextLayer should return null
+      expect(nextLayer).toBeNull();
     });
 
     it('should handle empty y vector in genEqEvals', () => {

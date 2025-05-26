@@ -17,8 +17,7 @@ export class Mle<F extends Field<F>> {
    * @throws Error if the number of evaluations is not a power of two.
    */
   constructor(evals: F[]) {
-    // Allow empty arrays (0-variable MLEs represent constants)
-    if (evals.length > 0 && (evals.length & (evals.length - 1)) !== 0) {
+    if (evals.length === 0 || (evals.length & (evals.length - 1)) !== 0) {
       throw new Error('Number of evaluations must be a power of two');
     }
     this.evals = [...evals];

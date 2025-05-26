@@ -23,8 +23,9 @@ export interface GkrOps {
 
   /**
    * Generates the next GKR layer from the current one.
+   * Returns null if called on an output layer (0 variables).
    */
-  nextLayer(layer: Layer): Layer;
+  nextLayer(layer: Layer): Layer | null;
 
   /**
    * Returns univariate polynomial `f(t) = sum_x h(t, x)` for all `x` in the boolean hypercube.

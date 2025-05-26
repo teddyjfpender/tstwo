@@ -21,13 +21,7 @@ export const CIRCLE_TO_LINE_FOLD_STEP = 1;
 /**
  * FRI proof config
  */
-export interface FriConfig {
-    log_blowup_factor: number;
-    log_last_layer_degree_bound: number;
-    n_queries: number;
-}
-
-export class FriConfigImpl implements FriConfig {
+export class FriConfig {
     private static readonly LOG_MIN_LAST_LAYER_DEGREE_BOUND = 0;
     private static readonly LOG_MAX_LAST_LAYER_DEGREE_BOUND = 10;
     private static readonly LOG_MIN_BLOWUP_FACTOR = 1;
@@ -37,39 +31,49 @@ export class FriConfigImpl implements FriConfig {
     public readonly log_last_layer_degree_bound: number;
     public readonly n_queries: number;
 
-    private constructor(
-        log_last_layer_degree_bound: number,
-        log_blowup_factor: number,
-        n_queries: number
-    ) {
+    /**
+     * Creates a new FRI configuration.
+     * 
+     * @throws Error if parameters are out of valid ranges
+     */
+    constructor(log_last_layer_degree_bound: number, log_blowup_factor: number, n_queries: number) {
+        if (log_last_layer_degree_bound < FriConfig.LOG_MIN_LAST_LAYER_DEGREE_BOUND ||
+            log_last_layer_degree_bound > FriConfig.LOG_MAX_LAST_LAYER_DEGREE_BOUND) {
+            throw new Error(`log_last_layer_degree_bound must be between ${FriConfig.LOG_MIN_LAST_LAYER_DEGREE_BOUND} and ${FriConfig.LOG_MAX_LAST_LAYER_DEGREE_BOUND}`);
+        }
+        if (log_blowup_factor < FriConfig.LOG_MIN_BLOWUP_FACTOR ||
+            log_blowup_factor > FriConfig.LOG_MAX_BLOWUP_FACTOR) {
+            throw new Error(`log_blowup_factor must be between ${FriConfig.LOG_MIN_BLOWUP_FACTOR} and ${FriConfig.LOG_MAX_BLOWUP_FACTOR}`);
+        }
         this.log_last_layer_degree_bound = log_last_layer_degree_bound;
         this.log_blowup_factor = log_blowup_factor;
         this.n_queries = n_queries;
     }
 
     /**
-     * Creates a new FRI configuration.
+     * Creates a new FRI configuration (Rust-style static constructor).
      * 
      * @throws Error if parameters are out of valid ranges
      */
-    static new(log_last_layer_degree_bound: number, log_blowup_factor: number, n_queries: number): FriConfigImpl {
-        if (log_last_layer_degree_bound < FriConfigImpl.LOG_MIN_LAST_LAYER_DEGREE_BOUND ||
-            log_last_layer_degree_bound > FriConfigImpl.LOG_MAX_LAST_LAYER_DEGREE_BOUND) {
-            throw new Error(`log_last_layer_degree_bound must be between ${FriConfigImpl.LOG_MIN_LAST_LAYER_DEGREE_BOUND} and ${FriConfigImpl.LOG_MAX_LAST_LAYER_DEGREE_BOUND}`);
-        }
-        if (log_blowup_factor < FriConfigImpl.LOG_MIN_BLOWUP_FACTOR ||
-            log_blowup_factor > FriConfigImpl.LOG_MAX_BLOWUP_FACTOR) {
-            throw new Error(`log_blowup_factor must be between ${FriConfigImpl.LOG_MIN_BLOWUP_FACTOR} and ${FriConfigImpl.LOG_MAX_BLOWUP_FACTOR}`);
-        }
-        return new FriConfigImpl(log_last_layer_degree_bound, log_blowup_factor, n_queries);
+    static new(log_last_layer_degree_bound: number, log_blowup_factor: number, n_queries: number): FriConfig {
+        return new FriConfig(log_last_layer_degree_bound, log_blowup_factor, n_queries);
     }
 
-    lastLayerDomainSize(): number {
+    last_layer_domain_size(): number {
         return 1 << (this.log_last_layer_degree_bound + this.log_blowup_factor);
     }
 
-    securityBits(): number {
+    security_bits(): number {
         return this.log_blowup_factor * this.n_queries;
+    }
+
+    // TypeScript-style method aliases for compatibility
+    lastLayerDomainSize(): number {
+        return this.last_layer_domain_size();
+    }
+
+    securityBits(): number {
+        return this.security_bits();
     }
 }
 
@@ -424,6 +428,9 @@ export function accumulateLine(
     }
 }
 
+// Export snake_case alias for 1:1 Rust API compatibility
+export { accumulateLine as accumulate_line };
+
 // Export types and interfaces for future implementation
 export type ColumnVec<T> = T[];
 
@@ -723,7 +730,7 @@ function getQueryPositionsByLogSize(queries: Queries, column_log_sizes: Set<numb
     const result = new Map<number, number[]>();
     for (const column_log_size of column_log_sizes) {
         const column_queries = queries.fold(queries.log_domain_size - column_log_size);
-        result.set(column_log_size, column_queries.positions);
+        result.set(column_log_size, [...column_queries.positions]);
     }
     return result;
 }

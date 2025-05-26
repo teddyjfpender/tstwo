@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, it } from 'vitest';
 import {
   type FriConfig,
-  FriConfigImpl,
+  FriConfig as FriConfigClass,
   FriProver,
   FriVerifier,
   fold_line,
@@ -26,7 +26,7 @@ import { bitReverse as cpuBitReverse, precomputeTwiddles as cpuPrecomputeTwiddle
 import { test_channel } from '../src/test_utils';
 import { Blake2sMerkleChannel } from '../src/vcs/blake2_merkle';
 import { Coset, CirclePointIndex } from "../src/circle";
-import { LineDomain, LineEvaluation as BaseLineEvaluation, LinePoly } from '../src/poly/line';
+import { LineDomain, LineEvaluation as BaseLineEvaluation, LinePoly, CpuLineEvaluation } from '../src/poly/line';
 import { SecureEvaluation as BaseSecureEvaluation, CircleDomain, type BitReversedOrder } from '../src/poly/circle';
 import { CpuBackend } from '../src/backend/cpu';
 import { bitReverseIndex } from "../src/utils";
@@ -37,11 +37,6 @@ import { Queries } from '../src/queries';
 // Type aliases for test compatibility
 type TypescriptBitReversedOrder = BitReversedOrder;
 type TypescriptQueries = Queries;
-
-// Add missing new method to LinePoly
-(LinePoly as any).new = function(coeffs: SecureField[]): LinePoly {
-  return LinePoly.fromOrderedCoefficients(coeffs);
-};
 
 // Minimal CpuBackend wrapper exposing bit reverse and twiddle helpers used in the tests.
 const CpuBackendOps = {
@@ -102,9 +97,27 @@ function polynomial_evaluation(
  * Port of Rust test function `log_degree_bound`.
  */
 function log_degree_bound(polynomial: BaseLineEvaluation<any>): number {
-  // TODO(Jules): Ensure interpolate().into_ordered_coefficients() and SecureField.isZero() are correctly implemented.
-  // For now, return a placeholder value
-  return 4; // Placeholder
+  // Convert to CPU and cast to CpuLineEvaluation to access interpolate method
+  const cpuPoly = polynomial.toCpu() as any;
+  
+  // Create a CpuLineEvaluation instance to access interpolate
+  const cpuLineEval = new (CpuLineEvaluation as any)(cpuPoly.domain(), cpuPoly.values);
+  
+  // Interpolate to get coefficients
+  const linePoly = cpuLineEval.interpolate();
+  const coeffs = linePoly.intoOrderedCoefficients();
+  
+  // Find the last non-zero coefficient position
+  let degree = 0;
+  for (let i = coeffs.length - 1; i >= 0; i--) {
+    if (!coeffs[i]!.isZero()) {
+      degree = i;
+      break;
+    }
+  }
+  
+  // Return log2 of (degree + 1)
+  return Math.floor(Math.log2(degree + 1));
 }
 
 /** Port of Rust test function `query_polynomial`. */
@@ -115,7 +128,7 @@ function query_polynomial(
   // TODO(Jules): Ensure queries.fold and polynomial.domain.log_size are correct.
   const current_polynomial_log_size = (polynomial.domain as any).log_size();
   const column_queries = queries.fold(queries.log_domain_size - current_polynomial_log_size);
-  return query_polynomial_at_positions(polynomial, column_queries.positions);
+  return query_polynomial_at_positions(polynomial, [...column_queries.positions]);
 }
 
 /** Port of Rust test function `query_polynomial_at_positions`. */
@@ -246,7 +259,7 @@ describe('FRI Tests', () => {
   test.skip('committing_high_degree_polynomial_fails', () => {
     const LOG_EXPECTED_BLOWUP_FACTOR = LOG_BLOWUP_FACTOR;
     const LOG_INVALID_BLOWUP_FACTOR = LOG_BLOWUP_FACTOR - 1;
-    const config = FriConfigImpl.new(2, LOG_EXPECTED_BLOWUP_FACTOR, 3);
+    const config = FriConfigClass.new(2, LOG_EXPECTED_BLOWUP_FACTOR, 3);
     const column = polynomial_evaluation(6, LOG_INVALID_BLOWUP_FACTOR);
     const twiddles = CpuBackendOps.precompute_twiddles((column.domain as any).half_coset);
     
@@ -270,7 +283,7 @@ describe('FRI Tests', () => {
         half_coset: { log_size: invalid_domain_log_size -1 }, 
     } as any as TypescriptCircleDomain;
 
-    const config = FriConfigImpl.new(2, 2, 3);
+    const config = FriConfigClass.new(2, 2, 3);
     const column_values_sf = Array(1 << (invalid_domain_log_size + 1)).fill(SecureField.one());
     const column = createMockBaseSecureEvaluation(invalid_domain, column_values_sf);
 
@@ -306,7 +319,7 @@ describe('FRI Tests', () => {
 describe("FRI Implementation", () => {
   describe("FriConfig", () => {
     it("should create valid configuration", () => {
-      const config = FriConfigImpl.new(2, LOG_BLOWUP_FACTOR, 3);
+      const config = FriConfigClass.new(2, LOG_BLOWUP_FACTOR, 3);
       expect(config.log_last_layer_degree_bound).toBe(2);
       expect(config.log_blowup_factor).toBe(LOG_BLOWUP_FACTOR);
       expect(config.n_queries).toBe(3);
@@ -315,13 +328,13 @@ describe("FRI Implementation", () => {
     });
 
     it("should throw error for invalid log_last_layer_degree_bound", () => {
-      expect(() => FriConfigImpl.new(11, LOG_BLOWUP_FACTOR, 3)).toThrow();
-      expect(() => FriConfigImpl.new(-1, LOG_BLOWUP_FACTOR, 3)).toThrow();
+      expect(() => FriConfigClass.new(11, LOG_BLOWUP_FACTOR, 3)).toThrow();
+      expect(() => FriConfigClass.new(-1, LOG_BLOWUP_FACTOR, 3)).toThrow();
     });
 
     it("should throw error for invalid log_blowup_factor", () => {
-      expect(() => FriConfigImpl.new(2, 0, 3)).toThrow();
-      expect(() => FriConfigImpl.new(2, 17, 3)).toThrow();
+      expect(() => FriConfigClass.new(2, 0, 3)).toThrow();
+      expect(() => FriConfigClass.new(2, 17, 3)).toThrow();
     });
   });
 

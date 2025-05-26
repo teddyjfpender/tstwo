@@ -5,7 +5,7 @@
 //
 // Task: Port the Rust `impl GkrOps for CpuBackend` and its helper functions
 // (`eval_grand_product_sum`, `eval_logup_sum`, `eval_logup_singles_sum`,
-// `gen_eq_evals`, `next_grand_product_layer`, `next_logup_layer`, `MleExpr` enum)
+// `gen_eq_evals()`, `next_grand_product_layer()`, `next_logup_layer()`, `MleExpr` enum)
 // to TypeScript.
 //
 // Details:
@@ -107,7 +107,24 @@ export class CpuGkrOps implements GkrOps {
   /**
    * Generates the next GKR layer from the current one.
    */
-  nextLayer(layer: Layer): Layer {
+  nextLayer(layer: Layer): Layer | null {
+    // Check if this is an output layer (0 variables)
+    const nVariables = (() => {
+      switch (layer.type) {
+        case 'GrandProduct':
+          return layer.data.nVariables();
+        case 'LogUpGeneric':
+        case 'LogUpMultiplicities':
+          return layer.denominators.nVariables();
+        case 'LogUpSingles':
+          return layer.denominators.nVariables();
+      }
+    })();
+    
+    if (nVariables === 0) {
+      return null;
+    }
+
     switch (layer.type) {
       case 'GrandProduct':
         return nextGrandProductLayer(layer.data);
