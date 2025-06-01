@@ -240,7 +240,7 @@ export class LinePoly {
  */
 export class LineEvaluation<B extends Backend = CpuBackend> {
   /** The values of the polynomial evaluation. */
-  readonly values: SecureColumnByCoords;
+  readonly values: SecureColumnByCoords<any>;
   /** The domain on which the polynomial is evaluated. */
   protected readonly _domain: LineDomain;
 
@@ -248,9 +248,14 @@ export class LineEvaluation<B extends Backend = CpuBackend> {
    * Private constructor to enforce API hygiene.
    * Use LineEvaluation.new() instead.
    */
-  protected constructor(domain: LineDomain, values: SecureColumnByCoords) {
+  protected constructor(domain: LineDomain, values: SecureColumnByCoords<any> | QM31[]) {
     this._domain = domain;
-    this.values = values;
+    if (Array.isArray(values)) {
+      // Convert QM31[] to SecureColumnByCoords
+      this.values = SecureColumnByCoords.from(values);
+    } else {
+      this.values = values;
+    }
   }
 
   /**
@@ -260,9 +265,10 @@ export class LineEvaluation<B extends Backend = CpuBackend> {
    */
   static new<B extends Backend = CpuBackend>(
     domain: LineDomain, 
-    values: SecureColumnByCoords
+    values: SecureColumnByCoords<any> | QM31[]
   ): LineEvaluation<B> {
-    if (domain.size() !== values.len()) {
+    const valuesLength = Array.isArray(values) ? values.length : values.len();
+    if (domain.size() !== valuesLength) {
       throw new Error("domain size must match values length");
     }
     return new LineEvaluation(domain, values);
@@ -270,7 +276,7 @@ export class LineEvaluation<B extends Backend = CpuBackend> {
 
   /** Creates a new line evaluation with all zero values. */
   static newZero<B extends Backend = CpuBackend>(domain: LineDomain): LineEvaluation<B> {
-    const values = SecureColumnByCoords.zeros(domain.size());
+    const values = SecureColumnByCoords.zeros<any>(domain.size());
     return LineEvaluation.new(domain, values);
   }
 
@@ -298,17 +304,13 @@ export class LineEvaluation<B extends Backend = CpuBackend> {
   to_cpu(): LineEvaluation<CpuBackend> {
     return this.toCpu();
   }
-}
 
-/**
- * CPU-specific line evaluation with interpolation capabilities.
- */
-export class CpuLineEvaluation extends LineEvaluation<CpuBackend> {
   /**
    * Interpolates the polynomial as evaluations on `domain`.
+   * This method works for any backend but is most efficient on CPU.
    */
   interpolate(): LinePoly {
-    const values = Array.from(this.values);
+    const values = this.values.to_vec(); // Get QM31[] from SecureColumnByCoords
     bitReverse(values);
     lineIfft(values, this._domain);
     
@@ -357,12 +359,17 @@ function lineIfft(values: QM31[], domain: LineDomain): void {
   let currentDomain = domain;
   while (currentDomain.size() > 1) {
     const domainSize = currentDomain.size();
+    
+    // Process each chunk of the current domain size
     for (let chunkStart = 0; chunkStart < values.length; chunkStart += domainSize) {
       const halfSize = domainSize / 2;
       
+      // Split the chunk into left and right halves
       for (let i = 0; i < halfSize; i++) {
         const leftIdx = chunkStart + i;
-        const rightIdx = leftIdx + halfSize;
+        const rightIdx = chunkStart + i + halfSize;
+        
+        // Use the domain element at index i for the ibutterfly operation
         const x = currentDomain.at(i).inverse();
         
         const leftValue = values[leftIdx];
@@ -376,6 +383,8 @@ function lineIfft(values: QM31[], domain: LineDomain): void {
         values[rightIdx] = newRight;
       }
     }
+    
+    // Double the domain for the next iteration
     currentDomain = currentDomain.double();
   }
 }

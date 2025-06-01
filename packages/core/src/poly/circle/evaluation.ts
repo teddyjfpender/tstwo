@@ -2,8 +2,7 @@
 import type { CircleDomain } from "./domain";
 import type { CirclePoly } from "./poly";
 import type { PolyOps } from "./ops";
-// TODO: import type { ColumnOps } from "../../backend"; // placeholder path
-// TODO: import type { SimdBackend, CpuBackend } from "../../backend";
+import type { ColumnOps, Column } from "../../backend";
 import { TwiddleTree } from "../twiddles";
 import { M31 } from "../../fields"; // Import M31 type
 
@@ -19,19 +18,48 @@ export class NaturalOrder {}
 export class BitReversedOrder {}
 
 /**
- * Column operations interface
+ * Simple column wrapper for F[] arrays to work with ColumnOps interface
  */
-export interface ColumnOps<F> {
-  bitReverseColumn(col: F[]): void;
+export class ArrayColumn<F> implements Column<F> {
+  constructor(private data: F[]) {}
+  
+  zeros(len: number): Column<F> {
+    throw new Error("Not implemented");
+  }
+  
+  uninitialized(len: number): Column<F> {
+    throw new Error("Not implemented");
+  }
+  
+  toCpu(): F[] {
+    return [...this.data];
+  }
+  
+  len(): number {
+    return this.data.length;
+  }
+  
+  isEmpty(): boolean {
+    return this.data.length === 0;
+  }
+  
+  at(index: number): F {
+    return this.data[index]!;
+  }
+  
+  set(index: number, value: F): void {
+    this.data[index] = value;
+  }
 }
 
 /**
  * Default implementation of column operations
  */
 export class DefaultColumnOps<F> implements ColumnOps<F> {
-  bitReverseColumn(col: F[]): void {
+  bitReverseColumn(col: Column<F>): void {
     // Basic implementation - can be overridden by specific backends
-    const n = col.length;
+    const values = col.toCpu();
+    const n = values.length;
     
     // Check if n is a power of 2 using bit manipulation
     if (n === 0 || (n & (n - 1)) !== 0) {
@@ -45,10 +73,15 @@ export class DefaultColumnOps<F> implements ColumnOps<F> {
       const j = this.bitReverseIndex(i, logN);
       if (i < j) {
         // Use non-null assertion to handle type safety concerns
-        const temp = col[i]!;
-        col[i] = col[j]!;
-        col[j] = temp;
+        const temp = values[i]!;
+        values[i] = values[j]!;
+        values[j] = temp;
       }
+    }
+    
+    // Update the column with bit-reversed values
+    for (let i = 0; i < n; i++) {
+      col.set(i, values[i]!);
     }
   }
   
@@ -88,14 +121,16 @@ export class CircleEvaluation<B extends ColumnOps<F>, F, EvalOrder = NaturalOrde
 
   bitReverse(this: CircleEvaluation<B, F, NaturalOrder>): CircleEvaluation<B, F, BitReversedOrder> {
     const newValues = [...this.values];
-    this.backend.bitReverseColumn(newValues);
+    const arrayColumn = new ArrayColumn(newValues);
+    this.backend.bitReverseColumn(arrayColumn);
     const Constructor = this.constructor as any;
     return new Constructor(this.domain, newValues, this.backend);
   }
 
   bitReverseBack(this: CircleEvaluation<B, F, BitReversedOrder>): CircleEvaluation<B, F, NaturalOrder> {
     const newValues = [...this.values];
-    this.backend.bitReverseColumn(newValues);
+    const arrayColumn = new ArrayColumn(newValues);
+    this.backend.bitReverseColumn(arrayColumn);
     const Constructor = this.constructor as any;
     return new Constructor(this.domain, newValues, this.backend);
   }

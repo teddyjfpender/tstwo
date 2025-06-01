@@ -1,0 +1,3541 @@
+{
+  "description": "Test vectors for CM31 field operations",
+  "field_type": "CM31",
+  "field_modulus": "4611686014132420609",
+  "test_vectors": [
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 781046969,
+        "a_real": 916414539,
+        "b_imag": 1474650861,
+        "a_imag": 165759396,
+        "test_case": 0
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1640410257,
+        "real": 1697461508
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 781046969,
+        "a_imag": 165759396,
+        "a_real": 916414539,
+        "test_case": 0,
+        "b_imag": 1474650861
+      },
+      "intermediates": {
+        "bc": 129465873829070724,
+        "ac": 715762798033482291,
+        "ad": 1351391488969268079,
+        "bd": 244437236030239956
+      },
+      "output": {
+        "imag": 431489741,
+        "real": 98088339
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 1474650861,
+        "a_imag": 165759396,
+        "test_case": 0,
+        "b_real": 781046969,
+        "a_real": 916414539
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 838592182,
+        "real": 135367570
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 165759396,
+        "real": 916414539,
+        "test_case": 0
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1981724251,
+        "real": 1231069108
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 1,
+        "a_imag": 1968756198,
+        "b_real": 477217386,
+        "b_imag": 1765868819,
+        "a_real": 2044084841
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1587141370,
+        "real": 373818580
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 1968756198,
+        "b_real": 477217386,
+        "b_imag": 1765868819,
+        "test_case": 1,
+        "a_real": 2044084841
+      },
+      "intermediates": {
+        "bd": 3476565182261190162,
+        "ac": 975472824584245626,
+        "bc": 939524686480858428,
+        "ad": 3609585684112472779
+      },
+      "output": {
+        "imag": 562444183,
+        "real": 1087201000
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 2044084841,
+        "a_imag": 1968756198,
+        "test_case": 1,
+        "b_real": 477217386,
+        "b_imag": 1765868819
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 202887379,
+        "real": 1566867455
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 1968756198,
+        "test_case": 1,
+        "real": 2044084841
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 178727449,
+        "real": 103398806
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1257259285,
+        "b_real": 345453716,
+        "b_imag": 1659002143,
+        "a_imag": 921055634,
+        "test_case": 2
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 432574130,
+        "real": 1602713001
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 2,
+        "a_real": 1257259285,
+        "b_imag": 1659002143,
+        "b_real": 345453716,
+        "a_imag": 921055634
+      },
+      "intermediates": {
+        "bd": 1528033270628223662,
+        "ad": 2085795848121647755,
+        "ac": 434324891978753060,
+        "bc": 318182091408035944
+      },
+      "output": {
+        "imag": 1078205785,
+        "real": 476026242
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 2,
+        "a_imag": 921055634,
+        "a_real": 1257259285,
+        "b_real": 345453716,
+        "b_imag": 1659002143
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1409537138,
+        "real": 911805569
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 921055634,
+        "real": 1257259285,
+        "test_case": 2
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1226428013,
+        "real": 890224362
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 361375794,
+        "a_imag": 2050884187,
+        "b_imag": 785040926,
+        "test_case": 3,
+        "b_real": 368194713
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 688441466,
+        "real": 729570507
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 361375794,
+        "test_case": 3,
+        "b_real": 368194713,
+        "b_imag": 785040926,
+        "a_imag": 2050884187
+      },
+      "intermediates": {
+        "bc": 755124714628703331,
+        "bd": 1610028021281237162,
+        "ac": 133056656756977122,
+        "ad": 283694787955745244
+      },
+      "output": {
+        "imag": 169904106,
+        "real": 1629290996
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_imag": 2050884187,
+        "a_real": 361375794,
+        "test_case": 3,
+        "b_imag": 785040926,
+        "b_real": 368194713
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1265843261,
+        "real": 2140664728
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 361375794,
+        "test_case": 3,
+        "imag": 2050884187
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 96599460,
+        "real": 1786107853
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_imag": 2129009123,
+        "a_real": 765016289,
+        "a_imag": 1208073299,
+        "b_real": 544981498,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1189598775,
+        "real": 1309997787
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 544981498,
+        "a_imag": 1208073299,
+        "b_imag": 2129009123,
+        "test_case": 4,
+        "a_real": 765016289
+      },
+      "intermediates": {
+        "ac": 416919723173620922,
+        "ad": 1628726658524604547,
+        "bc": 658377596182821902,
+        "bd": 2571999074823706777
+      },
+      "output": {
+        "imag": 2040119032,
+        "real": 843927967
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 2129009123,
+        "a_imag": 1208073299,
+        "test_case": 4,
+        "a_real": 765016289,
+        "b_real": 544981498
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1226547823,
+        "real": 220034791
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 4,
+        "real": 765016289,
+        "imag": 1208073299
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 939410348,
+        "real": 1382467358
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 993558475,
+        "b_real": 848073942,
+        "test_case": 5,
+        "b_imag": 710525627,
+        "a_imag": 1356093381
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2066619008,
+        "real": 1841632417
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 1356093381,
+        "b_imag": 710525627,
+        "test_case": 5,
+        "a_real": 993558475,
+        "b_real": 848073942
+      },
+      "intermediates": {
+        "bc": 1150067459344777902,
+        "ac": 842611052500758450,
+        "bd": 963539099805574887,
+        "ad": 705948758410538825
+      },
+      "output": {
+        "imag": 1345272780,
+        "real": 1705544180
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 5,
+        "b_real": 848073942,
+        "a_imag": 1356093381,
+        "b_imag": 710525627,
+        "a_real": 993558475
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 645567754,
+        "real": 145484533
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 993558475,
+        "imag": 1356093381,
+        "test_case": 5
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 791390266,
+        "real": 1153925172
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 1867470541,
+        "a_real": 1382994548,
+        "b_imag": 412474155,
+        "a_imag": 821869809,
+        "test_case": 6
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1234343964,
+        "real": 1102981442
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 6,
+        "b_imag": 412474155,
+        "b_real": 1867470541,
+        "a_imag": 821869809,
+        "a_real": 1382994548
+      },
+      "intermediates": {
+        "bd": 339000054987286395,
+        "bc": 1534817656844796669,
+        "ad": 570449507555906940,
+        "ac": 2582701576753610468
+      },
+      "output": {
+        "imag": 768912163,
+        "real": 958991540
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 412474155,
+        "a_real": 1382994548,
+        "b_real": 1867470541,
+        "a_imag": 821869809,
+        "test_case": 6
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 409395654,
+        "real": 1663007654
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 6,
+        "imag": 821869809,
+        "real": 1382994548
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1325613838,
+        "real": 764489099
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_imag": 1856299998,
+        "a_imag": 2136514399,
+        "a_real": 1443218577,
+        "test_case": 7,
+        "b_real": 2067017360
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1845330750,
+        "real": 1362752290
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 2067017360,
+        "a_imag": 2136514399,
+        "test_case": 7,
+        "a_real": 1443218577,
+        "b_imag": 1856299998
+      },
+      "intermediates": {
+        "ad": 2679046641598662846,
+        "ac": 2983157852933496720,
+        "bd": 3966011674590671202,
+        "bc": 4416212352622966640
+      },
+      "output": {
+        "imag": 1223203100,
+        "real": 2058720637
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_imag": 2136514399,
+        "a_real": 1443218577,
+        "b_real": 2067017360,
+        "b_imag": 1856299998,
+        "test_case": 7
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 280214401,
+        "real": 1523684864
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 2136514399,
+        "real": 1443218577,
+        "test_case": 7
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 10969248,
+        "real": 704265070
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 734766457,
+        "a_imag": 963741706,
+        "b_imag": 1821878354,
+        "test_case": 8,
+        "b_real": 210467868
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 638136413,
+        "real": 945234325
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 734766457,
+        "a_imag": 963741706,
+        "test_case": 8,
+        "b_imag": 1821878354,
+        "b_real": 210467868
+      },
+      "intermediates": {
+        "bd": 1755820153008431924,
+        "ac": 154644729682703676,
+        "ad": 1338655103253571778,
+        "bc": 202836662164502808
+      },
+      "output": {
+        "imag": 414717706,
+        "real": 1764002022
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 210467868,
+        "a_real": 734766457,
+        "a_imag": 963741706,
+        "test_case": 8,
+        "b_imag": 1821878354
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1289346999,
+        "real": 524298589
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 734766457,
+        "test_case": 8,
+        "imag": 963741706
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1183741941,
+        "real": 1412717190
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_imag": 1084328723,
+        "test_case": 9,
+        "a_imag": 390562263,
+        "a_real": 1241672768,
+        "b_real": 170016477
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1474890986,
+        "real": 1411689245
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1241672768,
+        "b_imag": 1084328723,
+        "a_imag": 390562263,
+        "test_case": 9,
+        "b_real": 170016477
+      },
+      "intermediates": {
+        "bd": 423497879890780149,
+        "ad": 1346381446909315264,
+        "ac": 211104829602198336,
+        "bc": 66402020004407451
+      },
+      "output": {
+        "imag": 421945219,
+        "real": 1592028821
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 9,
+        "a_real": 1241672768,
+        "b_imag": 1084328723,
+        "a_imag": 390562263,
+        "b_real": 170016477
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1453717187,
+        "real": 1071656291
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 390562263,
+        "test_case": 9,
+        "real": 1241672768
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1756921384,
+        "real": 905810879
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 1820784811,
+        "b_imag": 1630888625,
+        "b_real": 1902647828,
+        "test_case": 10,
+        "a_real": 655634878
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1304189789,
+        "real": 410799059
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 1902647828,
+        "a_imag": 1820784811,
+        "a_real": 655634878,
+        "b_imag": 1630888625,
+        "test_case": 10
+      },
+      "intermediates": {
+        "ac": 1247442276587744984,
+        "ad": 1069267464683462750,
+        "bd": 2969497236832674875,
+        "bc": 3464312265904540508
+      },
+      "output": {
+        "imag": 946925880,
+        "real": 52091619
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 655634878,
+        "b_imag": 1630888625,
+        "a_imag": 1820784811,
+        "test_case": 10,
+        "b_real": 1902647828
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 189896186,
+        "real": 900470697
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 655634878,
+        "imag": 1820784811,
+        "test_case": 10
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 326698836,
+        "real": 1491848769
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 11,
+        "b_real": 1712709299,
+        "a_imag": 783601828,
+        "b_imag": 474778517,
+        "a_real": 89847814
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1258380345,
+        "real": 1802557113
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 1712709299,
+        "a_imag": 783601828,
+        "b_imag": 474778517,
+        "test_case": 11,
+        "a_real": 89847814
+      },
+      "intermediates": {
+        "ac": 153883186532622386,
+        "bd": 372037313816329076,
+        "ad": 42657811886611838,
+        "bc": 1342082137528998572
+      },
+      "output": {
+        "imag": 1571087221,
+        "real": 451547314
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_imag": 783601828,
+        "b_imag": 474778517,
+        "b_real": 1712709299,
+        "test_case": 11,
+        "a_real": 89847814
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 308823311,
+        "real": 524622162
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 89847814,
+        "imag": 783601828,
+        "test_case": 11
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1363881819,
+        "real": 2057635833
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 2117541080,
+        "test_case": 12,
+        "b_imag": 1964426959,
+        "a_real": 1581874531,
+        "a_imag": 11461367
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1975888326,
+        "real": 1551931964
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1581874531,
+        "b_real": 2117541080,
+        "a_imag": 11461367,
+        "b_imag": 1964426959,
+        "test_case": 12
+      },
+      "intermediates": {
+        "ad": 3107476974451881229,
+        "bc": 24269915455456360,
+        "ac": 3349684302798233480,
+        "bd": 22515018321792953
+      },
+      "output": {
+        "imag": 2051596253,
+        "real": 1764230523
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1581874531,
+        "b_imag": 1964426959,
+        "test_case": 12,
+        "a_imag": 11461367,
+        "b_real": 2117541080
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 194518055,
+        "real": 1611817098
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 11461367,
+        "test_case": 12,
+        "real": 1581874531
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2136022280,
+        "real": 565609116
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 1120842043,
+        "b_imag": 1054926583,
+        "a_real": 710802205,
+        "test_case": 13,
+        "a_imag": 1965656684
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 873099620,
+        "real": 1831644248
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 710802205,
+        "b_real": 1120842043,
+        "a_imag": 1965656684,
+        "test_case": 13,
+        "b_imag": 1054926583
+      },
+      "intermediates": {
+        "bd": 2073623489003230772,
+        "ad": 749844141309515515,
+        "bc": 2203190653531165412,
+        "ac": 796696995621104815
+      },
+      "output": {
+        "imag": 1439661279,
+        "real": 37436088
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 1054926583,
+        "b_real": 1120842043,
+        "a_imag": 1965656684,
+        "test_case": 13,
+        "a_real": 710802205
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 910730101,
+        "real": 1737443809
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 13,
+        "real": 710802205,
+        "imag": 1965656684
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 181826963,
+        "real": 1436681442
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 14,
+        "a_imag": 510488206,
+        "b_imag": 1180450085,
+        "a_real": 1696129487,
+        "b_real": 620610669
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1690938291,
+        "real": 169256509
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 620610669,
+        "a_real": 1696129487,
+        "a_imag": 510488206,
+        "test_case": 14,
+        "b_imag": 1180450085
+      },
+      "intermediates": {
+        "bc": 316814427042269814,
+        "ac": 1052636055637696803,
+        "bd": 602605846164197510,
+        "ad": 2002196197100156395
+      },
+      "output": {
+        "imag": 45830178,
+        "real": 1650096331
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1696129487,
+        "b_imag": 1180450085,
+        "test_case": 14,
+        "b_real": 620610669,
+        "a_imag": 510488206
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1477521768,
+        "real": 1075518818
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 510488206,
+        "real": 1696129487,
+        "test_case": 14
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1636995441,
+        "real": 451354160
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 769315113,
+        "b_imag": 1474127228,
+        "test_case": 15,
+        "a_real": 1894524731,
+        "b_real": 256965446
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 95958694,
+        "real": 4006530
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 15,
+        "a_real": 1894524731,
+        "a_imag": 769315113,
+        "b_real": 256965446,
+        "b_imag": 1474127228
+      },
+      "intermediates": {
+        "ad": 2792770490086475668,
+        "bd": 1134068354985196764,
+        "ac": 486827392459445026,
+        "bc": 197687401126585398
+      },
+      "output": {
+        "imag": 1954883329,
+        "real": 110832082
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 15,
+        "b_real": 256965446,
+        "b_imag": 1474127228,
+        "a_imag": 769315113,
+        "a_real": 1894524731
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1442671532,
+        "real": 1637559285
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 769315113,
+        "test_case": 15,
+        "real": 1894524731
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1378168534,
+        "real": 252958916
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_imag": 1835685037,
+        "b_real": 2030156299,
+        "test_case": 16,
+        "a_real": 69729896,
+        "a_imag": 1068290841
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 756492231,
+        "real": 2099886195
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 2030156299,
+        "b_imag": 1835685037,
+        "a_real": 69729896,
+        "a_imag": 1068290841,
+        "test_case": 16
+      },
+      "intermediates": {
+        "ad": 128002126718766152,
+        "bd": 1961045511987846117,
+        "bc": 2168797380020157459,
+        "ac": 141562587593014904
+      },
+      "output": {
+        "imag": 1060570706,
+        "real": 1712221801
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 2030156299,
+        "test_case": 16,
+        "b_imag": 1835685037,
+        "a_real": 69729896,
+        "a_imag": 1068290841
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1380089451,
+        "real": 187057244
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 16,
+        "imag": 1068290841,
+        "real": 69729896
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1079192806,
+        "real": 2077753751
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_imag": 1946890680,
+        "a_imag": 2058960092,
+        "b_real": 997228897,
+        "a_real": 1037619648,
+        "test_case": 17
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1858367125,
+        "real": 2034848545
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1037619648,
+        "a_imag": 2058960092,
+        "b_imag": 1946890680,
+        "test_case": 17,
+        "b_real": 997228897
+      },
+      "intermediates": {
+        "ad": 2020132022076080640,
+        "bd": 4008570213606742560,
+        "ac": 1034744297080568256,
+        "bc": 2053254501512178524
+      },
+      "output": {
+        "imag": 342266953,
+        "real": 1796280778
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 997228897,
+        "a_imag": 2058960092,
+        "test_case": 17,
+        "b_imag": 1946890680,
+        "a_real": 1037619648
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 112069412,
+        "real": 40390751
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 2058960092,
+        "real": 1037619648,
+        "test_case": 17
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 88523555,
+        "real": 1109863999
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 440726740,
+        "test_case": 18,
+        "a_imag": 70638532,
+        "a_real": 822482874,
+        "b_imag": 628671039
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 699309571,
+        "real": 1263209614
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 440726740,
+        "a_real": 822482874,
+        "b_imag": 628671039,
+        "test_case": 18,
+        "a_imag": 70638532
+      },
+      "intermediates": {
+        "ac": 362490195763850760,
+        "bc": 31132289926745680,
+        "ad": 517071162957286086,
+        "bd": 44408399305874748
+      },
+      "output": {
+        "imag": 1493356891,
+        "real": 1882811446
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 18,
+        "a_imag": 70638532,
+        "b_imag": 628671039,
+        "a_real": 822482874,
+        "b_real": 440726740
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1589451140,
+        "real": 381756134
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 18,
+        "imag": 70638532,
+        "real": 822482874
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2076845115,
+        "real": 1325000773
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 1367947373,
+        "b_imag": 1541240548,
+        "test_case": 19,
+        "b_real": 9768628,
+        "a_real": 887660551
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 761704274,
+        "real": 897429179
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 1367947373,
+        "b_imag": 1541240548,
+        "b_real": 9768628,
+        "a_real": 887660551,
+        "test_case": 19
+      },
+      "intermediates": {
+        "bc": 13362969010414244,
+        "ad": 1368098434061221948,
+        "bd": 2108335958797680404,
+        "ac": 8671225712994028
+      },
+      "output": {
+        "imag": 1331118727,
+        "real": 46883825
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 9768628,
+        "a_imag": 1367947373,
+        "a_real": 887660551,
+        "b_imag": 1541240548,
+        "test_case": 19
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1974190472,
+        "real": 877891923
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 1367947373,
+        "test_case": 19,
+        "real": 887660551
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 779536274,
+        "real": 1259823096
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 898805856,
+        "test_case": 20,
+        "a_imag": 1898779395,
+        "a_real": 8624221,
+        "b_imag": 1555281935
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1306577683,
+        "real": 907430077
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 20,
+        "a_imag": 1898779395,
+        "b_imag": 1555281935,
+        "b_real": 898805856,
+        "a_real": 8624221
+      },
+      "intermediates": {
+        "ac": 7751500338238176,
+        "bc": 1706634039478137120,
+        "ad": 13413095124747635,
+        "bd": 2953137291593729325
+      },
+      "output": {
+        "imag": 648847894,
+        "real": 402363431
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_imag": 1898779395,
+        "b_imag": 1555281935,
+        "b_real": 898805856,
+        "test_case": 20,
+        "a_real": 8624221
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 343497460,
+        "real": 1257302012
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 20,
+        "imag": 1898779395,
+        "real": 8624221
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 248704252,
+        "real": 2138859426
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 926440076,
+        "b_real": 96708130,
+        "b_imag": 1473344746,
+        "a_real": 1856769717,
+        "test_case": 21
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 252301175,
+        "real": 1953477847
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 926440076,
+        "b_real": 96708130,
+        "a_real": 1856769717,
+        "b_imag": 1473344746,
+        "test_case": 21
+      },
+      "intermediates": {
+        "ad": 2735661907073856882,
+        "bd": 1364965618458440696,
+        "bc": 89594287307017880,
+        "ac": 179564727171699210
+      },
+      "output": {
+        "imag": 133557023,
+        "real": 1569019496
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1856769717,
+        "b_real": 96708130,
+        "b_imag": 1473344746,
+        "test_case": 21,
+        "a_imag": 926440076
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1600578977,
+        "real": 1760061587
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 21,
+        "real": 1856769717,
+        "imag": 926440076
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1221043571,
+        "real": 290713930
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 1842460334,
+        "b_real": 2106652046,
+        "a_real": 2017080851,
+        "test_case": 22,
+        "b_imag": 1165737407
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 860714094,
+        "real": 1976249250
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 2106652046,
+        "b_imag": 1165737407,
+        "a_imag": 1842460334,
+        "test_case": 22,
+        "a_real": 2017080851
+      },
+      "intermediates": {
+        "ad": 2351386600954093357,
+        "ac": 4249287501706571146,
+        "bd": 2147824932257513938,
+        "bc": 3881422832294943364
+      },
+      "output": {
+        "imag": 1250033666,
+        "real": 1662924253
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 22,
+        "b_real": 2106652046,
+        "b_imag": 1165737407,
+        "a_real": 2017080851,
+        "a_imag": 1842460334
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 676722927,
+        "real": 2057912452
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 1842460334,
+        "test_case": 22,
+        "real": 2017080851
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 305023313,
+        "real": 130402796
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 356096786,
+        "b_imag": 351736233,
+        "b_real": 1731649171,
+        "test_case": 23,
+        "a_imag": 860748633
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1212484866,
+        "real": 2087745957
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 356096786,
+        "a_imag": 860748633,
+        "b_real": 1731649171,
+        "b_imag": 351736233,
+        "test_case": 23
+      },
+      "intermediates": {
+        "bc": 1490514656773833243,
+        "bd": 302756481731319489,
+        "ac": 616634704272664406,
+        "ad": 125252142091047138
+      },
+      "output": {
+        "imag": 1930348972,
+        "real": 503647678
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 356096786,
+        "b_imag": 351736233,
+        "test_case": 23,
+        "a_imag": 860748633,
+        "b_real": 1731649171
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 509012400,
+        "real": 771931262
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 23,
+        "real": 356096786,
+        "imag": 860748633
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1286735014,
+        "real": 1791386861
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 736930769,
+        "b_imag": 718894899,
+        "a_real": 2110198114,
+        "b_real": 1654850535,
+        "test_case": 24
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1455825668,
+        "real": 1617565002
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_imag": 718894899,
+        "test_case": 24,
+        "a_real": 2110198114,
+        "a_imag": 736930769,
+        "b_real": 1654850535
+      },
+      "intermediates": {
+        "bd": 529775770750247331,
+        "bc": 1219510277337611415,
+        "ac": 3492062477908890990,
+        "ad": 1517010660034020486
+      },
+      "output": {
+        "imag": 73967540,
+        "real": 155567085
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 2110198114,
+        "test_case": 24,
+        "a_imag": 736930769,
+        "b_real": 1654850535,
+        "b_imag": 718894899
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 18035870,
+        "real": 455347579
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 736930769,
+        "test_case": 24,
+        "real": 2110198114
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1410552878,
+        "real": 37285533
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1229610550,
+        "a_imag": 836155063,
+        "b_imag": 1104660728,
+        "test_case": 25,
+        "b_real": 1932989597
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1940815791,
+        "real": 1015116500
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_imag": 1104660728,
+        "a_real": 1229610550,
+        "test_case": 25,
+        "a_imag": 836155063,
+        "b_real": 1932989597
+      },
+      "intermediates": {
+        "bd": 923667660614465864,
+        "ac": 2376824401511448350,
+        "ad": 1358302485319480400,
+        "bc": 1616279038257879611
+      },
+      "output": {
+        "imag": 248806097,
+        "real": 2021020300
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 1932989597,
+        "a_real": 1229610550,
+        "b_imag": 1104660728,
+        "a_imag": 836155063,
+        "test_case": 25
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1878977982,
+        "real": 1444104600
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 836155063,
+        "real": 1229610550,
+        "test_case": 25
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1311328584,
+        "real": 917873097
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 26,
+        "b_imag": 2123478337,
+        "a_real": 977112765,
+        "a_imag": 1391118571,
+        "b_real": 280083444
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1367113261,
+        "real": 1257196209
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_imag": 2123478337,
+        "a_imag": 1391118571,
+        "a_real": 977112765,
+        "b_real": 280083444,
+        "test_case": 26
+      },
+      "intermediates": {
+        "ac": 273673108397562660,
+        "bd": 2954010149716896427,
+        "bc": 389629280378038524,
+        "ad": 2074877789283671805
+      },
+      "output": {
+        "imag": 369584184,
+        "real": 728891339
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 2123478337,
+        "b_real": 280083444,
+        "test_case": 26,
+        "a_imag": 1391118571,
+        "a_real": 977112765
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1415123881,
+        "real": 697029321
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 977112765,
+        "imag": 1391118571,
+        "test_case": 26
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 756365076,
+        "real": 1170370882
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_imag": 813165830,
+        "test_case": 27,
+        "a_imag": 350260039,
+        "a_real": 289812294,
+        "b_real": 156744141
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1163425869,
+        "real": 446556435
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 156744141,
+        "b_imag": 813165830,
+        "test_case": 27,
+        "a_real": 289812294,
+        "a_imag": 350260039
+      },
+      "intermediates": {
+        "bd": 284819495329267370,
+        "ac": 45426379074269454,
+        "bc": 54901208939681499,
+        "ad": 235665454594714020
+      },
+      "output": {
+        "imag": 1402624557,
+        "real": 558724313
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 289812294,
+        "test_case": 27,
+        "b_real": 156744141,
+        "b_imag": 813165830,
+        "a_imag": 350260039
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1684577856,
+        "real": 133068153
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 27,
+        "real": 289812294,
+        "imag": 350260039
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1797223608,
+        "real": 1857671353
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 28,
+        "a_real": 1047955208,
+        "a_imag": 941798127,
+        "b_real": 1166509011,
+        "b_imag": 1248756736
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 43071216,
+        "real": 66980572
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 28,
+        "a_real": 1047955208,
+        "a_imag": 941798127,
+        "b_imag": 1248756736,
+        "b_real": 1166509011
+      },
+      "intermediates": {
+        "bd": 1176076755043433472,
+        "bc": 1098616001688422397,
+        "ad": 1308641125016281088,
+        "ac": 1222449193256379288
+      },
+      "output": {
+        "imag": 51609394,
+        "real": 609658513
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 1166509011,
+        "test_case": 28,
+        "a_real": 1047955208,
+        "a_imag": 941798127,
+        "b_imag": 1248756736
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1840525038,
+        "real": 2028929844
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 28,
+        "real": 1047955208,
+        "imag": 941798127
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1205685520,
+        "real": 1099528439
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 403109305,
+        "b_imag": 357798563,
+        "a_imag": 1719557120,
+        "test_case": 29,
+        "a_real": 1918060939
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2077355683,
+        "real": 173686597
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 1719557120,
+        "test_case": 29,
+        "a_real": 1918060939,
+        "b_real": 403109305,
+        "b_imag": 357798563
+      },
+      "intermediates": {
+        "bc": 693169475551001600,
+        "ad": 686279447720630657,
+        "bd": 615255066532418560,
+        "ac": 773188212067937395
+      },
+      "output": {
+        "imag": 1471162490,
+        "real": 1917437738
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 29,
+        "a_real": 1918060939,
+        "b_imag": 357798563,
+        "b_real": 403109305,
+        "a_imag": 1719557120
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1361758557,
+        "real": 1514951634
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 1918060939,
+        "imag": 1719557120,
+        "test_case": 29
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 427926527,
+        "real": 229422708
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 2134899950,
+        "b_real": 719074697,
+        "test_case": 30,
+        "a_real": 554860983,
+        "b_imag": 37745650
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 25161953,
+        "real": 1273935680
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 554860983,
+        "b_imag": 37745650,
+        "b_real": 719074697,
+        "test_case": 30,
+        "a_imag": 2134899950
+      },
+      "intermediates": {
+        "bd": 80583186297717500,
+        "ad": 20943588462973950,
+        "ac": 398986493227847151,
+        "bc": 1535152534671565150
+      },
+      "output": {
+        "imag": 452767672,
+        "real": 1840754480
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 37745650,
+        "a_real": 554860983,
+        "a_imag": 2134899950,
+        "b_real": 719074697,
+        "test_case": 30
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2097154300,
+        "real": 1983269933
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 554860983,
+        "imag": 2134899950,
+        "test_case": 30
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 12583697,
+        "real": 1592622664
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 415076471,
+        "a_real": 2110068156,
+        "b_real": 122723080,
+        "b_imag": 1006888772,
+        "test_case": 31
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1421965243,
+        "real": 85307589
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 415076471,
+        "b_imag": 1006888772,
+        "test_case": 31,
+        "b_real": 122723080,
+        "a_real": 2110068156
+      },
+      "intermediates": {
+        "ac": 258954063114240480,
+        "ad": 2124603934431144432,
+        "bd": 417935838171283612,
+        "bc": 50939462956650680
+      },
+      "output": {
+        "imag": 1059136779,
+        "real": 2005737241
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 2110068156,
+        "b_real": 122723080,
+        "b_imag": 1006888772,
+        "a_imag": 415076471,
+        "test_case": 31
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1555671346,
+        "real": 1987345076
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 2110068156,
+        "test_case": 31,
+        "imag": 415076471
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1732407176,
+        "real": 37415491
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1839939043,
+        "a_imag": 1495615301,
+        "b_imag": 207967658,
+        "b_real": 639724112,
+        "test_case": 32
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1703582959,
+        "real": 332179508
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1839939043,
+        "a_imag": 1495615301,
+        "test_case": 32,
+        "b_imag": 207967658,
+        "b_real": 639724112
+      },
+      "intermediates": {
+        "bd": 311039611417935058,
+        "ac": 1177053370417304816,
+        "ad": 382647813635471294,
+        "bc": 956781170325837712
+      },
+      "output": {
+        "imag": 470648431,
+        "real": 63667704
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 32,
+        "b_real": 639724112,
+        "a_imag": 1495615301,
+        "a_real": 1839939043,
+        "b_imag": 207967658
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1287647643,
+        "real": 1200214931
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 1839939043,
+        "test_case": 32,
+        "imag": 1495615301
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 651868346,
+        "real": 307544604
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 33,
+        "b_real": 2091409281,
+        "a_real": 1289443195,
+        "b_imag": 149820875,
+        "a_imag": 140302596
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 290123471,
+        "real": 1233368829
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 140302596,
+        "a_real": 1289443195,
+        "b_imag": 149820875,
+        "test_case": 33,
+        "b_real": 2091409281
+      },
+      "intermediates": {
+        "ad": 193185507737695625,
+        "ac": 2696753465345292795,
+        "bc": 293430151422793476,
+        "bd": 21020257697491500
+      },
+      "output": {
+        "imag": 803793223,
+        "real": 1171556905
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 33,
+        "a_real": 1289443195,
+        "b_real": 2091409281,
+        "a_imag": 140302596,
+        "b_imag": 149820875
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2137965368,
+        "real": 1345517561
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 33,
+        "imag": 140302596,
+        "real": 1289443195
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2007181051,
+        "real": 858040452
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 608291978,
+        "b_imag": 891474192,
+        "test_case": 34,
+        "a_real": 340194818,
+        "a_imag": 1484702162
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 228692707,
+        "real": 948486796
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 340194818,
+        "b_imag": 891474192,
+        "b_real": 608291978,
+        "a_imag": 1484702162,
+        "test_case": 34
+      },
+      "intermediates": {
+        "bc": 903132414863856436,
+        "bd": 1323573660229603104,
+        "ac": 206937778746570004,
+        "ad": 303274900499137056
+      },
+      "output": {
+        "imag": 1612767091,
+        "real": 1572960541
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_imag": 1484702162,
+        "a_real": 340194818,
+        "test_case": 34,
+        "b_real": 608291978,
+        "b_imag": 891474192
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 593227970,
+        "real": 1879386487
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 1484702162,
+        "test_case": 34,
+        "real": 340194818
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 662781485,
+        "real": 1807288829
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1339972741,
+        "b_real": 1325454690,
+        "test_case": 35,
+        "b_imag": 465177467,
+        "a_imag": 83858475
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 549035942,
+        "real": 517943784
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1339972741,
+        "b_imag": 465177467,
+        "a_imag": 83858475,
+        "b_real": 1325454690,
+        "test_case": 35
+      },
+      "intermediates": {
+        "ac": 1776073154030605290,
+        "ad": 623325125507427047,
+        "bd": 39009072986982825,
+        "bc": 111150608984997750
+      },
+      "output": {
+        "imag": 385052145,
+        "real": 1055432553
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1339972741,
+        "b_real": 1325454690,
+        "a_imag": 83858475,
+        "b_imag": 465177467,
+        "test_case": 35
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1766164655,
+        "real": 14518051
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 35,
+        "imag": 83858475,
+        "real": 1339972741
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2063625172,
+        "real": 807510906
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 678932714,
+        "a_real": 86263682,
+        "b_real": 60899036,
+        "test_case": 36,
+        "b_imag": 1214918603
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1893851317,
+        "real": 147162718
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 86263682,
+        "b_real": 60899036,
+        "a_imag": 678932714,
+        "test_case": 36,
+        "b_imag": 1214918603
+      },
+      "intermediates": {
+        "ad": 104803352025076246,
+        "bc": 41346347791463704,
+        "bd": 824847984423878542,
+        "ac": 5253375075610552
+      },
+      "output": {
+        "imag": 833010671,
+        "real": 2067340864
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 60899036,
+        "b_imag": 1214918603,
+        "a_real": 86263682,
+        "a_imag": 678932714,
+        "test_case": 36
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1611497758,
+        "real": 25364646
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 678932714,
+        "real": 86263682,
+        "test_case": 36
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1468550933,
+        "real": 2061219965
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1463555792,
+        "a_imag": 1425380289,
+        "b_imag": 1640955090,
+        "b_real": 1617788277,
+        "test_case": 37
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 918851732,
+        "real": 933860422
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_imag": 1640955090,
+        "b_real": 1617788277,
+        "test_case": 37,
+        "a_imag": 1425380289,
+        "a_real": 1463555792
+      },
+      "intermediates": {
+        "ac": 2367723403033050384,
+        "bc": 2305963521811072053,
+        "ad": 2401629326381381280,
+        "bd": 2338985040420221010
+      },
+      "output": {
+        "imag": 1784131671,
+        "real": 2009268100
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1463555792,
+        "b_real": 1617788277,
+        "test_case": 37,
+        "b_imag": 1640955090,
+        "a_imag": 1425380289
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1931908846,
+        "real": 1993251162
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 1463555792,
+        "imag": 1425380289,
+        "test_case": 37
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 722103358,
+        "real": 683927855
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 1621954154,
+        "a_imag": 1364573146,
+        "b_imag": 834051008,
+        "a_real": 14465526,
+        "test_case": 38
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 51140507,
+        "real": 1636419680
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 1621954154,
+        "a_real": 14465526,
+        "a_imag": 1364573146,
+        "test_case": 38,
+        "b_imag": 834051008
+      },
+      "intermediates": {
+        "bc": 2213275082591548484,
+        "ac": 23462419985495004,
+        "ad": 12064986541550208,
+        "bd": 1138123607911031168
+      },
+      "output": {
+        "imag": 1659051205,
+        "real": 165178744
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 38,
+        "a_imag": 1364573146,
+        "b_real": 1621954154,
+        "b_imag": 834051008,
+        "a_real": 14465526
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 530522138,
+        "real": 539995019
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 14465526,
+        "imag": 1364573146,
+        "test_case": 38
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 782910501,
+        "real": 2133018121
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 213192634,
+        "b_real": 433493800,
+        "test_case": 39,
+        "a_real": 1484363860,
+        "b_imag": 191419046
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 404611680,
+        "real": 1917857660
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1484363860,
+        "b_imag": 191419046,
+        "test_case": 39,
+        "b_real": 433493800,
+        "a_imag": 213192634
+      },
+      "intermediates": {
+        "ac": 643462530254068000,
+        "bd": 40809130614507164,
+        "bc": 92417685044669200,
+        "ad": 284135513998077560
+      },
+      "output": {
+        "imag": 1047423951,
+        "real": 15511210
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 433493800,
+        "test_case": 39,
+        "a_real": 1484363860,
+        "b_imag": 191419046,
+        "a_imag": 213192634
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 21773588,
+        "real": 1050870060
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 213192634,
+        "real": 1484363860,
+        "test_case": 39
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1934291013,
+        "real": 663119787
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1215894112,
+        "a_imag": 391169626,
+        "b_real": 1456143837,
+        "b_imag": 966652747,
+        "test_case": 40
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1357822373,
+        "real": 524554302
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_imag": 966652747,
+        "b_real": 1456143837,
+        "a_real": 1215894112,
+        "a_imag": 391169626,
+        "test_case": 40
+      },
+      "intermediates": {
+        "ad": 1175347383425925664,
+        "bd": 378125193515862622,
+        "ac": 1770516717633387744,
+        "bc": 569599240121494962
+      },
+      "output": {
+        "imag": 821970749,
+        "real": 1844427759
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 1456143837,
+        "a_real": 1215894112,
+        "b_imag": 966652747,
+        "a_imag": 391169626,
+        "test_case": 40
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1572000526,
+        "real": 1907233922
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 391169626,
+        "test_case": 40,
+        "real": 1215894112
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1756314021,
+        "real": 931589535
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1803560947,
+        "a_imag": 1674330730,
+        "b_imag": 1956896324,
+        "test_case": 41,
+        "b_real": 579398117
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1483743407,
+        "real": 235475417
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 579398117,
+        "a_real": 1803560947,
+        "a_imag": 1674330730,
+        "b_imag": 1956896324,
+        "test_case": 41
+      },
+      "intermediates": {
+        "ac": 1044979816586536799,
+        "bd": 3276491650697236520,
+        "ad": 3529381787294258828,
+        "bc": 970104072197235410
+      },
+      "output": {
+        "imag": 1136983672,
+        "real": 433094357
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 579398117,
+        "a_imag": 1674330730,
+        "b_imag": 1956896324,
+        "a_real": 1803560947,
+        "test_case": 41
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1864918053,
+        "real": 1224162830
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 1803560947,
+        "imag": 1674330730,
+        "test_case": 41
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 473152917,
+        "real": 343922700
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 993769510,
+        "a_imag": 872931121,
+        "b_imag": 185235766,
+        "test_case": 42,
+        "b_real": 736473689
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1058166887,
+        "real": 1730243199
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 736473689,
+        "a_real": 993769510,
+        "b_imag": 185235766,
+        "test_case": 42,
+        "a_imag": 872931121
+      },
+      "intermediates": {
+        "ac": 731885097045422390,
+        "bd": 161698064863673686,
+        "ad": 184081656412294660,
+        "bc": 642890802925775369
+      },
+      "output": {
+        "imag": 349468209,
+        "real": 1150132235
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 736473689,
+        "a_imag": 872931121,
+        "a_real": 993769510,
+        "b_imag": 185235766,
+        "test_case": 42
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 687695355,
+        "real": 257295821
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 872931121,
+        "real": 993769510,
+        "test_case": 42
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1274552526,
+        "real": 1153714137
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1590954848,
+        "b_real": 1501558092,
+        "a_imag": 256879209,
+        "b_imag": 998785411,
+        "test_case": 43
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1255664620,
+        "real": 945029293
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1590954848,
+        "b_imag": 998785411,
+        "b_real": 1501558092,
+        "test_case": 43,
+        "a_imag": 256879209
+      },
+      "intermediates": {
+        "ad": 1589022491742122528,
+        "ac": 2388911126021030016,
+        "bc": 385719054940509228,
+        "bd": 256567206338419899
+      },
+      "output": {
+        "imag": 336111679,
+        "real": 181705412
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 43,
+        "b_real": 1501558092,
+        "b_imag": 998785411,
+        "a_real": 1590954848,
+        "a_imag": 256879209
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1405577445,
+        "real": 89396756
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 43,
+        "real": 1590954848,
+        "imag": 256879209
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1890604438,
+        "real": 556528799
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 44,
+        "a_imag": 972994110,
+        "b_imag": 1256748075,
+        "b_real": 761281376,
+        "a_real": 223738751
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 82258538,
+        "real": 985020127
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 223738751,
+        "b_imag": 1256748075,
+        "test_case": 44,
+        "b_real": 761281376,
+        "a_imag": 972994110
+      },
+      "intermediates": {
+        "ac": 170328144225801376,
+        "bd": 1222808474728838250,
+        "bc": 740722294900695360,
+        "ad": 281183244622154325
+      },
+      "output": {
+        "imag": 564166382,
+        "real": 437357988
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_imag": 1256748075,
+        "b_real": 761281376,
+        "test_case": 44,
+        "a_imag": 972994110,
+        "a_real": 223738751
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1863729682,
+        "real": 1609941022
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 972994110,
+        "real": 223738751,
+        "test_case": 44
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1174489537,
+        "real": 1923744896
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 45,
+        "a_real": 834245912,
+        "b_real": 492865086,
+        "a_imag": 12438682,
+        "b_imag": 1390681030
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1403119712,
+        "real": 1327110998
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 834245912,
+        "b_imag": 1390681030,
+        "a_imag": 12438682,
+        "b_real": 492865086,
+        "test_case": 45
+      },
+      "intermediates": {
+        "ac": 411170683163028432,
+        "bd": 17298239095602460,
+        "bc": 6130592073656652,
+        "ad": 1160169964173449360
+      },
+      "output": {
+        "imag": 1423053366,
+        "real": 912445569
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 834245912,
+        "b_real": 492865086,
+        "a_imag": 12438682,
+        "b_imag": 1390681030,
+        "test_case": 45
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 769241299,
+        "real": 341380826
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 834245912,
+        "test_case": 45,
+        "imag": 12438682
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2135044965,
+        "real": 1313237735
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_imag": 116846392,
+        "b_imag": 32686191,
+        "a_real": 2044830552,
+        "test_case": 46,
+        "b_real": 1822277065
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 149532583,
+        "real": 1719623970
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 2044830552,
+        "b_imag": 32686191,
+        "b_real": 1822277065,
+        "a_imag": 116846392,
+        "test_case": 46
+      },
+      "intermediates": {
+        "bc": 212926500269599480,
+        "ad": 66837721985307432,
+        "bd": 3819263486572872,
+        "ac": 3726247816720889880
+      },
+      "output": {
+        "imag": 2015483463,
+        "real": 1755246824
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 2044830552,
+        "test_case": 46,
+        "b_real": 1822277065,
+        "b_imag": 32686191,
+        "a_imag": 116846392
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 84160201,
+        "real": 222553487
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 2044830552,
+        "imag": 116846392,
+        "test_case": 46
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2030637255,
+        "real": 102653095
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b_real": 1834248088,
+        "b_imag": 1741221647,
+        "test_case": 47,
+        "a_imag": 639464537,
+        "a_real": 1367032144
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 233202537,
+        "real": 1053796585
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_real": 1367032144,
+        "b_imag": 1741221647,
+        "test_case": 47,
+        "a_imag": 639464537,
+        "b_real": 1834248088
+      },
+      "intermediates": {
+        "ac": 2507476096366540672,
+        "bc": 1172936604336055256,
+        "ad": 2380305961277621168,
+        "bd": 1113449494313232439
+      },
+      "output": {
+        "imag": 2127738395,
+        "real": 763770599
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b_real": 1834248088,
+        "a_real": 1367032144,
+        "test_case": 47,
+        "a_imag": 639464537,
+        "b_imag": 1741221647
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1045726537,
+        "real": 1680267703
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 47,
+        "imag": 639464537,
+        "real": 1367032144
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1508019110,
+        "real": 780451503
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 48,
+        "a_real": 1539200379,
+        "a_imag": 1282338521,
+        "b_real": 1017584899,
+        "b_imag": 974610747
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 109465621,
+        "real": 409301631
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a_imag": 1282338521,
+        "b_real": 1017584899,
+        "a_real": 1539200379,
+        "test_case": 48,
+        "b_imag": 974610747
+      },
+      "intermediates": {
+        "bd": 1249780903858685187,
+        "bc": 1304888314375594379,
+        "ac": 1566267062205476721,
+        "ad": 1500121231159873113
+      },
+      "output": {
+        "imag": 1058241160,
+        "real": 2103406437
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1539200379,
+        "b_imag": 974610747,
+        "a_imag": 1282338521,
+        "b_real": 1017584899,
+        "test_case": 48
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 307727774,
+        "real": 521615480
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "real": 1539200379,
+        "imag": 1282338521,
+        "test_case": 48
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 865145126,
+        "real": 608283268
+      }
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a_real": 1658624814,
+        "b_imag": 569975413,
+        "b_real": 1840780485,
+        "test_case": 49,
+        "a_imag": 305277830
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 875253243,
+        "real": 1351921652
+      }
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b_real": 1840780485,
+        "a_imag": 305277830,
+        "a_real": 1658624814,
+        "test_case": 49,
+        "b_imag": 569975413
+      },
+      "intermediates": {
+        "ac": 3053164189547954790,
+        "bd": 174000857233993790,
+        "ad": 945375363371698182,
+        "bc": 561949471967147550
+      },
+      "output": {
+        "imag": 1163210251,
+        "real": 684786112
+      }
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a_real": 1658624814,
+        "a_imag": 305277830,
+        "test_case": 49,
+        "b_imag": 569975413,
+        "b_real": 1840780485
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1882786064,
+        "real": 1965327976
+      }
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "imag": 305277830,
+        "test_case": 49,
+        "real": 1658624814
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1842205817,
+        "real": 488858833
+      }
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "real": 0,
+        "imag": 0,
+        "test_case": 0
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 0,
+        "real": 0
+      }
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "real": 1,
+        "imag": 0,
+        "test_case": 1
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 0,
+        "real": 1
+      }
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "real": 0,
+        "imag": 1,
+        "test_case": 2
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1,
+        "real": 0
+      }
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "imag": 1,
+        "test_case": 3,
+        "real": 1
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1,
+        "real": 1
+      }
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "real": 42,
+        "imag": 19,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 19,
+        "real": 42
+      }
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "test_case": 5,
+        "imag": 2147483646,
+        "real": 2147483646
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2147483646,
+        "real": 2147483646
+      }
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "real": 1,
+        "imag": 0,
+        "test_case": 0
+      },
+      "intermediates": {
+        "verification_real": 1,
+        "verification_imag": 0
+      },
+      "output": {
+        "imag": 0,
+        "real": 1
+      }
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "imag": 1,
+        "test_case": 1,
+        "real": 1
+      },
+      "intermediates": {
+        "verification_imag": 0,
+        "verification_real": 1
+      },
+      "output": {
+        "imag": 1073741823,
+        "real": 1073741824
+      }
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "imag": 3,
+        "real": 2,
+        "test_case": 2
+      },
+      "intermediates": {
+        "verification_imag": 0,
+        "verification_real": 1
+      },
+      "output": {
+        "imag": 1982292597,
+        "real": 825955249
+      }
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "test_case": 3,
+        "real": 42,
+        "imag": 19
+      },
+      "intermediates": {
+        "verification_imag": 0,
+        "verification_real": 1
+      },
+      "output": {
+        "imag": 305195323,
+        "real": 342586803
+      }
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "real": 2147483646,
+        "test_case": 4,
+        "imag": 1
+      },
+      "intermediates": {
+        "verification_real": 1,
+        "verification_imag": 0
+      },
+      "output": {
+        "imag": 1073741823,
+        "real": 1073741823
+      }
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "imag": 0,
+        "test_case": 0,
+        "real": 0
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 0,
+        "real": 0
+      }
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "test_case": 1,
+        "imag": 0,
+        "real": 1
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 0,
+        "real": 1
+      }
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "test_case": 2,
+        "imag": 1,
+        "real": 0
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2147483646,
+        "real": 0
+      }
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "real": 1,
+        "test_case": 3,
+        "imag": 1
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2147483646,
+        "real": 1
+      }
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "real": 42,
+        "imag": 19,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 2147483628,
+        "real": 42
+      }
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "test_case": 5,
+        "real": 2147483646,
+        "imag": 2147483646
+      },
+      "intermediates": {},
+      "output": {
+        "imag": 1,
+        "real": 2147483646
+      }
+    },
+    {
+      "operation": "into_slice",
+      "inputs": {
+        "elements": [
+          {
+            "imag": 482512870,
+            "real": 1615867303
+          },
+          {
+            "imag": 742391620,
+            "real": 1881313536
+          },
+          {
+            "imag": 1766725086,
+            "real": 1262581745
+          },
+          {
+            "imag": 96849178,
+            "real": 259396594
+          },
+          {
+            "imag": 316739591,
+            "real": 1011977251
+          },
+          {
+            "imag": 27743488,
+            "real": 878584500
+          },
+          {
+            "imag": 1314793629,
+            "real": 76629720
+          },
+          {
+            "imag": 1070964175,
+            "real": 741541040
+          },
+          {
+            "imag": 1346598355,
+            "real": 2036141139
+          },
+          {
+            "imag": 1269481045,
+            "real": 243337927
+          }
+        ]
+      },
+      "intermediates": {},
+      "output": [
+        167,
+        45,
+        80,
+        96,
+        230,
+        143,
+        194,
+        28,
+        0,
+        145,
+        34,
+        112,
+        68,
+        255,
+        63,
+        44,
+        241,
+        119,
+        65,
+        75,
+        222,
+        21,
+        78,
+        105,
+        242,
+        19,
+        118,
+        15,
+        26,
+        205,
+        197,
+        5,
+        35,
+        140,
+        81,
+        60,
+        7,
+        16,
+        225,
+        18,
+        180,
+        34,
+        94,
+        52,
+        0,
+        85,
+        167,
+        1,
+        216,
+        70,
+        145,
+        4,
+        157,
+        40,
+        94,
+        78,
+        176,
+        4,
+        51,
+        44,
+        207,
+        157,
+        213,
+        63,
+        83,
+        12,
+        93,
+        121,
+        211,
+        117,
+        67,
+        80,
+        199,
+        10,
+        129,
+        14,
+        85,
+        190,
+        170,
+        75
+      ]
+    },
+    {
+      "operation": "zero",
+      "inputs": {},
+      "intermediates": {},
+      "output": {
+        "imag": 0,
+        "real": 0
+      }
+    },
+    {
+      "operation": "one",
+      "inputs": {},
+      "intermediates": {},
+      "output": {
+        "imag": 0,
+        "real": 1
+      }
+    }
+  ]
+}

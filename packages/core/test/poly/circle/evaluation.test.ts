@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { CircleEvaluation, NaturalOrder, BitReversedOrder, DefaultColumnOps, CosetSubEvaluation } from "../../../src/poly/circle/evaluation";
+import { CircleEvaluation, NaturalOrder, BitReversedOrder, DefaultColumnOps, CosetSubEvaluation, ArrayColumn } from "../../../src/poly/circle/evaluation";
 import { CanonicCoset } from "../../../src/poly/circle/canonic";
 import { CircleDomain } from "../../../src/poly/circle/domain";
 import { M31 } from "../../../src/fields/m31";
@@ -190,11 +190,13 @@ describe("CircleEvaluation Tests", () => {
       const values = [M31.from_u32_unchecked(0), M31.from_u32_unchecked(1), M31.from_u32_unchecked(2)];
       
       // Should throw for non-power-of-2 length
-      expect(() => ops.bitReverseColumn(values)).toThrow("Column length must be a power of 2");
+      const invalidColumn = new ArrayColumn(values);
+      expect(() => ops.bitReverseColumn(invalidColumn)).toThrow("Column length must be a power of 2");
       
       // Should work for power-of-2 length
       const validValues = [M31.from_u32_unchecked(0), M31.from_u32_unchecked(1), M31.from_u32_unchecked(2), M31.from_u32_unchecked(3)];
-      expect(() => ops.bitReverseColumn([...validValues])).not.toThrow();
+      const validColumn = new ArrayColumn([...validValues]);
+      expect(() => ops.bitReverseColumn(validColumn)).not.toThrow();
     });
   });
 }); 

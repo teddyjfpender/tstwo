@@ -1,10 +1,10 @@
 import type { CircleDomain } from "./domain";
-import { CircleEvaluation } from "./evaluation";
+import { CircleEvaluation, BitReversedOrder } from "./evaluation";
 import { CirclePoly } from "./poly";
 import type { PolyOps } from "./ops";
-import type { ColumnOps } from "./evaluation";
+import type { ColumnOps } from "../../backend";
 import { TwiddleTree } from "../twiddles";
-// TODO: import type { SecureField } from "../../fields/qm31";
+import type { SecureField } from "../../fields/qm31";
 
 export const SECURE_EXTENSION_DEGREE = 4; // placeholder constant
 
@@ -12,7 +12,8 @@ export class SecureCirclePoly<B extends ColumnOps<any>> {
   constructor(public polys: [CirclePoly<B>, CirclePoly<B>, CirclePoly<B>, CirclePoly<B>]) {}
 
   evalAtPoint(point: any): any {
-    // TODO: combine coordinate evaluations as SecureField when implemented
+    // Combine coordinate evaluations - for now just return the first coordinate
+    // In a full implementation, this would combine all 4 coordinates into a SecureField
     return this.polys[0].evalAtPoint(point);
   }
 
@@ -25,8 +26,16 @@ export class SecureCirclePoly<B extends ColumnOps<any>> {
   }
 
   evaluateWithTwiddles(domain: any, twiddles: TwiddleTree<B, any>): SecureEvaluation<B, BitReversedOrder> {
-    const columns = this.polys.map((p) => p.evaluateWithTwiddles(domain, twiddles).values);
-    return new SecureEvaluation(domain, { columns } as any);
+    const evaluations = this.polys.map((p) => p.evaluateWithTwiddles(domain, twiddles));
+    const columns = evaluations.map(evaluation => evaluation.values);
+    
+    // Create a mock SecureColumnByCoords-like object
+    const values = {
+      len: () => domain.size(),
+      columns: columns
+    };
+    
+    return new SecureEvaluation(domain, values);
   }
 
   intoCoordinatePolys(): [CirclePoly<B>, CirclePoly<B>, CirclePoly<B>, CirclePoly<B>] {
@@ -70,5 +79,3 @@ export class SecureEvaluation<B extends ColumnOps<any>, EvalOrder> {
     return new SecureCirclePoly(polys as any);
   }
 }
-
-import { BitReversedOrder } from "../index";

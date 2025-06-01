@@ -9,8 +9,8 @@ export { SimdBackend } from './simd';
  * Column operations trait.
  * This is a 1:1 port of the Rust ColumnOps trait.
  */
-export interface ColumnOps {
-  bitReverseColumn<T>(column: Column<T>): void;
+export interface ColumnOps<F> {
+  bitReverseColumn(col: Column<F>): void;
 }
 
 /**
@@ -18,7 +18,7 @@ export interface ColumnOps {
  * This is a 1:1 port of the Rust Backend trait.
  */
 export interface Backend extends 
-  ColumnOps,
+  ColumnOps<BaseField>,
   PolyOps,
   QuotientOps,
   FriOps,

@@ -2,7 +2,7 @@ import type { ComplexConjugate, ExtensionOf, Field, FieldExpOps } from './fields
 import { M31, P } from './m31';
 
 // Constants
-export const P2: bigint = BigInt(4611686014132420609); // (2^31 - 1)^2
+export const P2: bigint = BigInt('4611686014132420609'); // (2^31 - 1)^2
 
 /**
  * Complex extension field of M31.

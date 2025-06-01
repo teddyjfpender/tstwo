@@ -1,0 +1,4883 @@
+{
+  "description": "Test vectors for M31 field operations",
+  "field_type": "M31",
+  "field_modulus": 2147483647,
+  "test_vectors": [
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 0,
+        "a": 1921246409,
+        "b": 1886093101
+      },
+      "intermediates": {},
+      "output": 1659855863
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1921246409,
+        "test_case": 0,
+        "b": 1886093101
+      },
+      "intermediates": {
+        "product_u64": 3623649597335924309
+      },
+      "output": 71664270
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1921246409,
+        "b": 1886093101,
+        "test_case": 0
+      },
+      "intermediates": {
+        "intermediate_sum": 2182636955
+      },
+      "output": 35153308
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 0,
+        "a": 1921246409
+      },
+      "intermediates": {},
+      "output": 226237238
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 2061069986,
+        "b": 1984993126,
+        "test_case": 1
+      },
+      "intermediates": {},
+      "output": 1898579465
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 2061069986,
+        "test_case": 1,
+        "b": 1984993126
+      },
+      "intermediates": {
+        "product_u64": 4091209754414916236
+      },
+      "output": 1662086589
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 2061069986,
+        "b": 1984993126,
+        "test_case": 1
+      },
+      "intermediates": {
+        "intermediate_sum": 2223560507
+      },
+      "output": 76076860
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 2061069986,
+        "test_case": 1
+      },
+      "intermediates": {},
+      "output": 86413661
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1705441415,
+        "b": 1902455040,
+        "test_case": 2
+      },
+      "intermediates": {},
+      "output": 1460412808
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 2,
+        "a": 1705441415,
+        "b": 1902455040
+      },
+      "intermediates": {
+        "product_u64": 3244525615391481600
+      },
+      "output": 1008622775
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1705441415,
+        "b": 1902455040,
+        "test_case": 2
+      },
+      "intermediates": {
+        "intermediate_sum": 1950470022
+      },
+      "output": 1950470022
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 2,
+        "a": 1705441415
+      },
+      "intermediates": {},
+      "output": 442042232
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 378590659,
+        "b": 1960102673,
+        "test_case": 3
+      },
+      "intermediates": {},
+      "output": 191209685
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 378590659,
+        "test_case": 3,
+        "b": 1960102673
+      },
+      "intermediates": {
+        "product_u64": 742076562678731507
+      },
+      "output": 1328846938
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1960102673,
+        "a": 378590659,
+        "test_case": 3
+      },
+      "intermediates": {
+        "intermediate_sum": 565971633
+      },
+      "output": 565971633
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 378590659,
+        "test_case": 3
+      },
+      "intermediates": {},
+      "output": 1768892988
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1697131274,
+        "b": 1369454381,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": 919102008
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1369454381,
+        "a": 1697131274,
+        "test_case": 4
+      },
+      "intermediates": {
+        "product_u64": 2324143858311411394
+      },
+      "output": 974176207
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 4,
+        "a": 1697131274,
+        "b": 1369454381
+      },
+      "intermediates": {
+        "intermediate_sum": 2475160540
+      },
+      "output": 327676893
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1697131274,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": 450352373
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 2046044730,
+        "test_case": 5,
+        "a": 1034689309
+      },
+      "intermediates": {},
+      "output": 933250392
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 5,
+        "b": 2046044730,
+        "a": 1034689309
+      },
+      "intermediates": {
+        "product_u64": 2117020607866791570
+      },
+      "output": 2094480543
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 2046044730,
+        "test_case": 5,
+        "a": 1034689309
+      },
+      "intermediates": {
+        "intermediate_sum": 1136128226
+      },
+      "output": 1136128226
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 5,
+        "a": 1034689309
+      },
+      "intermediates": {},
+      "output": 1112794338
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 620694871,
+        "b": 234544396,
+        "test_case": 6
+      },
+      "intermediates": {},
+      "output": 855239267
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 6,
+        "a": 620694871,
+        "b": 234544396
+      },
+      "intermediates": {
+        "product_u64": 145580503618992916
+      },
+      "output": 1618551928
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 234544396,
+        "test_case": 6,
+        "a": 620694871
+      },
+      "intermediates": {
+        "intermediate_sum": 2533634122
+      },
+      "output": 386150475
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 620694871,
+        "test_case": 6
+      },
+      "intermediates": {},
+      "output": 1526788776
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 966829411,
+        "a": 1810638765,
+        "test_case": 7
+      },
+      "intermediates": {},
+      "output": 629984529
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 966829411,
+        "test_case": 7,
+        "a": 1810638765
+      },
+      "intermediates": {
+        "product_u64": 1750578810698717415
+      },
+      "output": 1939633461
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1810638765,
+        "test_case": 7,
+        "b": 966829411
+      },
+      "intermediates": {
+        "intermediate_sum": 2991293001
+      },
+      "output": 843809354
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 7,
+        "a": 1810638765
+      },
+      "intermediates": {},
+      "output": 336844882
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1275495208,
+        "a": 996843089,
+        "test_case": 8
+      },
+      "intermediates": {},
+      "output": 124854650
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 996843089,
+        "test_case": 8,
+        "b": 1275495208
+      },
+      "intermediates": {
+        "product_u64": 1271468583147417512
+      },
+      "output": 1021084553
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 8,
+        "b": 1275495208,
+        "a": 996843089
+      },
+      "intermediates": {
+        "intermediate_sum": 1868831528
+      },
+      "output": 1868831528
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 996843089,
+        "test_case": 8
+      },
+      "intermediates": {},
+      "output": 1150640558
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 9,
+        "a": 1236256012,
+        "b": 963327091
+      },
+      "intermediates": {},
+      "output": 52099456
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 963327091,
+        "test_case": 9,
+        "a": 1236256012
+      },
+      "intermediates": {
+        "product_u64": 1190918907771221092
+      },
+      "output": 1997402435
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 9,
+        "a": 1236256012,
+        "b": 963327091
+      },
+      "intermediates": {
+        "intermediate_sum": 2420412568
+      },
+      "output": 272928921
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1236256012,
+        "test_case": 9
+      },
+      "intermediates": {},
+      "output": 911227635
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 10,
+        "b": 800651146,
+        "a": 352803258
+      },
+      "intermediates": {},
+      "output": 1153454404
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 10,
+        "a": 352803258,
+        "b": 800651146
+      },
+      "intermediates": {
+        "product_u64": 282472332830233668
+      },
+      "output": 420473458
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 352803258,
+        "b": 800651146,
+        "test_case": 10
+      },
+      "intermediates": {
+        "intermediate_sum": 1699635759
+      },
+      "output": 1699635759
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 352803258,
+        "test_case": 10
+      },
+      "intermediates": {},
+      "output": 1794680389
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1565892111,
+        "test_case": 11,
+        "a": 1090604030
+      },
+      "intermediates": {},
+      "output": 509012494
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1090604030,
+        "test_case": 11,
+        "b": 1565892111
+      },
+      "intermediates": {
+        "product_u64": 1707768246801807330
+      },
+      "output": 1287038010
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1090604030,
+        "b": 1565892111,
+        "test_case": 11
+      },
+      "intermediates": {
+        "intermediate_sum": 1672195566
+      },
+      "output": 1672195566
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1090604030,
+        "test_case": 11
+      },
+      "intermediates": {},
+      "output": 1056879617
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 12,
+        "b": 1720377117,
+        "a": 1676482751
+      },
+      "intermediates": {},
+      "output": 1249376221
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1676482751,
+        "b": 1720377117,
+        "test_case": 12
+      },
+      "intermediates": {
+        "product_u64": 2884182561865608867
+      },
+      "output": 460163112
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1720377117,
+        "test_case": 12,
+        "a": 1676482751
+      },
+      "intermediates": {
+        "intermediate_sum": 2103589281
+      },
+      "output": 2103589281
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1676482751,
+        "test_case": 12
+      },
+      "intermediates": {},
+      "output": 471000896
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 2023864994,
+        "b": 151479756,
+        "test_case": 13
+      },
+      "intermediates": {},
+      "output": 27861103
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 2023864994,
+        "b": 151479756,
+        "test_case": 13
+      },
+      "intermediates": {
+        "product_u64": 306574575468061464
+      },
+      "output": 1148386047
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 13,
+        "a": 2023864994,
+        "b": 151479756
+      },
+      "intermediates": {
+        "intermediate_sum": 4019868885
+      },
+      "output": 1872385238
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 2023864994,
+        "test_case": 13
+      },
+      "intermediates": {},
+      "output": 123618653
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 14,
+        "b": 1870464070,
+        "a": 1364698759
+      },
+      "intermediates": {},
+      "output": 1087679182
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1364698759,
+        "b": 1870464070,
+        "test_case": 14
+      },
+      "intermediates": {
+        "product_u64": 2552619995083089130
+      },
+      "output": 1012275619
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1364698759,
+        "b": 1870464070,
+        "test_case": 14
+      },
+      "intermediates": {
+        "intermediate_sum": 1641718336
+      },
+      "output": 1641718336
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1364698759,
+        "test_case": 14
+      },
+      "intermediates": {},
+      "output": 782784888
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1497116805,
+        "b": 61194535,
+        "test_case": 15
+      },
+      "intermediates": {},
+      "output": 1558311340
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 15,
+        "a": 1497116805,
+        "b": 61194535
+      },
+      "intermediates": {
+        "product_u64": 91615366722660675
+      },
+      "output": 1342415012
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1497116805,
+        "test_case": 15,
+        "b": 61194535
+      },
+      "intermediates": {
+        "intermediate_sum": 3583405917
+      },
+      "output": 1435922270
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1497116805,
+        "test_case": 15
+      },
+      "intermediates": {},
+      "output": 650366842
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1486066597,
+        "b": 1857374166,
+        "test_case": 16
+      },
+      "intermediates": {},
+      "output": 1195957116
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1486066597,
+        "b": 1857374166,
+        "test_case": 16
+      },
+      "intermediates": {
+        "product_u64": 2760181706223333102
+      },
+      "output": 261452853
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1857374166,
+        "test_case": 16,
+        "a": 1486066597
+      },
+      "intermediates": {
+        "intermediate_sum": 1776176078
+      },
+      "output": 1776176078
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 16,
+        "a": 1486066597
+      },
+      "intermediates": {},
+      "output": 661417050
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 17,
+        "a": 1266941054,
+        "b": 1552375418
+      },
+      "intermediates": {},
+      "output": 671832825
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1266941054,
+        "b": 1552375418,
+        "test_case": 17
+      },
+      "intermediates": {
+        "product_u64": 1966768148284610572
+      },
+      "output": 413487736
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 17,
+        "b": 1552375418,
+        "a": 1266941054
+      },
+      "intermediates": {
+        "intermediate_sum": 1862049283
+      },
+      "output": 1862049283
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1266941054,
+        "test_case": 17
+      },
+      "intermediates": {},
+      "output": 880542593
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1221235924,
+        "test_case": 18,
+        "b": 803804714
+      },
+      "intermediates": {},
+      "output": 2025040638
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 18,
+        "b": 803804714,
+        "a": 1221235924
+      },
+      "intermediates": {
+        "product_u64": 981635192617345736
+      },
+      "output": 1446613707
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 18,
+        "b": 803804714,
+        "a": 1221235924
+      },
+      "intermediates": {
+        "intermediate_sum": 2564914857
+      },
+      "output": 417431210
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1221235924,
+        "test_case": 18
+      },
+      "intermediates": {},
+      "output": 926247723
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 19,
+        "b": 92093312,
+        "a": 1760507764
+      },
+      "intermediates": {},
+      "output": 1852601076
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 92093312,
+        "test_case": 19,
+        "a": 1760507764
+      },
+      "intermediates": {
+        "product_u64": 162130990788474368
+      },
+      "output": 1971812493
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 92093312,
+        "test_case": 19,
+        "a": 1760507764
+      },
+      "intermediates": {
+        "intermediate_sum": 3815898099
+      },
+      "output": 1668414452
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 19,
+        "a": 1760507764
+      },
+      "intermediates": {},
+      "output": 386975883
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 733018230,
+        "b": 1228023402,
+        "test_case": 20
+      },
+      "intermediates": {},
+      "output": 1961041632
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 733018230,
+        "test_case": 20,
+        "b": 1228023402
+      },
+      "intermediates": {
+        "product_u64": 900163540532618460
+      },
+      "output": 573599949
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1228023402,
+        "test_case": 20,
+        "a": 733018230
+      },
+      "intermediates": {
+        "intermediate_sum": 1652478475
+      },
+      "output": 1652478475
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 20,
+        "a": 733018230
+      },
+      "intermediates": {},
+      "output": 1414465417
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 21,
+        "b": 592764134,
+        "a": 1477339247
+      },
+      "intermediates": {},
+      "output": 2070103381
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 592764134,
+        "test_case": 21,
+        "a": 1477339247
+      },
+      "intermediates": {
+        "product_u64": 875713719372167098
+      },
+      "output": 141265332
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 21,
+        "b": 592764134,
+        "a": 1477339247
+      },
+      "intermediates": {
+        "intermediate_sum": 3032058760
+      },
+      "output": 884575113
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 21,
+        "a": 1477339247
+      },
+      "intermediates": {},
+      "output": 670144400
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1935073734,
+        "test_case": 22,
+        "b": 825997473
+      },
+      "intermediates": {},
+      "output": 613587560
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 22,
+        "b": 825997473,
+        "a": 1935073734
+      },
+      "intermediates": {
+        "product_u64": 1598366014352674182
+      },
+      "output": 384393310
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1935073734,
+        "b": 825997473,
+        "test_case": 22
+      },
+      "intermediates": {
+        "intermediate_sum": 3256559908
+      },
+      "output": 1109076261
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 22,
+        "a": 1935073734
+      },
+      "intermediates": {},
+      "output": 212409913
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1532444294,
+        "b": 1411592366,
+        "test_case": 23
+      },
+      "intermediates": {},
+      "output": 796553013
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 23,
+        "b": 1411592366,
+        "a": 1532444294
+      },
+      "intermediates": {
+        "product_u64": 2163186666730659604
+      },
+      "output": 828505268
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 23,
+        "a": 1532444294,
+        "b": 1411592366
+      },
+      "intermediates": {
+        "intermediate_sum": 2268335575
+      },
+      "output": 120851928
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1532444294,
+        "test_case": 23
+      },
+      "intermediates": {},
+      "output": 615039353
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 24,
+        "b": 1362359775,
+        "a": 1824806100
+      },
+      "intermediates": {},
+      "output": 1039682228
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1362359775,
+        "a": 1824806100,
+        "test_case": 24
+      },
+      "intermediates": {
+        "product_u64": 2486042427814627500
+      },
+      "output": 1668361601
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1824806100,
+        "b": 1362359775,
+        "test_case": 24
+      },
+      "intermediates": {
+        "intermediate_sum": 2609929972
+      },
+      "output": 462446325
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1824806100,
+        "test_case": 24
+      },
+      "intermediates": {},
+      "output": 322677547
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 554288016,
+        "test_case": 25,
+        "b": 435981082
+      },
+      "intermediates": {},
+      "output": 990269098
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 25,
+        "a": 554288016,
+        "b": 435981082
+      },
+      "intermediates": {
+        "product_u64": 241659088955313312
+      },
+      "output": 1084367858
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 435981082,
+        "test_case": 25,
+        "a": 554288016
+      },
+      "intermediates": {
+        "intermediate_sum": 2265790581
+      },
+      "output": 118306934
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 25,
+        "a": 554288016
+      },
+      "intermediates": {},
+      "output": 1593195631
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 400265263,
+        "b": 1843093306,
+        "test_case": 26
+      },
+      "intermediates": {},
+      "output": 95874922
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1843093306,
+        "test_case": 26,
+        "a": 400265263
+      },
+      "intermediates": {
+        "product_u64": 737726226859629478
+      },
+      "output": 1374615510
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1843093306,
+        "test_case": 26,
+        "a": 400265263
+      },
+      "intermediates": {
+        "intermediate_sum": 704655604
+      },
+      "output": 704655604
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 400265263,
+        "test_case": 26
+      },
+      "intermediates": {},
+      "output": 1747218384
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 813980422,
+        "b": 621500997,
+        "test_case": 27
+      },
+      "intermediates": {},
+      "output": 1435481419
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 813980422,
+        "b": 621500997,
+        "test_case": 27
+      },
+      "intermediates": {
+        "product_u64": 505889643811480734
+      },
+      "output": 1895380100
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 27,
+        "b": 621500997,
+        "a": 813980422
+      },
+      "intermediates": {
+        "intermediate_sum": 2339963072
+      },
+      "output": 192479425
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 27,
+        "a": 813980422
+      },
+      "intermediates": {},
+      "output": 1333503225
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1038673039,
+        "test_case": 28,
+        "a": 1064040694
+      },
+      "intermediates": {},
+      "output": 2102713733
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1038673039,
+        "a": 1064040694,
+        "test_case": 28
+      },
+      "intermediates": {
+        "product_u64": 1105190381256649066
+      },
+      "output": 1923613441
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 28,
+        "a": 1064040694,
+        "b": 1038673039
+      },
+      "intermediates": {
+        "intermediate_sum": 2172851302
+      },
+      "output": 25367655
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 28,
+        "a": 1064040694
+      },
+      "intermediates": {},
+      "output": 1083442953
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 777208736,
+        "test_case": 29,
+        "b": 611723815
+      },
+      "intermediates": {},
+      "output": 1388932551
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 777208736,
+        "test_case": 29,
+        "b": 611723815
+      },
+      "intermediates": {
+        "product_u64": 475437093037247840
+      },
+      "output": 1891220584
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 777208736,
+        "b": 611723815,
+        "test_case": 29
+      },
+      "intermediates": {
+        "intermediate_sum": 2312968568
+      },
+      "output": 165484921
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 29,
+        "a": 777208736
+      },
+      "intermediates": {},
+      "output": 1370274911
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1978252582,
+        "a": 757481817,
+        "test_case": 30
+      },
+      "intermediates": {},
+      "output": 588250752
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 30,
+        "a": 757481817,
+        "b": 1978252582
+      },
+      "intermediates": {
+        "product_u64": 1498490360298301494
+      },
+      "output": 1116000844
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 757481817,
+        "b": 1978252582,
+        "test_case": 30
+      },
+      "intermediates": {
+        "intermediate_sum": 926712882
+      },
+      "output": 926712882
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 757481817,
+        "test_case": 30
+      },
+      "intermediates": {},
+      "output": 1390001830
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 31,
+        "b": 466519599,
+        "a": 23618331
+      },
+      "intermediates": {},
+      "output": 490137930
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 466519599,
+        "a": 23618331,
+        "test_case": 31
+      },
+      "intermediates": {
+        "product_u64": 11018414307169269
+      },
+      "output": 2131926613
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 23618331,
+        "b": 466519599,
+        "test_case": 31
+      },
+      "intermediates": {
+        "intermediate_sum": 1704582379
+      },
+      "output": 1704582379
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 23618331,
+        "test_case": 31
+      },
+      "intermediates": {},
+      "output": 2123865316
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 517470043,
+        "b": 2102868636,
+        "test_case": 32
+      },
+      "intermediates": {},
+      "output": 472855032
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 2102868636,
+        "a": 517470043,
+        "test_case": 32
+      },
+      "intermediates": {
+        "product_u64": 1088171523494271348
+      },
+      "output": 1455834604
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 2102868636,
+        "a": 517470043,
+        "test_case": 32
+      },
+      "intermediates": {
+        "intermediate_sum": 562085054
+      },
+      "output": 562085054
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 517470043,
+        "test_case": 32
+      },
+      "intermediates": {},
+      "output": 1630013604
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 33,
+        "a": 160257471,
+        "b": 490900560
+      },
+      "intermediates": {},
+      "output": 651158031
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 160257471,
+        "test_case": 33,
+        "b": 490900560
+      },
+      "intermediates": {
+        "product_u64": 78670482258083760
+      },
+      "output": 125582454
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 33,
+        "a": 160257471,
+        "b": 490900560
+      },
+      "intermediates": {
+        "intermediate_sum": 1816840558
+      },
+      "output": 1816840558
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 160257471,
+        "test_case": 33
+      },
+      "intermediates": {},
+      "output": 1987226176
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1700681046,
+        "b": 630703103,
+        "test_case": 34
+      },
+      "intermediates": {},
+      "output": 183900502
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 34,
+        "a": 1700681046,
+        "b": 630703103
+      },
+      "intermediates": {
+        "product_u64": 1072624812925485738
+      },
+      "output": 896989141
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 630703103,
+        "test_case": 34,
+        "a": 1700681046
+      },
+      "intermediates": {
+        "intermediate_sum": 3217461590
+      },
+      "output": 1069977943
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 34,
+        "a": 1700681046
+      },
+      "intermediates": {},
+      "output": 446802601
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1515237720,
+        "a": 235443903,
+        "test_case": 35
+      },
+      "intermediates": {},
+      "output": 1750681623
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1515237720,
+        "test_case": 35,
+        "a": 235443903
+      },
+      "intermediates": {
+        "product_u64": 356753482769621160
+      },
+      "output": 247776118
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 235443903,
+        "b": 1515237720,
+        "test_case": 35
+      },
+      "intermediates": {
+        "intermediate_sum": 867689830
+      },
+      "output": 867689830
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 235443903,
+        "test_case": 35
+      },
+      "intermediates": {},
+      "output": 1912039744
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 36,
+        "a": 1395605574,
+        "b": 1722534491
+      },
+      "intermediates": {},
+      "output": 970656418
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1395605574,
+        "b": 1722534491,
+        "test_case": 36
+      },
+      "intermediates": {
+        "product_u64": 2403978737046852834
+      },
+      "output": 1878941883
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1395605574,
+        "b": 1722534491,
+        "test_case": 36
+      },
+      "intermediates": {
+        "intermediate_sum": 1820554730
+      },
+      "output": 1820554730
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 36,
+        "a": 1395605574
+      },
+      "intermediates": {},
+      "output": 751878073
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1854908870,
+        "b": 1530200954,
+        "test_case": 37
+      },
+      "intermediates": {},
+      "output": 1237626177
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 37,
+        "b": 1530200954,
+        "a": 1854908870
+      },
+      "intermediates": {
+        "product_u64": 2838383322457061980
+      },
+      "output": 909780876
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 37,
+        "b": 1530200954,
+        "a": 1854908870
+      },
+      "intermediates": {
+        "intermediate_sum": 2472191563
+      },
+      "output": 324707916
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 37,
+        "a": 1854908870
+      },
+      "intermediates": {},
+      "output": 292574777
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1216435986,
+        "test_case": 38,
+        "b": 1916664851
+      },
+      "intermediates": {},
+      "output": 985617190
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1916664851,
+        "a": 1216435986,
+        "test_case": 38
+      },
+      "intermediates": {
+        "product_u64": 2331500097857728086
+      },
+      "output": 927956047
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1916664851,
+        "test_case": 38,
+        "a": 1216435986
+      },
+      "intermediates": {
+        "intermediate_sum": 1447254782
+      },
+      "output": 1447254782
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 38,
+        "a": 1216435986
+      },
+      "intermediates": {},
+      "output": 931047661
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1934884893,
+        "test_case": 39,
+        "b": 486302165
+      },
+      "intermediates": {},
+      "output": 273703411
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 486302165,
+        "a": 1934884893,
+        "test_case": 39
+      },
+      "intermediates": {
+        "product_u64": 940938712491693345
+      },
+      "output": 731437741
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 486302165,
+        "test_case": 39,
+        "a": 1934884893
+      },
+      "intermediates": {
+        "intermediate_sum": 3596066375
+      },
+      "output": 1448582728
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1934884893,
+        "test_case": 39
+      },
+      "intermediates": {},
+      "output": 212598754
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 40,
+        "a": 2142806178,
+        "b": 1096227676
+      },
+      "intermediates": {},
+      "output": 1091550207
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 2142806178,
+        "b": 1096227676,
+        "test_case": 40
+      },
+      "intermediates": {
+        "product_u64": 2349003436627382328
+      },
+      "output": 1502313620
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 40,
+        "a": 2142806178,
+        "b": 1096227676
+      },
+      "intermediates": {
+        "intermediate_sum": 3194062149
+      },
+      "output": 1046578502
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 40,
+        "a": 2142806178
+      },
+      "intermediates": {},
+      "output": 4677469
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 153547971,
+        "test_case": 41,
+        "b": 1762546678
+      },
+      "intermediates": {},
+      "output": 1916094649
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1762546678,
+        "test_case": 41,
+        "a": 153547971
+      },
+      "intermediates": {
+        "product_u64": 270635466199690338
+      },
+      "output": 1375168365
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1762546678,
+        "a": 153547971,
+        "test_case": 41
+      },
+      "intermediates": {
+        "intermediate_sum": 538484940
+      },
+      "output": 538484940
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 41,
+        "a": 153547971
+      },
+      "intermediates": {},
+      "output": 1993935676
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 42,
+        "b": 20650220,
+        "a": 687620207
+      },
+      "intermediates": {},
+      "output": 708270427
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 20650220,
+        "a": 687620207,
+        "test_case": 42
+      },
+      "intermediates": {
+        "product_u64": 14199508550995540
+      },
+      "output": 932164373
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 42,
+        "a": 687620207,
+        "b": 20650220
+      },
+      "intermediates": {
+        "intermediate_sum": 2814453634
+      },
+      "output": 666969987
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 42,
+        "a": 687620207
+      },
+      "intermediates": {},
+      "output": 1459863440
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 43,
+        "a": 1074440921,
+        "b": 2066517490
+      },
+      "intermediates": {},
+      "output": 993474764
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 43,
+        "a": 1074440921,
+        "b": 2066517490
+      },
+      "intermediates": {
+        "product_u64": 2220350955218208290
+      },
+      "output": 1209766142
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1074440921,
+        "b": 2066517490,
+        "test_case": 43
+      },
+      "intermediates": {
+        "intermediate_sum": 1155407078
+      },
+      "output": 1155407078
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1074440921,
+        "test_case": 43
+      },
+      "intermediates": {},
+      "output": 1073042726
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1029558474,
+        "a": 1047829643,
+        "test_case": 44
+      },
+      "intermediates": {},
+      "output": 2077388117
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1047829643,
+        "b": 1029558474,
+        "test_case": 44
+      },
+      "intermediates": {
+        "product_u64": 1078801888259044782
+      },
+      "output": 581226210
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1047829643,
+        "b": 1029558474,
+        "test_case": 44
+      },
+      "intermediates": {
+        "intermediate_sum": 2165754816
+      },
+      "output": 18271169
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 44,
+        "a": 1047829643
+      },
+      "intermediates": {},
+      "output": 1099654004
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1155385551,
+        "test_case": 45,
+        "a": 1578797185
+      },
+      "intermediates": {},
+      "output": 586699089
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1155385551,
+        "test_case": 45,
+        "a": 1578797185
+      },
+      "intermediates": {
+        "product_u64": 1824119455508473935
+      },
+      "output": 538398277
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1155385551,
+        "test_case": 45,
+        "a": 1578797185
+      },
+      "intermediates": {
+        "intermediate_sum": 2570895281
+      },
+      "output": 423411634
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 45,
+        "a": 1578797185
+      },
+      "intermediates": {},
+      "output": 568686462
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 46,
+        "a": 1589279922,
+        "b": 1482556992
+      },
+      "intermediates": {},
+      "output": 924353267
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 46,
+        "a": 1589279922,
+        "b": 1482556992
+      },
+      "intermediates": {
+        "product_u64": 2356198060606314624
+      },
+      "output": 1213014990
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1589279922,
+        "b": 1482556992,
+        "test_case": 46
+      },
+      "intermediates": {
+        "intermediate_sum": 2254206577
+      },
+      "output": 106722930
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 46,
+        "a": 1589279922
+      },
+      "intermediates": {},
+      "output": 558203725
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 47,
+        "b": 1509568495,
+        "a": 1396080614
+      },
+      "intermediates": {},
+      "output": 758165462
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1396080614,
+        "b": 1509568495,
+        "test_case": 47
+      },
+      "intermediates": {
+        "product_u64": 2107479311374655930
+      },
+      "output": 1215769667
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1396080614,
+        "b": 1509568495,
+        "test_case": 47
+      },
+      "intermediates": {
+        "intermediate_sum": 2033995766
+      },
+      "output": 2033995766
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1396080614,
+        "test_case": 47
+      },
+      "intermediates": {},
+      "output": 751403033
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1144027407,
+        "b": 763740396,
+        "test_case": 48
+      },
+      "intermediates": {},
+      "output": 1907767803
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 763740396,
+        "test_case": 48,
+        "a": 1144027407
+      },
+      "intermediates": {
+        "product_u64": 873739944857033172
+      },
+      "output": 1468409223
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 763740396,
+        "a": 1144027407,
+        "test_case": 48
+      },
+      "intermediates": {
+        "intermediate_sum": 2527770658
+      },
+      "output": 380287011
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1144027407,
+        "test_case": 48
+      },
+      "intermediates": {},
+      "output": 1003456240
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1226964000,
+        "test_case": 49,
+        "a": 1725203590
+      },
+      "intermediates": {},
+      "output": 804683943
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1725203590,
+        "b": 1226964000,
+        "test_case": 49
+      },
+      "intermediates": {
+        "product_u64": 2116762697600760000
+      },
+      "output": 319486379
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1725203590,
+        "b": 1226964000,
+        "test_case": 49
+      },
+      "intermediates": {
+        "intermediate_sum": 2645723237
+      },
+      "output": 498239590
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 49,
+        "a": 1725203590
+      },
+      "intermediates": {},
+      "output": 422280057
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 50,
+        "a": 817940666,
+        "b": 982941277
+      },
+      "intermediates": {},
+      "output": 1800881943
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 817940666,
+        "b": 982941277,
+        "test_case": 50
+      },
+      "intermediates": {
+        "product_u64": 803987642748270482
+      },
+      "output": 1881220242
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 817940666,
+        "b": 982941277,
+        "test_case": 50
+      },
+      "intermediates": {
+        "intermediate_sum": 1982483036
+      },
+      "output": 1982483036
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 817940666,
+        "test_case": 50
+      },
+      "intermediates": {},
+      "output": 1329542981
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1654210849,
+        "b": 426303324,
+        "test_case": 51
+      },
+      "intermediates": {},
+      "output": 2080514173
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 51,
+        "b": 426303324,
+        "a": 1654210849
+      },
+      "intermediates": {
+        "product_u64": 705195583525562076
+      },
+      "output": 818535975
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1654210849,
+        "b": 426303324,
+        "test_case": 51
+      },
+      "intermediates": {
+        "intermediate_sum": 3375391172
+      },
+      "output": 1227907525
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1654210849,
+        "test_case": 51
+      },
+      "intermediates": {},
+      "output": 493272798
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1959885258,
+        "test_case": 52,
+        "a": 402117660
+      },
+      "intermediates": {},
+      "output": 214519271
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 402117660,
+        "test_case": 52,
+        "b": 1959885258
+      },
+      "intermediates": {
+        "product_u64": 788104473815456280
+      },
+      "output": 2106223559
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1959885258,
+        "test_case": 52,
+        "a": 402117660
+      },
+      "intermediates": {
+        "intermediate_sum": 589716049
+      },
+      "output": 589716049
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 402117660,
+        "test_case": 52
+      },
+      "intermediates": {},
+      "output": 1745365987
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 610629495,
+        "b": 946756408,
+        "test_case": 53
+      },
+      "intermediates": {},
+      "output": 1557385903
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 610629495,
+        "test_case": 53,
+        "b": 946756408
+      },
+      "intermediates": {
+        "product_u64": 578117387305053960
+      },
+      "output": 1960260718
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 610629495,
+        "b": 946756408,
+        "test_case": 53
+      },
+      "intermediates": {
+        "intermediate_sum": 1811356734
+      },
+      "output": 1811356734
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 610629495,
+        "test_case": 53
+      },
+      "intermediates": {},
+      "output": 1536854152
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 54,
+        "a": 196752107,
+        "b": 1320628985
+      },
+      "intermediates": {},
+      "output": 1517381092
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 54,
+        "a": 196752107,
+        "b": 1320628985
+      },
+      "intermediates": {
+        "product_u64": 259836535364021395
+      },
+      "output": 1296084090
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 54,
+        "b": 1320628985,
+        "a": 196752107
+      },
+      "intermediates": {
+        "intermediate_sum": 1023606769
+      },
+      "output": 1023606769
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 54,
+        "a": 196752107
+      },
+      "intermediates": {},
+      "output": 1950731540
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 569161070,
+        "b": 2082896226,
+        "test_case": 55
+      },
+      "intermediates": {},
+      "output": 504573649
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 2082896226,
+        "a": 569161070,
+        "test_case": 55
+      },
+      "intermediates": {
+        "product_u64": 1185503444689121820
+      },
+      "output": 899282000
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 569161070,
+        "test_case": 55,
+        "b": 2082896226
+      },
+      "intermediates": {
+        "intermediate_sum": 633748491
+      },
+      "output": 633748491
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 569161070,
+        "test_case": 55
+      },
+      "intermediates": {},
+      "output": 1578322577
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1204921847,
+        "test_case": 56,
+        "b": 1603010075
+      },
+      "intermediates": {},
+      "output": 660448275
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1603010075,
+        "a": 1204921847,
+        "test_case": 56
+      },
+      "intermediates": {
+        "product_u64": 1931501860328608525
+      },
+      "output": 293648504
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 56,
+        "a": 1204921847,
+        "b": 1603010075
+      },
+      "intermediates": {
+        "intermediate_sum": 1749395419
+      },
+      "output": 1749395419
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 56,
+        "a": 1204921847
+      },
+      "intermediates": {},
+      "output": 942561800
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 671018058,
+        "test_case": 57,
+        "a": 80374297
+      },
+      "intermediates": {},
+      "output": 751392355
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 57,
+        "b": 671018058,
+        "a": 80374297
+      },
+      "intermediates": {
+        "product_u64": 53932604686055226
+      },
+      "output": 295628304
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 80374297,
+        "b": 671018058,
+        "test_case": 57
+      },
+      "intermediates": {
+        "intermediate_sum": 1556839886
+      },
+      "output": 1556839886
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 57,
+        "a": 80374297
+      },
+      "intermediates": {},
+      "output": 2067109350
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 58,
+        "a": 917895116,
+        "b": 552807693
+      },
+      "intermediates": {},
+      "output": 1470702809
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 58,
+        "b": 552807693,
+        "a": 917895116
+      },
+      "intermediates": {
+        "product_u64": 507419481491927388
+      },
+      "output": 142991365
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 58,
+        "b": 552807693,
+        "a": 917895116
+      },
+      "intermediates": {
+        "intermediate_sum": 2512571070
+      },
+      "output": 365087423
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 58,
+        "a": 917895116
+      },
+      "intermediates": {},
+      "output": 1229588531
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 2122060414,
+        "test_case": 59,
+        "a": 1900955606
+      },
+      "intermediates": {},
+      "output": 1875532373
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 2122060414,
+        "test_case": 59,
+        "a": 1900955606
+      },
+      "intermediates": {
+        "product_u64": 4033942640263980884
+      },
+      "output": 1429424703
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1900955606,
+        "b": 2122060414,
+        "test_case": 59
+      },
+      "intermediates": {
+        "intermediate_sum": 1926378839
+      },
+      "output": 1926378839
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1900955606,
+        "test_case": 59
+      },
+      "intermediates": {},
+      "output": 246528041
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1918344376,
+        "test_case": 60,
+        "b": 37686747
+      },
+      "intermediates": {},
+      "output": 1956031123
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1918344376,
+        "test_case": 60,
+        "b": 37686747
+      },
+      "intermediates": {
+        "product_u64": 72296159157184872
+      },
+      "output": 1194466138
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 37686747,
+        "test_case": 60,
+        "a": 1918344376
+      },
+      "intermediates": {
+        "intermediate_sum": 4028141276
+      },
+      "output": 1880657629
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1918344376,
+        "test_case": 60
+      },
+      "intermediates": {},
+      "output": 229139271
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 378593252,
+        "b": 661195010,
+        "test_case": 61
+      },
+      "intermediates": {},
+      "output": 1039788262
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 378593252,
+        "test_case": 61,
+        "b": 661195010
+      },
+      "intermediates": {
+        "product_u64": 250323969042072520
+      },
+      "output": 1551330413
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 378593252,
+        "b": 661195010,
+        "test_case": 61
+      },
+      "intermediates": {
+        "intermediate_sum": 1864881889
+      },
+      "output": 1864881889
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 378593252,
+        "test_case": 61
+      },
+      "intermediates": {},
+      "output": 1768890395
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1715978148,
+        "test_case": 62,
+        "b": 946134372
+      },
+      "intermediates": {},
+      "output": 514628873
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 946134372,
+        "a": 1715978148,
+        "test_case": 62
+      },
+      "intermediates": {
+        "product_u64": 1623545907423703056
+      },
+      "output": 1301769437
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 946134372,
+        "a": 1715978148,
+        "test_case": 62
+      },
+      "intermediates": {
+        "intermediate_sum": 2917327423
+      },
+      "output": 769843776
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 62,
+        "a": 1715978148
+      },
+      "intermediates": {},
+      "output": 431505499
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 63,
+        "b": 1821594325,
+        "a": 1791573126
+      },
+      "intermediates": {},
+      "output": 1465683804
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 63,
+        "a": 1791573126,
+        "b": 1821594325
+      },
+      "intermediates": {
+        "product_u64": 3263519439144109950
+      },
+      "output": 1918433989
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1791573126,
+        "test_case": 63,
+        "b": 1821594325
+      },
+      "intermediates": {
+        "intermediate_sum": 2117462448
+      },
+      "output": 2117462448
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1791573126,
+        "test_case": 63
+      },
+      "intermediates": {},
+      "output": 355910521
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 64,
+        "b": 154559111,
+        "a": 897493064
+      },
+      "intermediates": {},
+      "output": 1052052175
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 897493064,
+        "test_case": 64,
+        "b": 154559111
+      },
+      "intermediates": {
+        "product_u64": 138715730100506104
+      },
+      "output": 1027600489
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 64,
+        "a": 897493064,
+        "b": 154559111
+      },
+      "intermediates": {
+        "intermediate_sum": 2890417600
+      },
+      "output": 742933953
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 897493064,
+        "test_case": 64
+      },
+      "intermediates": {},
+      "output": 1249990583
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 766818831,
+        "b": 406280215,
+        "test_case": 65
+      },
+      "intermediates": {},
+      "output": 1173099046
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 65,
+        "a": 766818831,
+        "b": 406280215
+      },
+      "intermediates": {
+        "product_u64": 311543319524728665
+      },
+      "output": 621839704
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 766818831,
+        "b": 406280215,
+        "test_case": 65
+      },
+      "intermediates": {
+        "intermediate_sum": 2508022263
+      },
+      "output": 360538616
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 65,
+        "a": 766818831
+      },
+      "intermediates": {},
+      "output": 1380664816
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 917696366,
+        "a": 1619871110,
+        "test_case": 66
+      },
+      "intermediates": {},
+      "output": 390083829
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 66,
+        "a": 1619871110,
+        "b": 917696366
+      },
+      "intermediates": {
+        "product_u64": 1486549831035386260
+      },
+      "output": 621448184
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 917696366,
+        "a": 1619871110,
+        "test_case": 66
+      },
+      "intermediates": {
+        "intermediate_sum": 2849658391
+      },
+      "output": 702174744
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1619871110,
+        "test_case": 66
+      },
+      "intermediates": {},
+      "output": 527612537
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 832694688,
+        "a": 262962254,
+        "test_case": 67
+      },
+      "intermediates": {},
+      "output": 1095656942
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 262962254,
+        "b": 832694688,
+        "test_case": 67
+      },
+      "intermediates": {
+        "product_u64": 218967272050306752
+      },
+      "output": 1779599845
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 67,
+        "b": 832694688,
+        "a": 262962254
+      },
+      "intermediates": {
+        "intermediate_sum": 1577751213
+      },
+      "output": 1577751213
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 67,
+        "a": 262962254
+      },
+      "intermediates": {},
+      "output": 1884521393
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1591606054,
+        "test_case": 68,
+        "a": 1608050168
+      },
+      "intermediates": {},
+      "output": 1052172575
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1608050168,
+        "test_case": 68,
+        "b": 1591606054
+      },
+      "intermediates": {
+        "product_u64": 2559382382524517072
+      },
+      "output": 1104006207
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 68,
+        "b": 1591606054,
+        "a": 1608050168
+      },
+      "intermediates": {
+        "intermediate_sum": 2163927761
+      },
+      "output": 16444114
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 68,
+        "a": 1608050168
+      },
+      "intermediates": {},
+      "output": 539433479
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 2113046647,
+        "test_case": 69,
+        "a": 1175399952
+      },
+      "intermediates": {},
+      "output": 1140962952
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 2113046647,
+        "test_case": 69,
+        "a": 1175399952
+      },
+      "intermediates": {
+        "product_u64": 2483674927457560944
+      },
+      "output": 1100381136
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 69,
+        "a": 1175399952,
+        "b": 2113046647
+      },
+      "intermediates": {
+        "intermediate_sum": 1209836952
+      },
+      "output": 1209836952
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 69,
+        "a": 1175399952
+      },
+      "intermediates": {},
+      "output": 972083695
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1754903068,
+        "test_case": 70,
+        "a": 2002385747
+      },
+      "intermediates": {},
+      "output": 1609805168
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 2002385747,
+        "test_case": 70,
+        "b": 1754903068
+      },
+      "intermediates": {
+        "product_u64": 3513992890729771796
+      },
+      "output": 1824169705
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1754903068,
+        "a": 2002385747,
+        "test_case": 70
+      },
+      "intermediates": {
+        "intermediate_sum": 2394966326
+      },
+      "output": 247482679
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 70,
+        "a": 2002385747
+      },
+      "intermediates": {},
+      "output": 145097900
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 527709358,
+        "test_case": 71,
+        "a": 1276103320
+      },
+      "intermediates": {},
+      "output": 1803812678
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1276103320,
+        "b": 527709358,
+        "test_case": 71
+      },
+      "intermediates": {
+        "product_u64": 673411663738868560
+      },
+      "output": 796095486
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1276103320,
+        "b": 527709358,
+        "test_case": 71
+      },
+      "intermediates": {
+        "intermediate_sum": 2895877609
+      },
+      "output": 748393962
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1276103320,
+        "test_case": 71
+      },
+      "intermediates": {},
+      "output": 871380327
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 270054233,
+        "a": 1143875375,
+        "test_case": 72
+      },
+      "intermediates": {},
+      "output": 1413929608
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 270054233,
+        "a": 1143875375,
+        "test_case": 72
+      },
+      "intermediates": {
+        "product_u64": 308908387043212375
+      },
+      "output": 510421356
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 270054233,
+        "test_case": 72,
+        "a": 1143875375
+      },
+      "intermediates": {
+        "intermediate_sum": 3021304789
+      },
+      "output": 873821142
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1143875375,
+        "test_case": 72
+      },
+      "intermediates": {},
+      "output": 1003608272
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 146477568,
+        "a": 1995240034,
+        "test_case": 73
+      },
+      "intermediates": {},
+      "output": 2141717602
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 146477568,
+        "test_case": 73,
+        "a": 1995240034
+      },
+      "intermediates": {
+        "product_u64": 292257907756557312
+      },
+      "output": 1321042441
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 73,
+        "b": 146477568,
+        "a": 1995240034
+      },
+      "intermediates": {
+        "intermediate_sum": 3996246113
+      },
+      "output": 1848762466
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1995240034,
+        "test_case": 73
+      },
+      "intermediates": {},
+      "output": 152243613
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1159839286,
+        "test_case": 74,
+        "a": 1857359240
+      },
+      "intermediates": {},
+      "output": 869714879
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 74,
+        "a": 1857359240,
+        "b": 1159839286
+      },
+      "intermediates": {
+        "product_u64": 2154238214767102640
+      },
+      "output": 1552847660
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1857359240,
+        "b": 1159839286,
+        "test_case": 74
+      },
+      "intermediates": {
+        "intermediate_sum": 2845003601
+      },
+      "output": 697519954
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1857359240,
+        "test_case": 74
+      },
+      "intermediates": {},
+      "output": 290124407
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 75,
+        "a": 114827773,
+        "b": 1653534489
+      },
+      "intermediates": {},
+      "output": 1768362262
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 114827773,
+        "b": 1653534489,
+        "test_case": 75
+      },
+      "intermediates": {
+        "product_u64": 189871682950562997
+      },
+      "output": 745644873
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1653534489,
+        "a": 114827773,
+        "test_case": 75
+      },
+      "intermediates": {
+        "intermediate_sum": 608776931
+      },
+      "output": 608776931
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 114827773,
+        "test_case": 75
+      },
+      "intermediates": {},
+      "output": 2032655874
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1724505641,
+        "b": 764351824,
+        "test_case": 76
+      },
+      "intermediates": {},
+      "output": 341373818
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 76,
+        "b": 764351824,
+        "a": 1724505641
+      },
+      "intermediates": {
+        "product_u64": 1318129032196639184
+      },
+      "output": 550217870
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 76,
+        "b": 764351824,
+        "a": 1724505641
+      },
+      "intermediates": {
+        "intermediate_sum": 3107637464
+      },
+      "output": 960153817
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 76,
+        "a": 1724505641
+      },
+      "intermediates": {},
+      "output": 422978006
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 519403788,
+        "a": 1252873350,
+        "test_case": 77
+      },
+      "intermediates": {},
+      "output": 1772277138
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 77,
+        "b": 519403788,
+        "a": 1252873350
+      },
+      "intermediates": {
+        "product_u64": 650747163874249800
+      },
+      "output": 392241786
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 519403788,
+        "a": 1252873350,
+        "test_case": 77
+      },
+      "intermediates": {
+        "intermediate_sum": 2880953209
+      },
+      "output": 733469562
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 77,
+        "a": 1252873350
+      },
+      "intermediates": {},
+      "output": 894610297
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 252821607,
+        "b": 2092147571,
+        "test_case": 78
+      },
+      "intermediates": {},
+      "output": 197485531
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 2092147571,
+        "a": 252821607,
+        "test_case": 78
+      },
+      "intermediates": {
+        "product_u64": 528940110981366597
+      },
+      "output": 221141946
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 2092147571,
+        "a": 252821607,
+        "test_case": 78
+      },
+      "intermediates": {
+        "intermediate_sum": 308157683
+      },
+      "output": 308157683
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 78,
+        "a": 252821607
+      },
+      "intermediates": {},
+      "output": 1894662040
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1684331786,
+        "test_case": 79,
+        "a": 61899270
+      },
+      "intermediates": {},
+      "output": 1746231056
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1684331786,
+        "a": 61899270,
+        "test_case": 79
+      },
+      "intermediates": {
+        "product_u64": 104258907991196220
+      },
+      "output": 711004181
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1684331786,
+        "test_case": 79,
+        "a": 61899270
+      },
+      "intermediates": {
+        "intermediate_sum": 525051131
+      },
+      "output": 525051131
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 79,
+        "a": 61899270
+      },
+      "intermediates": {},
+      "output": 2085584377
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 80,
+        "b": 2006152464,
+        "a": 1022488807
+      },
+      "intermediates": {},
+      "output": 881157624
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1022488807,
+        "test_case": 80,
+        "b": 2006152464
+      },
+      "intermediates": {
+        "product_u64": 2051268439575470448
+      },
+      "output": 1355597054
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 2006152464,
+        "a": 1022488807,
+        "test_case": 80
+      },
+      "intermediates": {
+        "intermediate_sum": 1163819990
+      },
+      "output": 1163819990
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 80,
+        "a": 1022488807
+      },
+      "intermediates": {},
+      "output": 1124994840
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 996138057,
+        "test_case": 81,
+        "a": 640512869
+      },
+      "intermediates": {},
+      "output": 1636650926
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 81,
+        "a": 640512869,
+        "b": 996138057
+      },
+      "intermediates": {
+        "product_u64": 638039244809155533
+      },
+      "output": 491863661
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 640512869,
+        "b": 996138057,
+        "test_case": 81
+      },
+      "intermediates": {
+        "intermediate_sum": 1791858459
+      },
+      "output": 1791858459
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 640512869,
+        "test_case": 81
+      },
+      "intermediates": {},
+      "output": 1506970778
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 82,
+        "a": 1149958004,
+        "b": 908120120
+      },
+      "intermediates": {},
+      "output": 2058078124
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 82,
+        "a": 1149958004,
+        "b": 908120120
+      },
+      "intermediates": {
+        "product_u64": 1044300000587440480
+      },
+      "output": 1794151426
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 908120120,
+        "test_case": 82,
+        "a": 1149958004
+      },
+      "intermediates": {
+        "intermediate_sum": 2389321531
+      },
+      "output": 241837884
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1149958004,
+        "test_case": 82
+      },
+      "intermediates": {},
+      "output": 997525643
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 709184823,
+        "a": 1232660272,
+        "test_case": 83
+      },
+      "intermediates": {},
+      "output": 1941845095
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1232660272,
+        "b": 709184823,
+        "test_case": 83
+      },
+      "intermediates": {
+        "product_u64": 874183956817451856
+      },
+      "output": 1857457834
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 709184823,
+        "a": 1232660272,
+        "test_case": 83
+      },
+      "intermediates": {
+        "intermediate_sum": 2670959096
+      },
+      "output": 523475449
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1232660272,
+        "test_case": 83
+      },
+      "intermediates": {},
+      "output": 914823375
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 404458604,
+        "b": 913402583,
+        "test_case": 84
+      },
+      "intermediates": {},
+      "output": 1317861187
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 84,
+        "a": 404458604,
+        "b": 913402583
+      },
+      "intermediates": {
+        "product_u64": 369433533610174132
+      },
+      "output": 1966383714
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 913402583,
+        "test_case": 84,
+        "a": 404458604
+      },
+      "intermediates": {
+        "intermediate_sum": 1638539668
+      },
+      "output": 1638539668
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 84,
+        "a": 404458604
+      },
+      "intermediates": {},
+      "output": 1743025043
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 85,
+        "a": 1524009030,
+        "b": 1057107679
+      },
+      "intermediates": {},
+      "output": 433633062
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1524009030,
+        "b": 1057107679,
+        "test_case": 85
+      },
+      "intermediates": {
+        "product_u64": 1611041648478341370
+      },
+      "output": 614493354
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1057107679,
+        "a": 1524009030,
+        "test_case": 85
+      },
+      "intermediates": {
+        "intermediate_sum": 2614384998
+      },
+      "output": 466901351
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 85,
+        "a": 1524009030
+      },
+      "intermediates": {},
+      "output": 623474617
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 483176867,
+        "test_case": 86,
+        "a": 957180952
+      },
+      "intermediates": {},
+      "output": 1440357819
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "test_case": 86,
+        "b": 483176867,
+        "a": 957180952
+      },
+      "intermediates": {
+        "product_u64": 462487693539437384
+      },
+      "output": 1799264126
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 483176867,
+        "test_case": 86,
+        "a": 957180952
+      },
+      "intermediates": {
+        "intermediate_sum": 2621487732
+      },
+      "output": 474004085
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 86,
+        "a": 957180952
+      },
+      "intermediates": {},
+      "output": 1190302695
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 2117632870,
+        "a": 1666759806,
+        "test_case": 87
+      },
+      "intermediates": {},
+      "output": 1636909029
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1666759806,
+        "test_case": 87,
+        "b": 2117632870
+      },
+      "intermediates": {
+        "product_u64": 3529585351580423220
+      },
+      "output": 525781647
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1666759806,
+        "b": 2117632870,
+        "test_case": 87
+      },
+      "intermediates": {
+        "intermediate_sum": 1696610583
+      },
+      "output": 1696610583
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 87,
+        "a": 1666759806
+      },
+      "intermediates": {},
+      "output": 480723841
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1905165735,
+        "test_case": 88,
+        "a": 333755594
+      },
+      "intermediates": {},
+      "output": 91437682
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 333755594,
+        "b": 1905165735,
+        "test_case": 88
+      },
+      "intermediates": {
+        "product_u64": 635859721553371590
+      },
+      "output": 1339092958
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1905165735,
+        "test_case": 88,
+        "a": 333755594
+      },
+      "intermediates": {
+        "intermediate_sum": 576073506
+      },
+      "output": 576073506
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 333755594,
+        "test_case": 88
+      },
+      "intermediates": {},
+      "output": 1813728053
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 89,
+        "b": 631083851,
+        "a": 1306558258
+      },
+      "intermediates": {},
+      "output": 1937642109
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1306558258,
+        "test_case": 89,
+        "b": 631083851
+      },
+      "intermediates": {
+        "product_u64": 824547817014491558
+      },
+      "output": 207338852
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 631083851,
+        "a": 1306558258,
+        "test_case": 89
+      },
+      "intermediates": {
+        "intermediate_sum": 2822958054
+      },
+      "output": 675474407
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1306558258,
+        "test_case": 89
+      },
+      "intermediates": {},
+      "output": 840925389
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1664720567,
+        "a": 2009934914,
+        "test_case": 90
+      },
+      "intermediates": {},
+      "output": 1527171834
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1664720567,
+        "a": 2009934914,
+        "test_case": 90
+      },
+      "intermediates": {
+        "product_u64": 3345979989667176238
+      },
+      "output": 42728788
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 2009934914,
+        "b": 1664720567,
+        "test_case": 90
+      },
+      "intermediates": {
+        "intermediate_sum": 2492697994
+      },
+      "output": 345214347
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "test_case": 90,
+        "a": 2009934914
+      },
+      "intermediates": {},
+      "output": 137548733
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 91,
+        "a": 1458676468,
+        "b": 783927721
+      },
+      "intermediates": {},
+      "output": 95120542
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 783927721,
+        "test_case": 91,
+        "a": 1458676468
+      },
+      "intermediates": {
+        "product_u64": 1143496919235569428
+      },
+      "output": 1485254619
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 783927721,
+        "test_case": 91,
+        "a": 1458676468
+      },
+      "intermediates": {
+        "intermediate_sum": 2822232394
+      },
+      "output": 674748747
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1458676468,
+        "test_case": 91
+      },
+      "intermediates": {},
+      "output": 688807179
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 92,
+        "a": 1061422378,
+        "b": 849317023
+      },
+      "intermediates": {},
+      "output": 1910739401
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 849317023,
+        "a": 1061422378,
+        "test_case": 92
+      },
+      "intermediates": {
+        "product_u64": 901484094228540694
+      },
+      "output": 2988826
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 92,
+        "b": 849317023,
+        "a": 1061422378
+      },
+      "intermediates": {
+        "intermediate_sum": 2359589002
+      },
+      "output": 212105355
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1061422378,
+        "test_case": 92
+      },
+      "intermediates": {},
+      "output": 1086061269
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "test_case": 93,
+        "a": 1468191129,
+        "b": 1584632490
+      },
+      "intermediates": {},
+      "output": 905339972
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1468191129,
+        "test_case": 93,
+        "b": 1584632490
+      },
+      "intermediates": {
+        "product_u64": 2326543364543181210
+      },
+      "output": 1320585044
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1468191129,
+        "test_case": 93,
+        "b": 1584632490
+      },
+      "intermediates": {
+        "intermediate_sum": 2031042286
+      },
+      "output": 2031042286
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1468191129,
+        "test_case": 93
+      },
+      "intermediates": {},
+      "output": 679292518
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1142141950,
+        "test_case": 94,
+        "b": 682731178
+      },
+      "intermediates": {},
+      "output": 1824873128
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 1142141950,
+        "test_case": 94,
+        "b": 682731178
+      },
+      "intermediates": {
+        "product_u64": 779775918966717100
+      },
+      "output": 873389774
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 94,
+        "a": 1142141950,
+        "b": 682731178
+      },
+      "intermediates": {
+        "intermediate_sum": 2606894419
+      },
+      "output": 459410772
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1142141950,
+        "test_case": 94
+      },
+      "intermediates": {},
+      "output": 1005341697
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 1258762437,
+        "b": 1153253872,
+        "test_case": 95
+      },
+      "intermediates": {},
+      "output": 264532662
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 1153253872,
+        "test_case": 95,
+        "a": 1258762437
+      },
+      "intermediates": {
+        "product_u64": 1451672654398406064
+      },
+      "output": 668696285
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "a": 1258762437,
+        "b": 1153253872,
+        "test_case": 95
+      },
+      "intermediates": {
+        "intermediate_sum": 2252992212
+      },
+      "output": 105508565
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 1258762437,
+        "test_case": 95
+      },
+      "intermediates": {},
+      "output": 888721210
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 771189383,
+        "b": 755377688,
+        "test_case": 96
+      },
+      "intermediates": {},
+      "output": 1526567071
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 771189383,
+        "b": 755377688,
+        "test_case": 96
+      },
+      "intermediates": {
+        "product_u64": 582539253140686504
+      },
+      "output": 1398224738
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "test_case": 96,
+        "b": 755377688,
+        "a": 771189383
+      },
+      "intermediates": {
+        "intermediate_sum": 2163295342
+      },
+      "output": 15811695
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 771189383,
+        "test_case": 96
+      },
+      "intermediates": {},
+      "output": 1376294264
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 2120259980,
+        "a": 293433920,
+        "test_case": 97
+      },
+      "intermediates": {},
+      "output": 266210253
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "b": 2120259980,
+        "test_case": 97,
+        "a": 293433920
+      },
+      "intermediates": {
+        "product_u64": 622156197350521600
+      },
+      "output": 1931963015
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 2120259980,
+        "a": 293433920,
+        "test_case": 97
+      },
+      "intermediates": {
+        "intermediate_sum": 320657587
+      },
+      "output": 320657587
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 293433920,
+        "test_case": 97
+      },
+      "intermediates": {},
+      "output": 1854049727
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "b": 1141564828,
+        "test_case": 98,
+        "a": 682716111
+      },
+      "intermediates": {},
+      "output": 1824280939
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 682716111,
+        "test_case": 98,
+        "b": 1141564828
+      },
+      "intermediates": {
+        "product_u64": 779364699826543908
+      },
+      "output": 1229296965
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 1141564828,
+        "test_case": 98,
+        "a": 682716111
+      },
+      "intermediates": {
+        "intermediate_sum": 1688634930
+      },
+      "output": 1688634930
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 682716111,
+        "test_case": 98
+      },
+      "intermediates": {},
+      "output": 1464767536
+    },
+    {
+      "operation": "add",
+      "inputs": {
+        "a": 2105251809,
+        "test_case": 99,
+        "b": 971492841
+      },
+      "intermediates": {},
+      "output": 929261003
+    },
+    {
+      "operation": "mul",
+      "inputs": {
+        "a": 2105251809,
+        "test_case": 99,
+        "b": 971492841
+      },
+      "intermediates": {
+        "product_u64": 2045237060945799369
+      },
+      "output": 199733588
+    },
+    {
+      "operation": "sub",
+      "inputs": {
+        "b": 971492841,
+        "a": 2105251809,
+        "test_case": 99
+      },
+      "intermediates": {
+        "intermediate_sum": 3281242615
+      },
+      "output": 1133758968
+    },
+    {
+      "operation": "neg",
+      "inputs": {
+        "a": 2105251809,
+        "test_case": 99
+      },
+      "intermediates": {},
+      "output": 42231838
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "value": 0,
+        "test_case": 0
+      },
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "value": 1,
+        "test_case": 1
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "value": 42,
+        "test_case": 2
+      },
+      "intermediates": {},
+      "output": 42
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "test_case": 3,
+        "value": 1000
+      },
+      "intermediates": {},
+      "output": 1000
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "value": 2147483646,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": 2147483646
+    },
+    {
+      "operation": "from_u32_unchecked",
+      "inputs": {
+        "test_case": 5,
+        "value": 1073741823
+      },
+      "intermediates": {},
+      "output": 1073741823
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "value": -1,
+        "test_case": 0
+      },
+      "intermediates": {},
+      "output": 2147483646
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "test_case": 1,
+        "value": -10
+      },
+      "intermediates": {},
+      "output": 2147483637
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "test_case": 2,
+        "value": -100
+      },
+      "intermediates": {},
+      "output": 2147483547
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "value": 0,
+        "test_case": 3
+      },
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "value": 1,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "value": 10,
+        "test_case": 5
+      },
+      "intermediates": {},
+      "output": 10
+    },
+    {
+      "operation": "from_i32",
+      "inputs": {
+        "value": 100,
+        "test_case": 6
+      },
+      "intermediates": {},
+      "output": 100
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "test_case": 0,
+        "value": 0
+      },
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "value": 1,
+        "test_case": 1
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "test_case": 2,
+        "value": 2147483646
+      },
+      "intermediates": {},
+      "output": 2147483646
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "value": 2147483647,
+        "test_case": 3
+      },
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "value": 2147483648,
+        "test_case": 4
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "value": 4294967293,
+        "test_case": 5
+      },
+      "intermediates": {},
+      "output": 2147483646
+    },
+    {
+      "operation": "from_u32",
+      "inputs": {
+        "test_case": 6,
+        "value": 1
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "partial_reduce",
+      "inputs": {
+        "test_case": 0,
+        "value": 0
+      },
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "partial_reduce",
+      "inputs": {
+        "test_case": 1,
+        "value": 1
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "partial_reduce",
+      "inputs": {
+        "test_case": 2,
+        "value": 2147483646
+      },
+      "intermediates": {},
+      "output": 2147483646
+    },
+    {
+      "operation": "partial_reduce",
+      "inputs": {
+        "value": 2147483647,
+        "test_case": 3
+      },
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "partial_reduce",
+      "inputs": {
+        "test_case": 4,
+        "value": 2147483648
+      },
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "partial_reduce",
+      "inputs": {
+        "value": 4294967293,
+        "test_case": 5
+      },
+      "intermediates": {},
+      "output": 2147483646
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "value": 0,
+        "test_case": 0
+      },
+      "intermediates": {
+        "shifted2": 0,
+        "shifted1": 0,
+        "step2": "0",
+        "step1": "1"
+      },
+      "output": 0
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "test_case": 1,
+        "value": 1
+      },
+      "intermediates": {
+        "shifted2": 0,
+        "step2": "1",
+        "shifted1": 0,
+        "step1": "2"
+      },
+      "output": 1
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "value": 2147483646,
+        "test_case": 2
+      },
+      "intermediates": {
+        "step1": "2147483647",
+        "shifted1": 0,
+        "shifted2": 0,
+        "step2": "2147483646"
+      },
+      "output": 2147483646
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "test_case": 3,
+        "value": 2147483647
+      },
+      "intermediates": {
+        "step1": "2147483648",
+        "shifted2": 1,
+        "shifted1": 0,
+        "step2": "2147483648"
+      },
+      "output": 0
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "value": 2147483648,
+        "test_case": 4
+      },
+      "intermediates": {
+        "shifted1": 1,
+        "step2": "2147483649",
+        "step1": "2147483650",
+        "shifted2": 1
+      },
+      "output": 1
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "test_case": 5,
+        "value": 4294967293
+      },
+      "intermediates": {
+        "step2": "4294967294",
+        "shifted1": 1,
+        "shifted2": 1,
+        "step1": "4294967295"
+      },
+      "output": 2147483646
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "value": "4611686014132420590",
+        "test_case": 6
+      },
+      "intermediates": {
+        "step1": "4611686016279904236",
+        "shifted2": 2147483646,
+        "step2": "4611686016279904236",
+        "shifted1": 2147483645
+      },
+      "output": 2147483628
+    },
+    {
+      "operation": "reduce",
+      "inputs": {
+        "value": "4611686014132420608",
+        "test_case": 7
+      },
+      "intermediates": {
+        "shifted1": 2147483646,
+        "shifted2": 2147483646,
+        "step2": "4611686016279904254",
+        "step1": "4611686016279904255"
+      },
+      "output": 2147483646
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "value": 1,
+        "test_case": 0
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 1
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "value": 2,
+        "test_case": 1
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 1073741824
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "value": 19,
+        "test_case": 2
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 1017229096
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "value": 42,
+        "test_case": 3
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 2096353084
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "test_case": 4,
+        "value": 1000
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 36507222
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "test_case": 5,
+        "value": 2147483646
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 2147483646
+    },
+    {
+      "operation": "inverse",
+      "inputs": {
+        "test_case": 6,
+        "value": 1073741823
+      },
+      "intermediates": {
+        "verification_product": 1
+      },
+      "output": 2147483645
+    },
+    {
+      "operation": "pow2147483645",
+      "inputs": {
+        "value": 1,
+        "test_case": 0
+      },
+      "intermediates": {
+        "expected_inverse": 1
+      },
+      "output": 1
+    },
+    {
+      "operation": "pow2147483645",
+      "inputs": {
+        "value": 2,
+        "test_case": 1
+      },
+      "intermediates": {
+        "expected_inverse": 1073741824
+      },
+      "output": 1073741824
+    },
+    {
+      "operation": "pow2147483645",
+      "inputs": {
+        "value": 19,
+        "test_case": 2
+      },
+      "intermediates": {
+        "expected_inverse": 1017229096
+      },
+      "output": 1017229096
+    },
+    {
+      "operation": "pow2147483645",
+      "inputs": {
+        "value": 42,
+        "test_case": 3
+      },
+      "intermediates": {
+        "expected_inverse": 2096353084
+      },
+      "output": 2096353084
+    },
+    {
+      "operation": "pow2147483645",
+      "inputs": {
+        "test_case": 4,
+        "value": 1000
+      },
+      "intermediates": {
+        "expected_inverse": 36507222
+      },
+      "output": 36507222
+    },
+    {
+      "operation": "into_slice",
+      "inputs": {
+        "elements": [
+          960623204,
+          943046550,
+          2104276815,
+          992496562,
+          1926462530,
+          2024969342,
+          1263037152,
+          980051336,
+          848565636,
+          1758469013
+        ]
+      },
+      "intermediates": {},
+      "output": [
+        100,
+        242,
+        65,
+        57,
+        150,
+        191,
+        53,
+        56,
+        79,
+        183,
+        108,
+        125,
+        178,
+        75,
+        40,
+        59,
+        66,
+        124,
+        211,
+        114,
+        126,
+        148,
+        178,
+        120,
+        224,
+        106,
+        72,
+        75,
+        136,
+        101,
+        106,
+        58,
+        132,
+        21,
+        148,
+        50,
+        149,
+        27,
+        208,
+        104
+      ]
+    },
+    {
+      "operation": "zero",
+      "inputs": {},
+      "intermediates": {},
+      "output": 0
+    },
+    {
+      "operation": "one",
+      "inputs": {},
+      "intermediates": {},
+      "output": 1
+    },
+    {
+      "operation": "is_zero",
+      "inputs": {
+        "case": "zero",
+        "value": 0
+      },
+      "intermediates": {},
+      "output": true
+    },
+    {
+      "operation": "is_zero",
+      "inputs": {
+        "case": "non_zero",
+        "value": 1
+      },
+      "intermediates": {},
+      "output": false
+    },
+    {
+      "operation": "complex_conjugate",
+      "inputs": {
+        "value": 42
+      },
+      "intermediates": {},
+      "output": 42
+    }
+  ]
+}

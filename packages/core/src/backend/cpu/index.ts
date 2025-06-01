@@ -23,16 +23,16 @@ export class CpuBackend implements Backend {
    * Bit reverse a column in place.
    * This is required for FRI operations and ColumnOps interface.
    */
-  bitReverseColumn<T>(column: Column<T>): void {
+  bitReverseColumn<T>(col: Column<T>): void {
     // Get the internal data and bit reverse it
-    const data = column.toCpu();
-    bitReverse(data);
-    
-    // Update the column with the bit-reversed data
-    for (let i = 0; i < data.length; i++) {
-      const value = data[i];
-      if (value !== undefined) {
-        column.set(i, value);
+    if (col instanceof CpuColumn) {
+      bitReverse(col.getData());
+    } else {
+      // Fallback for other column implementations
+      const data = col.toCpu();
+      bitReverse(data);
+      for (let i = 0; i < data.length; i++) {
+        col.set(i, data[i]!);
       }
     }
   }
