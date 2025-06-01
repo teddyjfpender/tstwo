@@ -329,5 +329,256 @@
         "Comprehensive security analysis"
       ]
     }
+  },
+  "04_constraints_over_trace_polynomial": {
+    "input": {
+      "col1_val0": 3,
+      "col1_val1": 9,
+      "col2_val0": 7,
+      "col2_val1": 13
+    },
+    "output": {
+      "num_rows": 16,
+      "log_num_rows": 4,
+      "col1": {
+        "data": [3, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "length": 16
+      },
+      "col2": {
+        "data": [7, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "length": 16
+      },
+      "col3": {
+        "data": [24, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "length": 16
+      },
+      "domain": {
+        "log_size": 4,
+        "size": 16
+      },
+      "trace": {
+        "length": 3,
+        "polynomials": [
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "values": [3, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          },
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "values": [7, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          },
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "values": [24, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+          }
+        ]
+      },
+      "config": {
+        "log_blowup_factor": 1,
+        "log_last_layer_degree_bound": 0,
+        "n_queries": 3,
+        "security_bits": 3
+      },
+      "pcs_config": {
+        "pow_bits": 5,
+        "security_bits": 8,
+        "fri_config": {
+          "log_blowup_factor": 1,
+          "log_last_layer_degree_bound": 0,
+          "n_queries": 3,
+          "security_bits": 3
+        }
+      },
+      "twiddle_domain_log_size": 6,
+      "twiddle_domain_size": 64,
+      "twiddles": {
+        "log_size": 6,
+        "size": 64,
+        "computation_method": "SimdBackend::precompute_twiddles",
+        "domain_type": "CanonicCoset half_coset"
+      },
+      "channel": {
+        "type": "Blake2sChannel",
+        "initial_state": "blake2s_empty_state",
+        "initial_digest": "69217a3079908094e11121d042354a7c1f55b6482ca1a51e1b250dfd1ed0eef9"
+      },
+      "constraint_evaluation": {
+        "expected_col3_values": {
+          "0": 24,
+          "1": 126
+        },
+        "constraint_verification": {
+          "constraint_formula": "col1 * col2 + col1 - col3 = 0",
+          "constraint_satisfied_at_0": true,
+          "constraint_satisfied_at_1": true,
+          "verification_details": {
+            "position_0": {
+              "col1_value": 3,
+              "col2_value": 7,
+              "col3_value": 24,
+              "expected_col3": 24,
+              "constraint_result": 0,
+              "is_satisfied": true
+            },
+            "position_1": {
+              "col1_value": 9,
+              "col2_value": 13,
+              "col3_value": 126,
+              "expected_col3": 126,
+              "constraint_result": 0,
+              "is_satisfied": true
+            }
+          }
+        },
+        "framework_evaluation": {
+          "test_eval": {
+            "log_size": 4,
+            "max_constraint_log_degree_bound": 5,
+            "constraint_degree": 2,
+            "constraint_count": 1,
+            "constraint_type": "polynomial_identity",
+            "constraint_description": "col1 * col2 + col1 - col3 = 0"
+          },
+          "framework_component": {
+            "evaluator_type": "TestEval",
+            "claimed_sum": "0",
+            "trace_column_count": 3,
+            "security_properties": {
+              "constraint_degree": 2,
+              "soundness_error": "2^-4",
+              "constraint_type": "polynomial_identity"
+            }
+          }
+        }
+      },
+      "constraint_framework": {
+        "test_eval": {
+          "log_size": 4,
+          "max_constraint_log_degree_bound": 5,
+          "constraint_count": 1,
+          "trace_column_count": 3,
+          "evaluation_metadata": {
+            "column_count": 3,
+            "constraint_count": 1,
+            "constraint_degree": 2,
+            "max_log_degree_bound": 5,
+            "constraint_description": "col1 * col2 + col1 - col3 = 0",
+            "constraint_type": "polynomial_identity",
+            "evaluation_complexity": "O(n)"
+          }
+        },
+        "framework_component": {
+          "evaluator_type": "TestEval"
+        },
+        "trace_location_allocator": {
+          "allocations": [],
+          "total_allocations": 0
+        }
+      },
+      "trace_analysis": {
+        "polynomial_count": 3,
+        "polynomials": [
+          {
+            "polynomial_index": 0,
+            "constraint_role": "first_input",
+            "domain": {
+              "log_size": 4,
+              "size": 16,
+              "is_canonic": true
+            },
+            "values": {
+              "length": 16,
+              "all_values": [3, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              "non_zero_positions": [
+                {"index": 0, "value": 3},
+                {"index": 1, "value": 9}
+              ],
+              "zero_count": 14,
+              "non_zero_count": 2,
+              "first_value": 3,
+              "second_value": 9
+            }
+          },
+          {
+            "polynomial_index": 1,
+            "constraint_role": "second_input",
+            "domain": {
+              "log_size": 4,
+              "size": 16,
+              "is_canonic": true
+            },
+            "values": {
+              "length": 16,
+              "all_values": [7, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              "non_zero_positions": [
+                {"index": 0, "value": 7},
+                {"index": 1, "value": 13}
+              ],
+              "zero_count": 14,
+              "non_zero_count": 2,
+              "first_value": 7,
+              "second_value": 13
+            }
+          },
+          {
+            "polynomial_index": 2,
+            "constraint_role": "constraint_output",
+            "domain": {
+              "log_size": 4,
+              "size": 16,
+              "is_canonic": true
+            },
+            "values": {
+              "length": 16,
+              "all_values": [24, 126, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+              "non_zero_positions": [
+                {"index": 0, "value": 24},
+                {"index": 1, "value": 126}
+              ],
+              "zero_count": 14,
+              "non_zero_count": 2,
+              "first_value": 24,
+              "second_value": 126
+            }
+          }
+        ],
+        "constraint_properties": {
+          "polynomial_degree": 2,
+          "constraint_count": 1,
+          "constraint_type": "multiplicative",
+          "constraint_description": "col1 * col2 + col1 - col3 = 0"
+        }
+      }
+    },
+    "metadata": {
+      "description": "Enhanced constraint evaluation test vector with real framework data",
+      "verification_scope": [
+        "Complete constraint evaluation framework",
+        "Real constraint satisfaction verification",
+        "Framework component analysis",
+        "TestEval implementation verification",
+        "Trace location allocator simulation",
+        "Polynomial constraint validation",
+        "Multiplicative constraint properties"
+      ],
+      "constraint_features": [
+        "Real constraint evaluation (col1 * col2 + col1 - col3 = 0)",
+        "Framework component creation and analysis",
+        "TestEval with actual constraint logic",
+        "Constraint degree and soundness analysis",
+        "Polynomial identity verification",
+        "Multiplicative constraint validation",
+        "Real cryptographic commitment to constraint data"
+      ]
+    }
   }
 }

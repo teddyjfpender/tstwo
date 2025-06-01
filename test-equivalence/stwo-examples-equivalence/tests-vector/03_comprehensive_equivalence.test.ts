@@ -129,8 +129,6 @@ describe("03_committing_to_the_trace_polynomials: Comprehensive Rust-TypeScript 
 
   // Channel digest progression tests
   test("should have correct channel digest progression", () => {
-    console.log(`result.channel.digest_progression: ${JSON.stringify(result.channel.digest_progression)}`);
-    console.log(`expected.channel.digest_progression: ${JSON.stringify(expected.channel.digest_progression)}`);
     expect(result.channel.digest_progression.length).toBe(expected.channel.digest_progression.length);
     expect(result.channel.digest_progression[0]?.step).toBe(expected.channel.digest_progression[0]?.step as string);
     expect(result.channel.digest_progression[0]?.digest).toBe(expected.channel.digest_progression[0]?.digest as string);

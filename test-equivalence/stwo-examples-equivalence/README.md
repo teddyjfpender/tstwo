@@ -1,4 +1,6 @@
-# Stwo Examples Equivalence Testing
+# WIP: Stwo Examples Equivalence Testing
+
+**This is a work in progress. Most of the APIs have not been implemented and there is heavy use of mocking/simulation here.**
 
 ## Test Vector Generation & Custom Values
 
