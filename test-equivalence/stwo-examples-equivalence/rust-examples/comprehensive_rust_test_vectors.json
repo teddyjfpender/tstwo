@@ -1,0 +1,825 @@
+{
+  "examples": {
+    "01_writing_a_spreadsheet": {
+      "columns": {
+        "col_1": {
+          "all_values": [
+            1,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "data_chunks": 1,
+          "length": 16,
+          "non_zero_count": 2,
+          "non_zero_positions": [
+            {
+              "index": 0,
+              "value": 1
+            },
+            {
+              "index": 1,
+              "value": 7
+            }
+          ],
+          "zero_count": 14
+        },
+        "col_2": {
+          "all_values": [
+            5,
+            11,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "data_chunks": 1,
+          "length": 16,
+          "non_zero_count": 2,
+          "non_zero_positions": [
+            {
+              "index": 0,
+              "value": 5
+            },
+            {
+              "index": 1,
+              "value": 11
+            }
+          ],
+          "zero_count": 14
+        }
+      },
+      "comprehensive_verification_data": {
+        "all_column_1_values": [
+          1,
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_column_2_values": [
+          5,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "constants": {
+        "N_LANES": 16,
+        "num_rows": 16
+      },
+      "example": "01_writing_a_spreadsheet",
+      "input_values": {
+        "col1_val0": 1,
+        "col1_val1": 7,
+        "col2_val0": 5,
+        "col2_val1": 11
+      },
+      "metadata": {
+        "description": "Comprehensive test vector for basic spreadsheet creation",
+        "verification_scope": [
+          "Complete column data with all values",
+          "SIMD memory layout verification",
+          "Zero-padding behavior verification"
+        ]
+      },
+      "source": "rust_reference_implementation"
+    },
+    "02_from_spreadsheet_to_trace_polynomials": {
+      "comprehensive_verification_data": {
+        "all_column_1_values": [
+          1,
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_column_2_values": [
+          5,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_trace_0_values": [
+          1,
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_trace_1_values": [
+          5,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "constants": {
+        "LOG_N_LANES": 4,
+        "N_LANES": 16,
+        "log_num_rows": 4,
+        "num_rows": 16
+      },
+      "data_integrity_checks": {
+        "columns_to_trace_preservation": {
+          "col_1_to_trace_0": true,
+          "col_2_to_trace_1": true,
+          "trace_length_matches_column_count": true,
+          "trace_value_lengths_match_domain": true
+        },
+        "memory_layout_verification": {
+          "chunks_correct": true,
+          "col_1_chunks": 1,
+          "col_2_chunks": 1,
+          "expected_chunks_for_n_lanes": 1
+        }
+      },
+      "domain": {
+        "is_canonic": true,
+        "log_size": 4,
+        "size": 16,
+        "size_verification": {
+          "actual_size": 16,
+          "expected_size_from_log": 16,
+          "sizes_match": true
+        }
+      },
+      "example": "02_from_spreadsheet_to_trace_polynomials",
+      "input_columns": {
+        "col_1": {
+          "all_values": [
+            1,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "data_chunks": 1,
+          "length": 16,
+          "non_zero_count": 2,
+          "non_zero_positions": [
+            {
+              "index": 0,
+              "value": 1
+            },
+            {
+              "index": 1,
+              "value": 7
+            }
+          ],
+          "zero_count": 14
+        },
+        "col_2": {
+          "all_values": [
+            5,
+            11,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "data_chunks": 1,
+          "length": 16,
+          "non_zero_count": 2,
+          "non_zero_positions": [
+            {
+              "index": 0,
+              "value": 5
+            },
+            {
+              "index": 1,
+              "value": 11
+            }
+          ],
+          "zero_count": 14
+        }
+      },
+      "input_values": {
+        "col1_val0": 1,
+        "col1_val1": 7,
+        "col2_val0": 5,
+        "col2_val1": 11
+      },
+      "metadata": {
+        "description": "Comprehensive test vector from Rust implementation capturing ALL data",
+        "flexibility_features": [
+          "Supports any N_LANES size",
+          "Captures all values regardless of trace length",
+          "Provides non-zero position mapping for sparse verification",
+          "Includes data integrity checks for validation"
+        ],
+        "verification_scope": [
+          "Complete column data with all values",
+          "Complete trace polynomial data with all values",
+          "Domain verification with size checks",
+          "Data integrity across transformations",
+          "Memory layout verification",
+          "Comprehensive value preservation checks"
+        ]
+      },
+      "source": "rust_reference_implementation",
+      "trace": {
+        "data_integrity": {
+          "consistent_domain": true,
+          "consistent_length": true
+        },
+        "polynomial_count": 2,
+        "polynomials": [
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "polynomial_index": 0,
+            "values": {
+              "all_values": [
+                1,
+                7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "first_value": 1,
+              "length": 16,
+              "non_zero_count": 2,
+              "non_zero_positions": [
+                {
+                  "index": 0,
+                  "value": 1
+                },
+                {
+                  "index": 1,
+                  "value": 7
+                }
+              ],
+              "second_value": 7,
+              "zero_count": 14
+            }
+          },
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "polynomial_index": 1,
+            "values": {
+              "all_values": [
+                5,
+                11,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "first_value": 5,
+              "length": 16,
+              "non_zero_count": 2,
+              "non_zero_positions": [
+                {
+                  "index": 0,
+                  "value": 5
+                },
+                {
+                  "index": 1,
+                  "value": 11
+                }
+              ],
+              "second_value": 11,
+              "zero_count": 14
+            }
+          }
+        ]
+      }
+    },
+    "03_committing_to_the_trace_polynomials": {
+      "channel_analysis": {
+        "after_size_mix": {
+          "digest_string": "af0e8a72c17f8e1cd8e6d4d5f19a3e935f2bf4e45660c569dfe5bda33ff72ac5",
+          "mixed_value": 4
+        },
+        "initial_state": {
+          "digest_string": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      },
+      "commitment_scheme": {
+        "channel_operations": [
+          "commit_preprocessed",
+          "mix_size",
+          "commit_trace"
+        ],
+        "original_trace_length": 2,
+        "preprocessed_trace_length": 0,
+        "steps": [
+          {
+            "channel_state_before": "0000000000000000000000000000000000000000000000000000000000000000",
+            "description": "Commit to empty preprocessed trace",
+            "operation": "commit_preprocessed_trace",
+            "step": 1,
+            "trace_length": 0
+          },
+          {
+            "channel_state_after": "af0e8a72c17f8e1cd8e6d4d5f19a3e935f2bf4e45660c569dfe5bda33ff72ac5",
+            "description": "Mix log_num_rows (4) into channel",
+            "mixed_value": 4,
+            "mixed_value_u64": 4,
+            "operation": "mix_log_num_rows",
+            "step": 2
+          },
+          {
+            "description": "Commit to the original trace polynomials",
+            "operation": "commit_original_trace",
+            "step": 3,
+            "trace_details": {
+              "domain_log_size": 4,
+              "domain_size": 16,
+              "polynomial_count": 2,
+              "values_per_polynomial": 16
+            },
+            "trace_length": 2,
+            "trace_polynomials": 2
+          }
+        ],
+        "total_steps": 3
+      },
+      "comprehensive_verification_data": {
+        "after_mix_channel_digest": "af0e8a72c17f8e1cd8e6d4d5f19a3e935f2bf4e45660c569dfe5bda33ff72ac5",
+        "all_column_1_values": [
+          1,
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_column_2_values": [
+          5,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_trace_0_values": [
+          1,
+          7,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "all_trace_1_values": [
+          5,
+          11,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "config_fri_last_layer_bound": 0,
+        "config_fri_log_blowup": 1,
+        "config_fri_queries": 3,
+        "config_pow_bits": 5,
+        "config_security_bits": 8,
+        "initial_channel_digest": "0000000000000000000000000000000000000000000000000000000000000000",
+        "twiddle_domain_log_size": 6,
+        "twiddle_domain_size": 64
+      },
+      "constants": {
+        "CONSTRAINT_EVAL_BLOWUP_FACTOR": 1,
+        "LOG_N_LANES": 4,
+        "N_LANES": 16,
+        "log_num_rows": 4,
+        "num_rows": 16
+      },
+      "domain": {
+        "is_canonic": true,
+        "log_size": 4,
+        "size": 16,
+        "size_verification": {
+          "actual_size": 16,
+          "expected_size_from_log": 16,
+          "sizes_match": true
+        }
+      },
+      "example": "03_committing_to_the_trace_polynomials",
+      "input_columns": {
+        "col_1": {
+          "all_values": [
+            1,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "data_chunks": 1,
+          "length": 16,
+          "non_zero_count": 2,
+          "non_zero_positions": [
+            {
+              "index": 0,
+              "value": 1
+            },
+            {
+              "index": 1,
+              "value": 7
+            }
+          ],
+          "zero_count": 14
+        },
+        "col_2": {
+          "all_values": [
+            5,
+            11,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "data_chunks": 1,
+          "length": 16,
+          "non_zero_count": 2,
+          "non_zero_positions": [
+            {
+              "index": 0,
+              "value": 5
+            },
+            {
+              "index": 1,
+              "value": 11
+            }
+          ],
+          "zero_count": 14
+        }
+      },
+      "input_values": {
+        "col1_val0": 1,
+        "col1_val1": 7,
+        "col2_val0": 5,
+        "col2_val1": 11
+      },
+      "metadata": {
+        "commitment_features": [
+          "Blake2s channel state tracking",
+          "FRI configuration validation",
+          "Twiddle precomputation details",
+          "Step-by-step commitment operations",
+          "Channel digest progression",
+          "Security parameter verification"
+        ],
+        "description": "Comprehensive test vector for commitment scheme operations",
+        "verification_scope": [
+          "Complete column data with all values",
+          "Complete trace polynomial data with all values",
+          "Domain verification with size checks",
+          "PCS configuration validation",
+          "Twiddle domain computation verification",
+          "Channel state progression tracking",
+          "Commitment scheme step-by-step operations",
+          "Data integrity across all transformations",
+          "Cryptographic state verification"
+        ]
+      },
+      "pcs_config": {
+        "derived_values": {
+          "fri_security_contribution": 3,
+          "pow_security_contribution": 5,
+          "total_security_bits": 8
+        },
+        "fri_config": {
+          "log_blowup_factor": 1,
+          "log_last_layer_degree_bound": 0,
+          "n_queries": 3,
+          "security_bits": 3
+        },
+        "pow_bits": 5,
+        "security_bits": 8
+      },
+      "source": "rust_reference_implementation",
+      "trace": {
+        "data_integrity": {
+          "consistent_domain": true,
+          "consistent_length": true
+        },
+        "polynomial_count": 2,
+        "polynomials": [
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "polynomial_index": 0,
+            "values": {
+              "all_values": [
+                1,
+                7,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "first_value": 1,
+              "length": 16,
+              "non_zero_count": 2,
+              "non_zero_positions": [
+                {
+                  "index": 0,
+                  "value": 1
+                },
+                {
+                  "index": 1,
+                  "value": 7
+                }
+              ],
+              "second_value": 7,
+              "zero_count": 14
+            }
+          },
+          {
+            "domain": {
+              "log_size": 4,
+              "size": 16
+            },
+            "polynomial_index": 1,
+            "values": {
+              "all_values": [
+                5,
+                11,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "first_value": 5,
+              "length": 16,
+              "non_zero_count": 2,
+              "non_zero_positions": [
+                {
+                  "index": 0,
+                  "value": 5
+                },
+                {
+                  "index": 1,
+                  "value": 11
+                }
+              ],
+              "second_value": 11,
+              "zero_count": 14
+            }
+          }
+        ]
+      },
+      "twiddle_computation": {
+        "computation_breakdown": {
+          "constraint_eval_blowup_factor": 1,
+          "formula": "4 + 1 + 1 = 6",
+          "fri_log_blowup_factor": 1,
+          "log_num_rows": 4
+        },
+        "domain_properties": {
+          "is_canonic": true,
+          "log_size": 6,
+          "size": 64
+        },
+        "log_size": 6,
+        "size": 64
+      }
+    }
+  },
+  "generator": "rust_reference_implementation",
+  "global_constants": {
+    "LOG_N_LANES": 4,
+    "N_LANES": 16
+  },
+  "metadata": {
+    "description": "Comprehensive test vectors from Rust implementation for deep equivalence verification",
+    "features": [
+      "Complete data capture (all values, not just samples)",
+      "Flexible for any configuration changes",
+      "Data integrity verification built-in",
+      "Memory layout verification included",
+      "Comprehensive verification data for thorough testing",
+      "CLI configurable table values for testing hardcoded assumptions"
+    ]
+  },
+  "table_config": {
+    "col1_val0": 1,
+    "col1_val1": 7,
+    "col2_val0": 5,
+    "col2_val1": 11
+  },
+  "timestamp": "2024-01-01T00:00:00Z"
+}

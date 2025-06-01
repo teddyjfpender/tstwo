@@ -1,0 +1,33 @@
+{
+  "name": "stwo-examples-equivalence",
+  "version": "1.0.0",
+  "description": "Rust-TypeScript equivalence testing for Stwo prover examples",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "build:rust": "cargo build --manifest-path rust-examples/Cargo.toml",
+    "run:rust": "cargo run --manifest-path rust-examples/Cargo.toml --bin writing_a_spreadsheet",
+    "run:ts": "tsx typescript-examples/writing_a_spreadsheet.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {},
+  "keywords": [
+    "stwo",
+    "prover",
+    "rust",
+    "typescript",
+    "equivalence",
+    "testing",
+    "cryptography"
+  ],
+  "author": "Stwo Team",
+  "license": "MIT"
+} 

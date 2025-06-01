@@ -1,5 +1,7 @@
 # Test Equivalence System
 
+> Note: The examples in this section are copied from the [Stwo Book](https://github.com/zksecurity/stwo-book/tree/419f23085a30ded61da2a1e7c6699d8343829f9f/stwo-examples).
+
 This directory contains a comprehensive test vector system to ensure that the TypeScript implementation of the STWO prover matches the Rust reference implementation exactly.
 
 ## Overview
