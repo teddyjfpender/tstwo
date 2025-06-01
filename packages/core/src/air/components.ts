@@ -8,11 +8,11 @@ import type { Backend, ColumnOps } from '../backend';
 import type { CirclePoint } from '../circle';
 import type { BaseField } from '../fields/m31';
 import type { SecureField } from '../fields/qm31';
-import type { TreeVec } from '../pcs/utils';
+import { TreeVecColumnOps, type TreeVec } from '../pcs/utils';
 import type { SecureCirclePoly } from '../poly/circle';
 import type { ColumnVec } from '../fri';
 import type { Component, ComponentProver, Trace } from './index';
-import type { DomainEvaluationAccumulator, PointEvaluationAccumulator } from './accumulator';
+import { DomainEvaluationAccumulator, PointEvaluationAccumulator } from './accumulator';
 
 /**
  * Preprocessed trace index constant.
@@ -82,9 +82,6 @@ export class Components<B extends ColumnOps<BaseField>> {
    * Returns mask points for all components at the given point.
    */
   maskPoints(point: CirclePoint<SecureField>): TreeVec<ColumnVec<CirclePoint<SecureField>[]>> {
-    // Import TreeVec dynamically to avoid circular dependencies
-    const { TreeVec, TreeVecColumnOps } = require('../pcs/utils');
-
     // Concatenate mask points from all components
     const componentMaskPoints = this.componentList.map(component => 
       component.maskPoints(point)
@@ -123,9 +120,6 @@ export class Components<B extends ColumnOps<BaseField>> {
     maskValues: TreeVec<SecureField[][]>,
     randomCoeff: SecureField
   ): SecureField {
-    // Import accumulator dynamically to avoid circular dependencies
-    const { PointEvaluationAccumulator } = require('./accumulator');
-    
     const evaluationAccumulator = PointEvaluationAccumulator.new(randomCoeff);
     
     for (const component of this.componentList) {
@@ -143,9 +137,6 @@ export class Components<B extends ColumnOps<BaseField>> {
    * Returns the column log sizes for all components.
    */
   columnLogSizes(): TreeVec<ColumnVec<number>> {
-    // Import TreeVec dynamically to avoid circular dependencies
-    const { TreeVec, TreeVecColumnOps } = require('../pcs/utils');
-
     // Initialize preprocessed columns tracking
     const preprocessedColumnsTraceLogSizes = new Array(this.nPreprocessedColumns).fill(0);
     const visitedColumns = new Array(this.nPreprocessedColumns).fill(false);
@@ -256,9 +247,6 @@ export class ComponentProvers<B extends ColumnOps<BaseField>> {
     randomCoeff: SecureField,
     trace: Trace<B>
   ): SecureCirclePoly<B> {
-    // Import accumulator dynamically to avoid circular dependencies
-    const { DomainEvaluationAccumulator } = require('./accumulator');
-
     // Calculate total constraints
     const totalConstraints = this.componentProverList.reduce(
       (sum, component) => sum + component.nConstraints(),

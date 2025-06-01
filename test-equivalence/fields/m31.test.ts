@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { M31, P } from "../../packages/core/src/fields/m31";
+import { M31, P, pow2147483645 } from "../../packages/core/src/fields/m31";
 import fs from "fs";
 import path from "path";
 
@@ -176,8 +176,6 @@ describe("M31 Test Vector Validation", () => {
     it(`should pass all ${pow2147483645Vectors.length} pow2147483645 test vectors`, () => {
       for (const vector of pow2147483645Vectors) {
         const value = M31.from_u32_unchecked(vector.inputs.value);
-        // We need to import the pow2147483645 function
-        const { pow2147483645 } = require("../../packages/core/src/fields/m31");
         const result = pow2147483645(value);
         expect(result.value).toBe(vector.output);
         

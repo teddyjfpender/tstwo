@@ -121,8 +121,6 @@ class MockComponentProver implements ComponentProver<CpuBackend> {
         const accumulator = columnAccumulators[i]!;
         // Accumulate some mock values to consume the random coefficients
         for (let j = 0; j < (1 << 4); j++) {
-          const { QM31 } = require('../../src/fields/qm31');
-          const { M31 } = require('../../src/fields/m31');
           accumulator.accumulate(j, QM31.zero());
         }
       }
@@ -187,7 +185,6 @@ class MockCirclePoint {
   }
 
   neutral(): CirclePoint<SecureField> {
-    const { QM31 } = require('../../src/fields/qm31');
     return new MockCirclePoint(QM31.zero(), QM31.one()) as any;
   }
 

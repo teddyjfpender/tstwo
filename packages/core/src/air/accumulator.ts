@@ -8,13 +8,14 @@
  * This is a 1:1 port of the Rust accumulation module.
  */
 
+import { M31, type BaseField } from '../fields/m31';
+import type { CirclePoint } from '../circle';
+import { QM31, type SecureField } from '../fields/qm31';
 import type { Backend, ColumnOps } from '../backend';
-import type { BaseField } from '../fields/m31';
-import type { SecureField } from '../fields/qm31';
-import type { SecureColumnByCoords } from '../fields/secure_columns';
-import type { CanonicCoset } from '../poly/circle/canonic';
-import type { CircleEvaluation, BitReversedOrder } from '../poly/circle/evaluation';
-import type { CirclePoly, SecureCirclePoly } from '../poly/circle';
+import { SecureColumnByCoords } from '../fields/secure_columns';
+import { CanonicCoset } from '../poly/circle/canonic';
+import { CircleEvaluation, BitReversedOrder } from '../poly/circle/evaluation';
+import { CirclePoly, SecureCirclePoly } from '../poly/circle';
 
 /**
  * Accumulates N evaluations of u_i(P0) at a single point.
@@ -50,8 +51,6 @@ export class PointEvaluationAccumulator {
    * **API hygiene:** Static factory method instead of direct constructor access
    */
   static new(randomCoeff: SecureField): PointEvaluationAccumulator {
-    // Import SecureField dynamically to avoid circular dependencies
-    const { QM31 } = require('../fields/qm31');
     return new PointEvaluationAccumulator(randomCoeff, QM31.zero());
   }
 
@@ -167,8 +166,6 @@ export class DomainEvaluationAccumulator<B extends ColumnOps<BaseField>> {
 
       // Get or create the sub-accumulation for this log size
       if (!this.subAccumulations[logSize]) {
-        // Import SecureColumnByCoords dynamically to avoid circular dependencies
-        const { SecureColumnByCoords } = require('../fields/secure_columns');
         this.subAccumulations[logSize] = SecureColumnByCoords.zeros(1 << logSize);
       }
 
@@ -196,11 +193,6 @@ export class DomainEvaluationAccumulator<B extends ColumnOps<BaseField>> {
 
     const logSize = this.logSize();
     let curPoly: SecureCirclePoly<B> | null = null;
-
-    // Import required classes dynamically to avoid circular dependencies
-    const { CanonicCoset } = require('../poly/circle/canonic');
-    const { CircleEvaluation } = require('../poly/circle/evaluation');
-    const { SecureCirclePoly } = require('../poly/circle');
 
     for (let currentLogSize = 1; currentLogSize <= logSize; currentLogSize++) {
       const values = this.subAccumulations[currentLogSize];
@@ -235,9 +227,7 @@ export class DomainEvaluationAccumulator<B extends ColumnOps<BaseField>> {
 
     if (!curPoly) {
       // Return zero polynomial
-      const { CirclePoly } = require('../poly/circle');
       const zeroCoeffs = new Array(1 << logSize).fill(null).map(() => {
-        const { M31 } = require('../fields/m31');
         return M31.zero();
       });
       const zeroPoly = new CirclePoly(zeroCoeffs);
@@ -252,18 +242,13 @@ export class DomainEvaluationAccumulator<B extends ColumnOps<BaseField>> {
    * 
    * **Performance optimization:** Static method for reuse
    */
-  private static generateSecurePowers(felt: SecureField, nPowers: number): SecureField[] {
-    if (nPowers <= 0) {
-      return [];
-    }
-
+  static generateSecurePowers(felt: SecureField, nPowers: number): SecureField[] {
     const powers: SecureField[] = [];
-    const { QM31 } = require('../fields/qm31');
-    let currentPower = QM31.one(); // Start with felt^0 = 1
+    let current = QM31.one();
 
     for (let i = 0; i < nPowers; i++) {
-      powers.push(currentPower);
-      currentPower = currentPower.mul(felt);
+      powers.push(current);
+      current = current.mul(felt);
     }
 
     return powers;

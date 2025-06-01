@@ -1,11 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { commitOnLayer, type Blake2sHash } from '../../../src/backend/cpu/blake2';
-let blake2s: any;
-try {
-  blake2s = require('@noble/hashes/blake2').blake2s;
-} catch {
-  blake2s = undefined;
-}
+import { blake2s } from '@noble/hashes/blake2';
 
 // Helper function to convert an array of numbers to a little-endian Uint8Array (for leaf nodes)
 // This logic needs to be available in the test to prepare messages for blake2s

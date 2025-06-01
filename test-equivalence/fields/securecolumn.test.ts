@@ -1,11 +1,7 @@
 import { describe, it, expect } from 'bun:test';
 import { SecureColumnByCoords } from '../../packages/core/src/fields/secure_columns';
 import { QM31 } from '../../packages/core/src/fields/qm31';
-import { M31 } from '../../packages/core/src/fields/m31';
-
-// Load test vectors
-const testVectorData = require('../../test-vectors/securecolumn-test-vectors.json');
-const testVectors = testVectorData.test_vectors;
+import testVectors from '../../test-vectors/securecolumn-test-vectors.json';
 
 describe('SecureColumn Test Vector Validation', () => {
   describe('Column Operations', () => {
