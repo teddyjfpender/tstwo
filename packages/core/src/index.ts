@@ -13,3 +13,7 @@ export * from "./fields";
 
 // Export CPU backend lookups
 export * from "./backend/cpu/lookups";
+
+// Export new constraint framework and examples
+export * from './constraint_framework';
+export * from './examples/fibonacci';

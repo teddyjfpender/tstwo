@@ -118,7 +118,7 @@ describe("QM31", () => {
       const e2 = qm31(0, 0, 1, 0);
       const e3 = qm31(0, 0, 0, 1);
       const combined = QM31.from_partial_evals([e0, e1, e2, e3]);
-      console.log(combined.to_m31_array().map(v => v.value));
+      
       // This should result in zero based on the Rust formula
       expect(combined.equals(QM31.zero())).toBe(true);
     });
