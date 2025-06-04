@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'bun:test';
 import { SecureColumnByCoords } from '../../packages/core/src/fields/secure_columns';
 import { QM31 } from '../../packages/core/src/fields/qm31';
-import testVectors from '../../test-vectors/securecolumn-test-vectors.json';
+import secureColumnVectors from '../../test-vectors/securecolumn-test-vectors.json';
+
+// The JSON structure wraps vectors in a `test_vectors` array. Extract it once
+// so tests operate on the expected array of vector objects.
+const testVectors = secureColumnVectors.test_vectors;
 
 describe('SecureColumn Test Vector Validation', () => {
   describe('Column Operations', () => {

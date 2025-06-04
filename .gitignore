@@ -36,3 +36,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # Any ./target folder
 target
 
+
+# rust reference repo
+rust-reference/stwo/

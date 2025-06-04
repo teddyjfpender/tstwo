@@ -141,7 +141,11 @@ class CommitmentTreeProver {
 // ANCHOR: here_1
 const CONSTRAINT_EVAL_BLOWUP_FACTOR = 1;
 
-export function committingToTheTracePolynomials(config: TableConfig) {
+// Provide a default configuration so tests can invoke this example without
+// manually supplying values, matching the pattern used in other examples.
+export function committingToTheTracePolynomials(
+    config: TableConfig = DEFAULT_TABLE_CONFIG,
+) {
     // --snip--
     // ANCHOR_END: here_1
     

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { blake2s } from '@noble/hashes/blake2.js';
+// Use the extensionless path so Bun resolves the module.
+import { blake2s } from '@noble/hashes/blake2s';
 import { M31 } from '../../src/fields/m31';
 import type { MerkleHasher, MerkleOps } from '../../src/vcs/ops';
 import { MerkleProver } from '../../src/vcs/prover';
