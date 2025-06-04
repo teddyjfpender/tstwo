@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { blake2s } from '@noble/hashes/blake2.js';
+// Bun cannot resolve the `.js` suffixed import. Use the module alias without it.
+import { blake2s } from '@noble/hashes/blake2s';
 import { M31 } from "../../src/fields/m31";
 import { MerkleVerifier, MerkleDecommitment, MerkleVerificationError } from "../../src/vcs/verifier";
 import type { MerkleHasher } from "../../src/vcs/ops";

@@ -1,4 +1,5 @@
-import { blake3 } from '@noble/hashes/blake3.js';
+// Extensionless import improves compatibility across bundlers.
+import { blake3 } from '@noble/hashes/blake3';
 import type { HashLike } from './hash';
 
 const BLAKE3_OUT_LEN = 32; // blake3 default output length is 32 bytes

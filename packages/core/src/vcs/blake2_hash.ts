@@ -1,4 +1,6 @@
-import { blake2s } from '@noble/hashes/blake2.js';
+// bun struggles to resolve the `.js` suffixed path. Use the explicit
+// `blake2s` module which is exported for ESM environments.
+import { blake2s } from '@noble/hashes/blake2s';
 import type { HashLike } from './hash';
 
 /** Wrapper around a 32 byte BLAKE2s hash. */

@@ -34,7 +34,9 @@
 // outputs with the Rust version if possible, or by testing against known Merkle
 // tree structures.
 
-import { blake2s } from '@noble/hashes/blake2.js';
+// Import from the ESM-friendly path. Using the `.js` suffix caused Bun to throw
+// resolution errors during testing.
+import { blake2s } from '@noble/hashes/blake2s';
 
 export type Blake2sHash = Uint8Array; // Represents a 32-byte hash
 
